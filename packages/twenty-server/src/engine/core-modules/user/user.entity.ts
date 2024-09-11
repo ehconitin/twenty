@@ -65,6 +65,10 @@ export class User {
   canImpersonate: boolean;
 
   @Field()
+  @Column({ default: false })
+  canAccessAdminPanel: boolean;
+
+  @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

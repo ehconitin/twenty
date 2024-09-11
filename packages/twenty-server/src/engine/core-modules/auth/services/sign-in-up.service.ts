@@ -244,7 +244,8 @@ export class SignInUpService {
       firstName: firstName,
       lastName: lastName,
       defaultAvatarUrl: imagePath,
-      canImpersonate: false,
+      canImpersonate: true,
+      canAccessAdminPanel: true,
       passwordHash,
       defaultWorkspace: workspace,
     });
