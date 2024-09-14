@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
 
+import { SkeletonCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCardSkeleton';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 
 const StyledButton = styled.button`
@@ -23,11 +24,30 @@ const StyledButton = styled.button`
 
 export const RecordBoardColumnNewButton = () => {
   const theme = useTheme();
-  const { handleAddNewCardClick } = useAddNewCard('last');
+  const {
+    isCreatingCard,
+    cardTitle,
+    handleAddNewCardClick,
+    handleCardTitleChange,
+    handleSaveCard,
+    handleCancel,
+  } = useAddNewCard('last');
+
   return (
-    <StyledButton onClick={handleAddNewCardClick}>
-      <IconPlus size={theme.icon.size.md} />
-      New
-    </StyledButton>
+    <>
+      {isCreatingCard ? (
+        <SkeletonCard
+          title={cardTitle}
+          onTitleChange={handleCardTitleChange}
+          onSave={handleSaveCard}
+          onCancel={handleCancel}
+        />
+      ) : (
+        <StyledButton onClick={handleAddNewCardClick}>
+          <IconPlus size={theme.icon.size.md} />
+          New
+        </StyledButton>
+      )}
+    </>
   );
 };

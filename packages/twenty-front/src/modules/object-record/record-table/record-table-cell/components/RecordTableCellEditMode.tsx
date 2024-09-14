@@ -1,7 +1,7 @@
-import { ReactElement } from 'react';
-import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import { ReactElement } from 'react';
+import { createPortal } from 'react-dom';
 
 const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModeProps>`
   position: absolute;
