@@ -1,8 +1,9 @@
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -16,7 +17,6 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -87,7 +87,8 @@ const StyledItem = styled('div', {
     indentationLevel === 2 ? '2px' : '0'};
 
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
-  width: 100%;
+  width: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded ? '100%' : 'auto'};
   overflow: hidden;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};

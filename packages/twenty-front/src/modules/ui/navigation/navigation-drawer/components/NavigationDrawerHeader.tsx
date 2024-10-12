@@ -7,10 +7,10 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -18,9 +18,7 @@ const StyledContainer = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
 `;
-const StyledSingleWorkspaceContainer = styled(StyledContainer)`
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
+const StyledSingleWorkspaceContainer = styled(StyledContainer)``;
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
