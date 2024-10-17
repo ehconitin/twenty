@@ -54,14 +54,56 @@ export class CallWebhookJobsJob {
 
     const webhooks = await webhookRepository.find({
       where: [
-        { operation: Like(`%${eventName}%`) },
-        { operation: Like(`%*.${operation}%`) },
-        { operation: Like(`%${nameSingular}.*%`) },
-        { operation: Like('%*.*%') },
+        { operation: Like(`${eventName}%`) },
+        { operation: Like(`*.${operation}%`) },
+        { operation: Like(`${nameSingular}.*%`) },
+        { operation: Like('*.*%') },
       ],
     });
 
     webhooks.forEach((webhook) => {
+      const webhookOperation = webhook.operation;
+      const operationParts = webhookOperation.split('.');
+
+      if (operationParts.length > 2) {
+        const fieldId = operationParts[2];
+
+        if (fieldId !== '*') {
+          const objectFieldIds = data.objectMetadataItem.fields.map(
+            (f) => f.id,
+          );
+
+          if (objectFieldIds.includes(fieldId)) {
+            const fieldName = data.objectMetadataItem.fields.find(
+              (f) => f.id === fieldId,
+            )?.name;
+
+            if (fieldName && fieldName in data.record) {
+              this.messageQueueService.add<CallWebhookJobData>(
+                CallWebhookJob.name,
+                {
+                  targetUrl: webhook.targetUrl,
+                  eventName: `${eventName}.${fieldName}`,
+                  objectMetadata: {
+                    id: data.objectMetadataItem.id,
+                    nameSingular: data.objectMetadataItem.nameSingular,
+                  },
+                  workspaceId: data.workspaceId,
+                  webhookId: webhook.id,
+                  eventDate: new Date(),
+                  record: { [fieldName]: data.record[fieldName] },
+                },
+                { retryLimit: 3 },
+              );
+
+              return;
+            }
+          }
+        }
+      }
+
+      // If not a field-specific webhook or if field not found, send the entire record
+      // DRY :)
       this.messageQueueService.add<CallWebhookJobData>(
         CallWebhookJob.name,
         {

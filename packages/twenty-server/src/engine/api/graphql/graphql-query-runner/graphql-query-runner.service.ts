@@ -405,9 +405,11 @@ export class GraphqlQueryRunnerService {
     operation: CallWebhookJobsJobOperation,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
-    if (!jobsData || !Array.isArray(jobsData)) return;
+    if (!jobsData) return;
 
-    jobsData.forEach((jobData) => {
+    const dataArray = Array.isArray(jobsData) ? jobsData : [jobsData];
+
+    dataArray.forEach((jobData) => {
       this.messageQueueService.add<CallWebhookJobsJobData>(
         CallWebhookJobsJob.name,
         {

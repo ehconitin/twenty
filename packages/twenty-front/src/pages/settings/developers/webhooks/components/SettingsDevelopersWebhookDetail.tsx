@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconTrash } from 'twenty-ui';
 
@@ -37,11 +37,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
-
   const [description, setDescription] = useState<string>('');
   const [operationObjectSingularName, setOperationObjectSingularName] =
     useState<string>('');
   const [operationAction, setOperationAction] = useState('');
+  const [operationFieldId, setOperationFieldId] = useState('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const { record: webhookData } = useFindOneRecord({
@@ -51,6 +51,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
       setDescription(data?.description ?? '');
       setOperationObjectSingularName(data?.operation.split('.')[0] ?? '');
       setOperationAction(data?.operation.split('.')[1] ?? '');
+      setOperationFieldId(data?.operation.split('.')[2] ?? '');
       setIsDirty(false);
     },
   });
@@ -68,13 +69,33 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
 
-  const fieldTypeOptions = [
-    { value: '*', label: 'All Objects' },
-    ...objectMetadataItems.map((item) => ({
-      value: item.nameSingular,
-      label: item.labelSingular,
-    })),
-  ];
+  const fieldTypeOptions = useMemo(
+    () => [
+      { value: '*', label: 'All Objects' },
+      ...objectMetadataItems.map((item) => ({
+        value: item.nameSingular,
+        label: item.labelSingular,
+      })),
+    ],
+    [objectMetadataItems],
+  );
+
+  const fieldOptions = useMemo(() => {
+    if (operationObjectSingularName === '*') {
+      return [{ value: '*', label: 'All Fields' }];
+    }
+    const selectedObject = objectMetadataItems.find(
+      (item) => item.nameSingular === operationObjectSingularName,
+    );
+    if (!selectedObject) return [];
+    return [
+      { value: '*', label: 'All Fields' },
+      ...selectedObject.fields.map((field) => ({
+        value: field.id,
+        label: field.label,
+      })),
+    ];
+  }, [objectMetadataItems, operationObjectSingularName]);
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
@@ -85,7 +106,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     await updateOneRecord({
       idToUpdate: webhookId,
       updateOneRecordInput: {
-        operation: `${operationObjectSingularName}.${operationAction}`,
+        operation: `${operationObjectSingularName}.${operationAction}.${operationFieldId}`,
         description: description,
       },
     });
@@ -158,6 +179,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               onChange={(objectSingularName) => {
                 setIsDirty(true);
                 setOperationObjectSingularName(objectSingularName);
+                setOperationFieldId('*');
               }}
               options={fieldTypeOptions}
             />
@@ -175,6 +197,16 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 { value: 'update', label: 'Update' },
                 { value: 'delete', label: 'Delete' },
               ]}
+            />
+            <Select
+              fullWidth
+              dropdownId="operation-webhook-field-select"
+              value={operationFieldId}
+              onChange={(fieldId) => {
+                setIsDirty(true);
+                setOperationFieldId(fieldId);
+              }}
+              options={fieldOptions}
             />
           </StyledFilterRow>
         </Section>

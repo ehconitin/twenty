@@ -21,7 +21,7 @@ export const SettingsDevelopersWebhooksNew = () => {
     operation: string;
   }>({
     targetUrl: '',
-    operation: '*.*',
+    operation: '*.*.*',
   });
   const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 
