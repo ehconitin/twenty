@@ -5,6 +5,7 @@ export type IconComponentProps = {
   color?: string;
   size?: number;
   stroke?: number;
+  fill?: string;
 };
 
 export type IconComponent = FunctionComponent<IconComponentProps>;

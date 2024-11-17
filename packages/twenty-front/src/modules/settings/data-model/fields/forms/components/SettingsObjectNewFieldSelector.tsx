@@ -5,11 +5,11 @@ import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
+import { SettingsDataModelFieldSelectorIconCustomizer } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSelectorIconCustomizer';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
@@ -60,7 +60,6 @@ export const SettingsObjectNewFieldSelector = ({
   fieldMetadataItem,
   objectSlug,
 }: SettingsObjectNewFieldSelectorProps) => {
-  const theme = useTheme();
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -138,9 +137,10 @@ export const SettingsObjectNewFieldSelector = ({
                           <SettingsCard
                             key={key}
                             Icon={
-                              <config.Icon
-                                size={theme.icon.size.xl}
-                                stroke={theme.icon.stroke.sm}
+                              <SettingsDataModelFieldSelectorIconCustomizer
+                                Icon={config.iconConfig.Icon}
+                                rotate={config.iconConfig.rotate}
+                                fill={config.iconConfig.fill}
                               />
                             }
                             title={config.label}

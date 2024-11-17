@@ -6,6 +6,9 @@ const StyledRectangleIllustrationIcon = styled('div')`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
+  height: 23px;
+  width: 23px;
+  align-items: center;
 `;
 
 export const IllustrationIconWrapper = StyledRectangleIllustrationIcon;

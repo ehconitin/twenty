@@ -11,13 +11,13 @@ import {
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import {
-  IllustrationIconCurrency,
-  IllustrationIconLink,
-  IllustrationIconMail,
-  IllustrationIconMap,
-  IllustrationIconPhone,
-  IllustrationIconSetting,
-  IllustrationIconUser,
+  IconMail,
+  IconMap,
+  IconMoneybag,
+  IconPhone,
+  IconSettings,
+  IconUserCircle,
+  IconWorld,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -36,7 +36,10 @@ type SettingsCompositeFieldTypeConfigArray = Record<
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Currency]: {
     label: 'Currency',
-    Icon: IllustrationIconCurrency,
+    iconConfig: {
+      Icon: IconMoneybag,
+      rotate: 4,
+    },
     subFields: ['amountMicros'],
     filterableSubFields: ['amountMicros'],
     labelBySubField: {
@@ -51,7 +54,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
   [FieldMetadataType.Emails]: {
     label: 'Emails',
-    Icon: IllustrationIconMail,
+    iconConfig: {
+      Icon: IconMail,
+      rotate: -4,
+    },
     subFields: ['primaryEmail', 'additionalEmails'],
     filterableSubFields: ['primaryEmail'],
     labelBySubField: {
@@ -70,7 +76,11 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
   [FieldMetadataType.Links]: {
     label: 'Links',
-    Icon: IllustrationIconLink,
+    iconConfig: {
+      Icon: IconWorld,
+      rotate: 4,
+      fill: false,
+    },
     exampleValue: {
       primaryLinkUrl: 'twenty.com',
       primaryLinkLabel: '',
@@ -87,7 +97,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.Phones]: {
     label: 'Phones',
-    Icon: IllustrationIconPhone,
+    iconConfig: {
+      Icon: IconPhone,
+      rotate: -4,
+    },
     exampleValue: {
       primaryPhoneNumber: '234-567-890',
       primaryPhoneCountryCode: '+1',
@@ -108,7 +121,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FullName]: {
     label: 'Full Name',
-    Icon: IllustrationIconUser,
+    iconConfig: {
+      Icon: IconUserCircle,
+      rotate: -4,
+    },
     exampleValue: { firstName: 'John', lastName: 'Doe' },
     category: 'Advanced',
     subFields: ['firstName', 'lastName'],
@@ -120,7 +136,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.Address]: {
     label: 'Address',
-    Icon: IllustrationIconMap,
+    iconConfig: {
+      Icon: IconMap,
+      rotate: -4,
+    },
     subFields: [
       'addressStreet1',
       'addressStreet2',
@@ -163,7 +182,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
   [FieldMetadataType.Actor]: {
     label: 'Actor',
-    Icon: IllustrationIconSetting,
+    iconConfig: {
+      Icon: IconSettings,
+      rotate: 4,
+    },
     category: 'Basic',
     subFields: ['source'],
     filterableSubFields: ['source'],

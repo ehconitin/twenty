@@ -65,7 +65,7 @@ export const SettingsObjectFieldDataType = ({
 
   const fieldTypeConfig = getSettingsFieldTypeConfig(value);
   const Icon: IconComponent =
-    IconFromProps ?? fieldTypeConfig?.Icon ?? IconTwentyStar;
+    IconFromProps ?? fieldTypeConfig?.iconConfig.Icon ?? IconTwentyStar;
   const label = labelFromProps ?? fieldTypeConfig?.label;
 
   const StyledIcon = styled(Icon)`

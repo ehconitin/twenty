@@ -22,6 +22,7 @@ export {
   IconBookmark,
   IconBookmarkPlus,
   IconBox,
+  IconBraces,
   IconBracketsContain,
   IconBrandGithub,
   IconBrandGoogle,
@@ -147,6 +148,7 @@ export {
   IconHelpCircle,
   IconHierarchy2,
   IconHome,
+  IconId,
   IconInbox,
   IconInfoCircle,
   IconJson,
@@ -228,8 +230,10 @@ export {
   IconTestPipe,
   IconTextSize,
   IconTimelineEvent,
+  IconToggleRight,
   IconTool,
   IconTrash,
+  IconTypography,
   IconUnlink,
   IconUpload,
   IconUser,
@@ -240,7 +244,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';
