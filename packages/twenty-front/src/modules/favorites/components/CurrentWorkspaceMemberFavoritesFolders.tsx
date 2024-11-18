@@ -25,6 +25,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
@@ -89,7 +90,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
 
       {isNavigationSectionOpen && (
-        <>
+        <ScrollWrapper contextProviderName="navigationDrawer">
           {isFavoriteFolderEnabled && (
             <FavoriteFolders
               isNavigationSectionOpen={isNavigationSectionOpen}
@@ -130,7 +131,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               ))}
             />
           )}
-        </>
+        </ScrollWrapper>
       )}
     </NavigationDrawerSection>
   );
