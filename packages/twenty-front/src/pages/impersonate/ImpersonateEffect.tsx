@@ -15,7 +15,7 @@ import { sleep } from '~/utils/sleep';
 export const ImpersonateEffect = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
-  const { signOut } = useAuth();
+  const { clearSession } = useAuth();
 
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -29,7 +29,7 @@ export const ImpersonateEffect = () => {
     }
 
     try {
-      await signOut();
+      await clearSession();
 
       const impersonateResult = await impersonate({
         variables: { userId },
@@ -53,7 +53,14 @@ export const ImpersonateEffect = () => {
       console.error('Impersonation failed:', error);
       navigate(AppPath.Index);
     }
-  }, [userId, impersonate, setCurrentUser, setTokenPair, signOut, navigate]);
+  }, [
+    userId,
+    impersonate,
+    setCurrentUser,
+    setTokenPair,
+    clearSession,
+    navigate,
+  ]);
 
   useEffect(() => {
     if (

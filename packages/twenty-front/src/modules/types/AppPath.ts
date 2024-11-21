@@ -27,7 +27,7 @@ export enum AppPath {
   DevelopersCatchAll = `/${Developers}/*`,
 
   // Impersonate
-  Impersonate = '/impersonate/:userId',
+  Impersonate = '/impersonate/:userId?',
 
   Authorize = '/authorize',
 
@@ -35,4 +35,3 @@ export enum AppPath {
   NotFoundWildcard = '*',
   NotFound = '/not-found',
 }
-// localhost:3001/impersonate/0c46e245-35dc-430d-ae84-adf32028de1f
