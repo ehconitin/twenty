@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,12 +10,12 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { sleep } from '~/utils/sleep';
 
 export const ImpersonateEffect = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const { signOut } = useAuth();
-  const client = useApolloClient();
 
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -31,8 +30,6 @@ export const ImpersonateEffect = () => {
 
     try {
       await signOut();
-
-      await client.clearStore();
 
       const impersonateResult = await impersonate({
         variables: { userId },
@@ -50,20 +47,13 @@ export const ImpersonateEffect = () => {
 
       setCurrentUser(user);
       setTokenPair(tokens);
-      window.location.reload();
+      await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
+      window.location.href = AppPath.Index;
     } catch (error) {
       console.error('Impersonation failed:', error);
       navigate(AppPath.Index);
     }
-  }, [
-    userId,
-    impersonate,
-    setCurrentUser,
-    setTokenPair,
-    signOut,
-    client,
-    navigate,
-  ]);
+  }, [userId, impersonate, setCurrentUser, setTokenPair, signOut, navigate]);
 
   useEffect(() => {
     if (
@@ -77,5 +67,5 @@ export const ImpersonateEffect = () => {
     }
   }, [userId, currentUser, isLogged, handleImpersonate, navigate]);
 
-  return null;
+  return <></>;
 };

@@ -35,3 +35,4 @@ export enum AppPath {
   NotFoundWildcard = '*',
   NotFound = '/not-found',
 }
+// localhost:3001/impersonate/0c46e245-35dc-430d-ae84-adf32028de1f
