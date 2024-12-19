@@ -5,6 +5,13 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
+const StyledOuterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+`;
+
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
 }>`
@@ -30,10 +37,12 @@ export const SettingsPageContainer = ({
 }: {
   children: ReactNode;
 }) => (
-  <ScrollWrapper
-    contextProviderName="settingsPageContainer"
-    componentInstanceId={'scroll-wrapper-settings-page-container'}
-  >
-    <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
-  </ScrollWrapper>
+  <StyledOuterContainer>
+    <ScrollWrapper
+      contextProviderName="settingsPageContainer"
+      componentInstanceId={'scroll-wrapper-settings-page-container'}
+    >
+      <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
+    </ScrollWrapper>
+  </StyledOuterContainer>
 );

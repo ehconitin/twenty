@@ -54,6 +54,13 @@ const StyledBoardContentContainer = styled.div`
   height: calc(100% - 48px);
 `;
 
+const StyledOuterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+`;
+
 const RecordBoardScrollRestoreEffect = () => {
   useScrollRestoration();
   return null;
@@ -193,35 +200,37 @@ export const RecordBoard = () => {
       <RecordBoardComponentInstanceContext.Provider
         value={{ instanceId: recordBoardId }}
       >
-        <ScrollWrapper
-          contextProviderName="recordBoard"
-          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
-        >
-          <RecordBoardStickyHeaderEffect />
-          <StyledContainerContainer>
-            <RecordBoardHeader />
-            <StyledBoardContentContainer>
-              <StyledContainer ref={boardRef}>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <StyledColumnContainer>
-                    {visibleRecordGroupIds.map((recordGroupId) => (
-                      <RecordBoardColumn
-                        key={recordGroupId}
-                        recordBoardColumnId={recordGroupId}
-                      />
-                    ))}
-                  </StyledColumnContainer>
-                </DragDropContext>
-              </StyledContainer>
-              <RecordBoardScrollRestoreEffect />
-              <DragSelect
-                dragSelectable={boardRef}
-                onDragSelectionStart={resetRecordSelection}
-                onDragSelectionChange={setRecordAsSelected}
-              />
-            </StyledBoardContentContainer>
-          </StyledContainerContainer>
-        </ScrollWrapper>
+        <StyledOuterContainer>
+          <ScrollWrapper
+            contextProviderName="recordBoard"
+            componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+          >
+            <RecordBoardStickyHeaderEffect />
+            <StyledContainerContainer>
+              <RecordBoardHeader />
+              <StyledBoardContentContainer>
+                <StyledContainer ref={boardRef}>
+                  <DragDropContext onDragEnd={handleDragEnd}>
+                    <StyledColumnContainer>
+                      {visibleRecordGroupIds.map((recordGroupId) => (
+                        <RecordBoardColumn
+                          key={recordGroupId}
+                          recordBoardColumnId={recordGroupId}
+                        />
+                      ))}
+                    </StyledColumnContainer>
+                  </DragDropContext>
+                </StyledContainer>
+                <RecordBoardScrollRestoreEffect />
+                <DragSelect
+                  dragSelectable={boardRef}
+                  onDragSelectionStart={resetRecordSelection}
+                  onDragSelectionChange={setRecordAsSelected}
+                />
+              </StyledBoardContentContainer>
+            </StyledContainerContainer>
+          </ScrollWrapper>
+        </StyledOuterContainer>
       </RecordBoardComponentInstanceContext.Provider>
     </RecordBoardScope>
   );
