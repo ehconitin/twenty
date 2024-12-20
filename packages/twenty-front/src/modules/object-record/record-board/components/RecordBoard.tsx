@@ -46,6 +46,7 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
+  min-height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
