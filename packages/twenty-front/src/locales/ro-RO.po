@@ -97,7 +97,7 @@ msgstr "Activează Fluxul de Lucru"
 msgid "Active"
 msgstr "Activ"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:71
+#: src/pages/settings/developers/SettingsDevelopers.tsx:51
 msgid "Active API keys created by you or your team."
 msgstr "Chei API active create de tine sau echipa ta."
 
@@ -179,7 +179,7 @@ msgstr "Permite utilizatorilor să se autentifice cu email și parolă."
 msgid "An error occurred while updating password"
 msgstr "A survenit o eroare în timpul actualizării parolei"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:151
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
 msgid "An optional description"
 msgstr "O descriere opțională"
 
@@ -197,7 +197,7 @@ msgstr "API & Webhooks"
 msgid "API Key"
 msgstr "Cheie API"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:70
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "API keys"
 msgstr "Chei API"
 
@@ -348,7 +348,7 @@ msgstr "Chineză — Simplificată"
 msgid "Chinese — Traditional"
 msgstr "Chineză — Tradițională"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:180
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
 msgid "Choose an object"
 msgstr "Alegeți un obiect"
 
@@ -461,7 +461,7 @@ msgstr "Numără valorile unice"
 msgid "Create a workflow and return here to view its versions"
 msgstr "Creează un flux de lucru și revino aici pentru a vizualiza versiunile acestuia"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:77
+#: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
 msgstr "Creează cheie API"
 
@@ -478,7 +478,7 @@ msgstr "Creează profil"
 msgid "Create Role"
 msgstr "Creează Rol"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:93
+#: src/pages/settings/developers/SettingsDevelopers.tsx:73
 msgid "Create Webhook"
 msgstr "Creează Webhook"
 
@@ -506,7 +506,7 @@ msgstr "Personalizează securitatea spațiului tău de lucru"
 msgid "Czech"
 msgstr ""
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
@@ -561,7 +561,7 @@ msgstr "Dezactivează Fluxul de Lucru"
 msgid "Define the name and description of your object"
 msgstr "Definiți numele și descrierea obiectului dvs"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:245
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
@@ -600,13 +600,13 @@ msgstr "Șterge înregistrare"
 msgid "Delete records"
 msgstr "Ștergere înregistrări"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:240
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "Șterge această integrare"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:262
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
 msgid "Delete webhook"
 msgstr "Șterge webhook"
 
@@ -632,7 +632,7 @@ msgstr "Șterge întregul spațiu de lucru"
 msgid "Descending"
 msgstr "Descendent"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
@@ -645,9 +645,9 @@ msgstr "Descriere"
 msgid "Destroy"
 msgstr "Distrugere"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:56
-#: src/pages/settings/developers/SettingsDevelopers.tsx:63
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:125
+#: src/pages/settings/developers/SettingsDevelopers.tsx:36
+#: src/pages/settings/developers/SettingsDevelopers.tsx:43
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
@@ -734,7 +734,7 @@ msgstr "Angajați"
 msgid "Empty"
 msgstr "Gol"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:134
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
 msgid "Endpoint URL"
 msgstr "URL endpoint"
 
@@ -762,7 +762,7 @@ msgstr "Eroare la regenerarea cheii API: {err}"
 msgid "Error while switching subscription {to}."
 msgstr "Eroare în timpul schimbării abonamentului {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:87
+#: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Stabilește puncte finale Webhook pentru notificări privind evenimentele asincrone."
 
@@ -863,7 +863,7 @@ msgstr "Numărul de câmpuri"
 msgid "Filter"
 msgstr "Filtru"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:164
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
 msgid "Filters"
 msgstr "Filtre"
 
@@ -1330,7 +1330,7 @@ msgstr "Permisiuni"
 msgid "Picture"
 msgstr "Imagine"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:143
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 msgid "Please enter a valid URL"
 msgstr "Vă rugăm să introduceți un URL valid"
 
@@ -1338,7 +1338,7 @@ msgstr "Vă rugăm să introduceți un URL valid"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Vă rugăm să introduceți \"{confirmationValue}\" pentru a confirma că doriți să ștergeți această Cheie API. Fiți conștient că orice script care folosește această cheie va înceta să funcționeze."
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:256
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Vă rugăm să introduceți {confirmationText} pentru a confirma că doriți să ștergeți acest webhook."
 
@@ -1531,7 +1531,7 @@ msgstr "Vezi versiunile"
 msgid "See versions history"
 msgstr "Vezi istoricul versiunilor"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:165
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Selectează evenimentele pe care dorești să le trimiți la acest endpoint"
 
@@ -1796,7 +1796,7 @@ msgstr "Contacte nelimitate"
 msgid "Upload"
 msgstr "Încarcă"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:138
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
 msgid "URL"
 msgstr "URL"
 
@@ -1848,15 +1848,15 @@ msgstr "Vizualizează"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Suportăm PNG-uri pătrate, JPEG-uri și GIF-uri sub 10MB"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Vom trimite cereri POST către acest endpoint pentru fiecare eveniment nou"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:86
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -1888,8 +1888,8 @@ msgstr "Workflow-ul nu poate fi testat"
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
-#: src/pages/settings/developers/SettingsDevelopers.tsx:60
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:121
+#: src/pages/settings/developers/SettingsDevelopers.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
@@ -1915,11 +1915,11 @@ msgid "Workspace name"
 msgstr "Nume Spațiu de lucru"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:154
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
 msgid "Write a description"
 msgstr "Scrie o descriere"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:113
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "da"
@@ -1947,4 +1947,3 @@ msgstr "Spațiul tău de lucru"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Spațiul tău de lucru va fi dezactivat"
-
