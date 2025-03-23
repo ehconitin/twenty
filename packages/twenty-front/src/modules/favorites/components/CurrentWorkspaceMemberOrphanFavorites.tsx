@@ -32,7 +32,7 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
   );
 
   return (
-    <FavoritesDroppable droppableId="orphan-favorites">
+    <FavoritesDroppable droppableId="orphan-favorites" isLastDroppable={true}>
       {orphanFavorites.length > 0 ? (
         orphanFavorites.map((favorite, index) => (
           <DraggableItem
