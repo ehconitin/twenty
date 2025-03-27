@@ -13,6 +13,8 @@ type FavoriteFoldersProps = {
   isNavigationSectionOpen: boolean;
 };
 
+//changes
+
 export const FavoriteFolders = ({
   isNavigationSectionOpen,
 }: FavoriteFoldersProps) => {
