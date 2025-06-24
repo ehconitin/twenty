@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { ApolloWorkspaceClientProvider } from '@/apollo/components/ApolloWorkspaceClientProvider';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
@@ -45,28 +46,30 @@ export const AppRouterProviders = () => {
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
-                    <ObjectMetadataItemsLoadEffect />
-                    <ObjectMetadataItemsProvider>
-                      <PrefetchDataProvider>
-                        <UserThemeProviderEffect />
-                        <SnackBarProvider>
-                          <ErrorMessageEffect />
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <GotoHotkeysEffectsProvider />
-                                <PageTitle title={pageTitle} />
-                                <PageFavicon />
-                                <Outlet />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogManagerScope>
-                        </SnackBarProvider>
-                        <MainContextStoreProvider />
-                      </PrefetchDataProvider>
-                      <PageChangeEffect />
-                    </ObjectMetadataItemsProvider>
+                    <ApolloWorkspaceClientProvider>
+                      <ObjectMetadataItemsLoadEffect />
+                      <ObjectMetadataItemsProvider>
+                        <PrefetchDataProvider>
+                          <UserThemeProviderEffect />
+                          <SnackBarProvider>
+                            <ErrorMessageEffect />
+                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogManagerScope>
+                          </SnackBarProvider>
+                          <MainContextStoreProvider />
+                        </PrefetchDataProvider>
+                        <PageChangeEffect />
+                      </ObjectMetadataItemsProvider>
+                    </ApolloWorkspaceClientProvider>
                   </ApolloMetadataClientProvider>
                 </AuthProvider>
               </UserProvider>

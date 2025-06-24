@@ -8,14 +8,15 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title, H3Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
   useGetIndicatorHealthStatusQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { H2Title, H3Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 const StyledTitleContainer = styled.div`
   align-items: center;
@@ -35,7 +36,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
       fetchPolicy: 'network-only',
     });
 
-  if (loadingIndicatorHealthStatus) {
+  if (isDefined(loadingIndicatorHealthStatus)) {
     return <SettingsSkeletonLoader />;
   }
 

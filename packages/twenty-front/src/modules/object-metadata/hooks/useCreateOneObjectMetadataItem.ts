@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 import {
   CreateObjectInput,
@@ -10,12 +10,11 @@ import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneObjectMetadataItem = () => {
   const { refreshCachedViews } = useRefreshCachedViews();
 
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
@@ -23,7 +22,7 @@ export const useCreateOneObjectMetadataItem = () => {
     CreateOneObjectMetadataItemMutation,
     CreateOneObjectMetadataItemMutationVariables
   >(CREATE_ONE_OBJECT_METADATA_ITEM, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const createOneObjectMetadataItem = async (input: CreateObjectInput) => {

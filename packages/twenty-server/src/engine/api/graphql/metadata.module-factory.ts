@@ -5,12 +5,13 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
-import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { SystemEngineModule } from 'src/engine/core-modules/system-engine.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
+import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
 export const metadataModuleFactory = async (
@@ -21,7 +22,7 @@ export const metadataModuleFactory = async (
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
-    include: [MetadataGraphQLApiModule],
+    include: [SystemEngineModule, MetadataEngineModule],
     renderGraphiQL() {
       return renderApolloPlayground({ path: 'metadata' });
     },

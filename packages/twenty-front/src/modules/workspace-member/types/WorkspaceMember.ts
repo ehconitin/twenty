@@ -1,7 +1,7 @@
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type ColorScheme = 'Dark' | 'Light' | 'System';
 

@@ -6,7 +6,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 @Module({
   imports: [UserModule],
-  exports: [],
+  exports: [TimelineCalendarEventResolver],
   providers: [TimelineCalendarEventResolver, TimelineCalendarEventService],
 })
 export class TimelineCalendarEventModule {}

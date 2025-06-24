@@ -2,6 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { useApolloWorkspaceClient } from '@/apollo/hooks/useApolloWorkspaceClient';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -19,6 +20,7 @@ import { useSearchQuery } from '~/generated/graphql';
 
 export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+  const workspaceClient = useApolloWorkspaceClient();
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -36,6 +38,7 @@ export const useCommandMenuSearchRecords = () => {
   }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
 
   const { data: searchData, loading } = useSearchQuery({
+    client: workspaceClient,
     variables: {
       searchInput: deferredCommandMenuSearch ?? '',
       limit: MAX_SEARCH_RESULTS,

@@ -1,4 +1,5 @@
 import { SettingsBillingLabelValueItem } from '@/billing/components/SettingsBillingLabelValueItem';
+import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
@@ -7,10 +8,9 @@ import { H2Title } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
-import { SubscriptionStatus } from '~/generated/graphql';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
-import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 
 const StyledLineSeparator = styled.div`
   width: 100%;

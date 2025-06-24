@@ -11,9 +11,9 @@ import { useMemo, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
-  ConfigSource,
-  useGetConfigVariablesGroupedQuery,
-} from '~/generated/graphql';
+    ConfigSource,
+    useGetConfigVariablesGroupedQuery,
+} from '~/generated-metadata/graphql';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 
 const StyledControlsContainer = styled.div`

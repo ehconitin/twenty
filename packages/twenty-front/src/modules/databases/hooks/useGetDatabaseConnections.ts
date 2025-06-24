@@ -1,8 +1,7 @@
-import { useQuery } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client';
 
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
   GetManyDatabaseConnectionsQuery,
   GetManyDatabaseConnectionsQueryVariables,
@@ -17,7 +16,7 @@ export const useGetDatabaseConnections = ({
   databaseKey,
   skip,
 }: UseGetDatabaseConnectionsParams) => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloClient();
   const foreignDataWrapperType = getForeignDataWrapperType(databaseKey);
 
   const { data } = useQuery<

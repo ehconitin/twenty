@@ -1,12 +1,13 @@
-import { useState } from 'react';
 import {
   DocumentNode,
   OperationVariables,
   TypedDocumentNode,
   useQuery,
 } from '@apollo/client';
+import { useState } from 'react';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useApolloWorkspaceClient } from '@/apollo/hooks/useApolloWorkspaceClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -38,6 +39,7 @@ export const useCustomResolver = <
   fetchMoreRecords: () => Promise<void>;
 } => {
   const { enqueueSnackBar } = useSnackBar();
+  const workspaceClient = useApolloWorkspaceClient();
 
   const [page, setPage] = useState({
     pageNumber: 1,
@@ -60,6 +62,7 @@ export const useCustomResolver = <
     loading: firstQueryLoading,
     fetchMore,
   } = useQuery<CustomResolverQueryResult<T>>(query, {
+    client: workspaceClient,
     variables: queryVariables,
     onError: (error) => {
       enqueueSnackBar(error.message || `Error loading ${objectName}`, {

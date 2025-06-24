@@ -7,7 +7,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Role } from '~/generated/graphql';
+import { Role } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type SettingsRoleEditEffectProps = {

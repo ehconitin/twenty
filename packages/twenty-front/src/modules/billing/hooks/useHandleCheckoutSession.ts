@@ -1,14 +1,14 @@
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useState } from 'react';
 import {
-  BillingPlanKey,
-  SubscriptionInterval,
+    BillingPlanKey,
+    SubscriptionInterval,
+    useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
-import { useCheckoutSessionMutation } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useHandleCheckoutSession = ({
   recurringInterval,

@@ -2,12 +2,12 @@ import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
+import { buildSignedPath } from 'twenty-shared/utils';
 import {
   useUpdateWorkspaceMutation,
   useUploadWorkspaceLogoMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { buildSignedPath } from 'twenty-shared/utils';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();

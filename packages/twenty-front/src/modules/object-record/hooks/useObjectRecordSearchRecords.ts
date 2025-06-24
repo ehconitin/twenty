@@ -1,3 +1,4 @@
+import { useApolloWorkspaceClient } from '@/apollo/hooks/useApolloWorkspaceClient';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -29,6 +30,7 @@ export const useObjectRecordSearchRecords = ({
   fetchPolicy,
 }: UseSearchRecordsParams) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const workspaceClient = useApolloWorkspaceClient();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -36,6 +38,7 @@ export const useObjectRecordSearchRecords = ({
   const { enqueueSnackBar } = useSnackBar();
 
   const { data, loading, error, previousData } = useSearchQuery({
+    client: workspaceClient,
     skip:
       skip ||
       !objectMetadataItem ||

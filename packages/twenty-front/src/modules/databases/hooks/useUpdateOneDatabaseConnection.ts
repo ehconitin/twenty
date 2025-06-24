@@ -1,7 +1,6 @@
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 import { UPDATE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/updateOneDatabaseConnection';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
   UpdateRemoteServerInput,
   UpdateServerMutation,
@@ -9,13 +8,13 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useUpdateOneDatabaseConnection = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
 
   const [mutate] = useMutation<
     UpdateServerMutation,
     UpdateServerMutationVariables
   >(UPDATE_ONE_DATABASE_CONNECTION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const updateOneDatabaseConnection = async (

@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 import {
   CreateFieldInput,
@@ -9,10 +9,9 @@ import {
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneFieldMetadataItem = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
@@ -20,7 +19,7 @@ export const useCreateOneFieldMetadataItem = () => {
     CreateOneFieldMetadataItemMutation,
     CreateOneFieldMetadataItemMutationVariables
   >(CREATE_ONE_FIELD_METADATA_ITEM, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const createOneFieldMetadataItem = async (input: CreateFieldInput) => {

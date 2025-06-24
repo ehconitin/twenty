@@ -24,6 +24,12 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     PermissionsModule,
   ],
   controllers: [WorkflowTriggerController],
+  exports: [
+    WorkflowTriggerResolver,
+    WorkflowBuilderResolver,
+    WorkflowStepResolver,
+    WorkflowVersionResolver,
+  ],
   providers: [
     WorkflowTriggerResolver,
     WorkflowBuilderResolver,

@@ -5,9 +5,9 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  SettingPermissionType,
-  useBillingPortalSessionQuery,
-} from '~/generated/graphql';
+    SettingPermissionType,
+    useBillingPortalSessionQuery,
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerFailPaymentInfo = () => {

@@ -1,7 +1,10 @@
-import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
-import { useCheckCustomDomainValidRecordsMutation } from '~/generated/graphql';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  CheckCustomDomainValidRecordsMutation,
+  useCheckCustomDomainValidRecordsMutation,
+} from '~/generated-metadata/graphql';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] =
@@ -15,13 +18,19 @@ export const useCheckCustomDomainValidRecords = () => {
       isLoading: true,
     }));
     checkCustomDomainValidRecords({
-      onCompleted: (data) => {
+      onCompleted: (data: CheckCustomDomainValidRecordsMutation) => {
+        if (isDefined(data.checkCustomDomainValidRecords)) {
+          setCustomDomainRecords((currentState) => ({
+            ...currentState,
+            isLoading: false,
+            records: data.checkCustomDomainValidRecords,
+          }));
+        }
+      },
+      onError: () => {
         setCustomDomainRecords((currentState) => ({
           ...currentState,
           isLoading: false,
-          ...(isDefined(data.checkCustomDomainValidRecords)
-            ? { customDomainRecords: data.checkCustomDomainValidRecords }
-            : {}),
         }));
       },
     });
