@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import 'src/instrument';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
@@ -20,6 +21,15 @@ async function bootstrap() {
 
     // Inject our logger
     app.useLogger(loggerService ?? false);
+
+    // Log config cache status for diagnostics
+    const configService = app.get(TwentyConfigService);
+    const cacheInfo = configService.getCacheInfo();
+
+    loggerService.log(
+      `Worker config status: database driver ${cacheInfo.usingDatabaseDriver ? 'active' : 'inactive'}${cacheInfo.cacheStats ? `, ${cacheInfo.cacheStats.foundConfigValues} values loaded from DB` : ''}`,
+      'QueueWorker',
+    );
   } catch (err) {
     loggerService?.error(err?.message, err?.name);
 
