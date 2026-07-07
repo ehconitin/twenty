@@ -103,32 +103,27 @@ export class GraphqlQueryFilterFieldParser {
         useDirectTableReference,
       );
     }
-    const [[operator, value]] = Object.entries(filterValue);
+    const filterEntries = this.getFilterEntriesOrThrow(filterValue, key);
 
-    if (
-      ARRAY_OPERATORS.includes(operator) &&
-      (!Array.isArray(value) || value.length === 0)
-    ) {
-      throw new GraphqlQueryRunnerException(
-        `Invalid filter value for field ${key}. Expected non-empty array`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
-      );
-    }
-    const { sql, params } = computeWhereConditionParts({
-      operator,
-      objectNameSingular,
-      key,
-      value,
-      fieldMetadataType: fieldMetadata.type,
-      useDirectTableReference,
+    // Multiple operators on the same field are combined with AND
+    filterEntries.forEach(([operator, value], index) => {
+      this.validateArrayOperatorValueOrThrow(operator, value, key);
+
+      const { sql, params } = computeWhereConditionParts({
+        operator,
+        objectNameSingular,
+        key,
+        value,
+        fieldMetadataType: fieldMetadata.type,
+        useDirectTableReference,
+      });
+
+      if (isFirst && index === 0) {
+        queryBuilder.where(sql, params);
+      } else {
+        queryBuilder.andWhere(sql, params);
+      }
     });
-
-    if (isFirst) {
-      queryBuilder.where(sql, params);
-    } else {
-      queryBuilder.andWhere(sql, params);
-    }
   }
 
   private parseRelationSubFilter(
@@ -229,7 +224,9 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    Object.entries(fieldValue).map(([subFieldKey, subFieldFilter], index) => {
+    let conditionIndex = 0;
+
+    Object.entries(fieldValue).forEach(([subFieldKey, subFieldFilter]) => {
       const subFieldMetadata = compositeType.properties.find(
         (property) => property.name === subFieldKey,
       );
@@ -242,39 +239,72 @@ export class GraphqlQueryFilterFieldParser {
 
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-      const [[operator, value]] = Object.entries(
-        // oxlint-disable-next-line typescript/no-explicit-any
-        subFieldFilter as Record<string, any>,
+      const filterEntries = this.getFilterEntriesOrThrow(
+        subFieldFilter,
+        subFieldKey,
       );
 
-      if (
-        ARRAY_OPERATORS.includes(operator) &&
-        (!Array.isArray(value) || value.length === 0)
-      ) {
-        throw new GraphqlQueryRunnerException(
-          `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-          {
-            userFriendlyMessage: msg`Invalid filter value: "${String(value)}"`,
-          },
-        );
-      }
+      // Multiple operators on the same sub-field are combined with AND
+      filterEntries.forEach(([operator, value]) => {
+        this.validateArrayOperatorValueOrThrow(operator, value, subFieldKey);
 
-      const { sql, params } = computeWhereConditionParts({
-        operator,
-        objectNameSingular,
-        key: fullFieldName,
-        subFieldKey,
-        value,
-        fieldMetadataType: fieldMetadata.type,
-        useDirectTableReference,
+        const { sql, params } = computeWhereConditionParts({
+          operator,
+          objectNameSingular,
+          key: fullFieldName,
+          subFieldKey,
+          value,
+          fieldMetadataType: fieldMetadata.type,
+          useDirectTableReference,
+        });
+
+        if (isFirst && conditionIndex === 0) {
+          queryBuilder.where(sql, params);
+        } else {
+          queryBuilder.andWhere(sql, params);
+        }
+
+        conditionIndex += 1;
       });
-
-      if (isFirst && index === 0) {
-        queryBuilder.where(sql, params);
-      }
-
-      queryBuilder.andWhere(sql, params);
     });
+  }
+
+  private getFilterEntriesOrThrow(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    filterValue: any,
+    key: string,
+    // oxlint-disable-next-line typescript/no-explicit-any
+  ): [string, any][] {
+    const filterEntries = Object.entries(filterValue ?? {});
+
+    if (filterEntries.length === 0) {
+      throw new GraphqlQueryRunnerException(
+        `Filter for field ${key} must contain at least one operator`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Invalid filter value: "${String(filterValue)}"`,
+        },
+      );
+    }
+
+    return filterEntries;
+  }
+
+  private validateArrayOperatorValueOrThrow(
+    operator: string,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    value: any,
+    key: string,
+  ): void {
+    if (
+      ARRAY_OPERATORS.includes(operator) &&
+      (!Array.isArray(value) || value.length === 0)
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Invalid filter value for field ${key}. Expected non-empty array`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
+      );
+    }
   }
 }
