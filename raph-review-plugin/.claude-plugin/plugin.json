@@ -1,8 +1,0 @@
-{
-  "name": "raph-review",
-  "description": "PR review skills distilled from bosiraphael's review history on twentyhq/twenty: review like raph, self-review before requesting review, and address review comments.",
-  "version": "0.1.0",
-  "author": {
-    "name": "ehconitin"
-  }
-}
