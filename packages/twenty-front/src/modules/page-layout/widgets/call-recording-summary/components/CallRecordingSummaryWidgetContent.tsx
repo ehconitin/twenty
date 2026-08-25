@@ -8,13 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const CallRecordingSummaryWidgetContent = () => {
   const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
-  const {
-    callRecording,
-    callRecordingsCount,
-    loading,
-    error,
-    restriction,
-  } = useWidgetCallRecording({ queryScope: 'call-recording-summary' });
+  const { callRecording, callRecordingsCount, loading, error, restriction } =
+    useWidgetCallRecording({ queryScope: 'call-recording-summary' });
 
   const canExposeCallRecordingHeaderData =
     !loading && !isDefined(error) && !isDefined(restriction);
