@@ -1,10 +1,10 @@
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const makeCallRecording = (
-  summary: CalendarEventCallRecordingCandidate['summary'],
-): CalendarEventCallRecordingCandidate => ({
+  summary: WidgetCallRecordingCandidate['summary'],
+): WidgetCallRecordingCandidate => ({
   __typename: 'CallRecording',
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
