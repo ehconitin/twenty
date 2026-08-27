@@ -12,10 +12,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useCallRecordingWidgetCount = ({
   restriction,
-  refetchSelectedCallRecording,
+  refetchCallRecording,
 }: {
   restriction: WidgetAccessDenialInfo | undefined;
-  refetchSelectedCallRecording: () => Promise<unknown>;
+  refetchCallRecording: () => Promise<unknown>;
 }): {
   callRecordingsCount: number;
   loading: boolean;
@@ -68,11 +68,8 @@ export const useCallRecordingWidgetCount = ({
   );
 
   const refetch = useCallback(async () => {
-    await Promise.all([
-      refetchSelectedCallRecording(),
-      refetchCallRecordingsCount(),
-    ]);
-  }, [refetchCallRecordingsCount, refetchSelectedCallRecording]);
+    await Promise.all([refetchCallRecording(), refetchCallRecordingsCount()]);
+  }, [refetchCallRecording, refetchCallRecordingsCount]);
 
   useListenToEventsForQuery({
     queryId: `call-recording-widget-${widget.id}-${targetRecordId}`,

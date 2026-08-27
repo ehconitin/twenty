@@ -9,7 +9,7 @@ import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/cal
 const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 const FIRST_PAGE_SIZE = 50;
 
-describe('selectedCallRecordingId (integration)', () => {
+describe('callRecordingIdForCalendarEvent (integration)', () => {
   const calendarEventId = randomUUID();
   const callRecordingIdPrefix = randomUUID().slice(0, 24);
   const callRecordingIds = Array.from(
@@ -21,11 +21,11 @@ describe('selectedCallRecordingId (integration)', () => {
   const processingCallRecordingId = callRecordingIds[FIRST_PAGE_SIZE];
   const completedCallRecordingId = callRecordingIds[FIRST_PAGE_SIZE + 1];
 
-  const querySelectedCallRecordingId = async () => {
+  const queryCallRecordingIdForCalendarEvent = async () => {
     const response = await makeMetadataAPIRequest({
       query: gql`
-        query SelectedCallRecordingId($calendarEventId: UUID!) {
-          selectedCallRecordingId(calendarEventId: $calendarEventId)
+        query CallRecordingIdForCalendarEvent($calendarEventId: UUID!) {
+          callRecordingIdForCalendarEvent(calendarEventId: $calendarEventId)
         }
       `,
       variables: { calendarEventId },
@@ -34,14 +34,14 @@ describe('selectedCallRecordingId (integration)', () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.selectedCallRecordingId as string | null;
+    return response.body.data.callRecordingIdForCalendarEvent as string | null;
   };
 
   beforeAll(async () => {
     await global.testDataSource.query(
       `INSERT INTO "${TEST_SCHEMA_NAME}"."calendarEvent" (id, title)
        VALUES ($1, $2)`,
-      [calendarEventId, 'Selected call recording integration test'],
+      [calendarEventId, 'Call recording for calendar event integration test'],
     );
 
     await global.testDataSource.query(
@@ -97,7 +97,7 @@ describe('selectedCallRecordingId (integration)', () => {
   });
 
   it('selects a completed recording beyond the first page', async () => {
-    await expect(querySelectedCallRecordingId()).resolves.toBe(
+    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
       completedCallRecordingId,
     );
   });
@@ -110,7 +110,7 @@ describe('selectedCallRecordingId (integration)', () => {
       [CallRecordingStatus.FAILED, completedCallRecordingId],
     );
 
-    await expect(querySelectedCallRecordingId()).resolves.toBe(
+    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
       processingCallRecordingId,
     );
   });
@@ -126,7 +126,7 @@ describe('selectedCallRecordingId (integration)', () => {
       ],
     );
 
-    await expect(querySelectedCallRecordingId()).resolves.toBe(
+    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
       failedCallRecordingIds[0],
     );
   });

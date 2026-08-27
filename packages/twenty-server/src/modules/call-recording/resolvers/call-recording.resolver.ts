@@ -16,11 +16,11 @@ export class CallRecordingResolver {
 
   @Query(() => UUIDScalarType, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async selectedCallRecordingId(
+  async callRecordingIdForCalendarEvent(
     @Args('calendarEventId', { type: () => UUIDScalarType })
     calendarEventId: string,
   ): Promise<string | undefined> {
-    return this.callRecordingService.findSelectedCallRecordingId(
+    return this.callRecordingService.findCallRecordingIdForCalendarEvent(
       calendarEventId,
     );
   }

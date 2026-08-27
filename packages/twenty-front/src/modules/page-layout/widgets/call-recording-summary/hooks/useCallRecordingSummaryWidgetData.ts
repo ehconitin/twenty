@@ -1,19 +1,19 @@
 import { useCallRecordingWidgetCount } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetCount';
-import { useSelectedCallRecordingForSummary } from '@/page-layout/widgets/call-recording/hooks/useSelectedCallRecordingForSummary';
+import { useCallRecordingForSummary } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForSummary';
 
 export const useCallRecordingSummaryWidgetData = () => {
-  const selectedCallRecording = useSelectedCallRecordingForSummary();
+  const callRecordingData = useCallRecordingForSummary();
   const callRecordingCount = useCallRecordingWidgetCount({
-    restriction: selectedCallRecording.restriction,
-    refetchSelectedCallRecording: selectedCallRecording.refetch,
+    restriction: callRecordingData.restriction,
+    refetchCallRecording: callRecordingData.refetch,
   });
 
   return {
-    callRecording: selectedCallRecording.callRecording,
+    callRecording: callRecordingData.callRecording,
     callRecordingsCount: callRecordingCount.callRecordingsCount,
-    loading: selectedCallRecording.loading || callRecordingCount.loading,
-    error: selectedCallRecording.error ?? callRecordingCount.error,
-    restriction: selectedCallRecording.restriction,
+    loading: callRecordingData.loading || callRecordingCount.loading,
+    error: callRecordingData.error ?? callRecordingCount.error,
+    restriction: callRecordingData.restriction,
     refetch: callRecordingCount.refetch,
   };
 };

@@ -1,6 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useCallRecordingIdForWidget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingIdForWidget';
 import { useCallRecordingWidgetRestriction } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetRestriction';
-import { useSelectedCallRecordingId } from '@/page-layout/widgets/call-recording/hooks/useSelectedCallRecordingId';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { useCallback } from 'react';
@@ -10,32 +10,37 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-const CALL_RECORDING_SUMMARY_RECORD_FIELDS = {
+const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS = {
   id: true,
   status: true,
-  summary: true,
+  transcript: true,
   createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
-export const useSelectedCallRecordingForSummary = (): {
+const CALL_RECORDING_TRANSCRIPT_WITH_VIDEO_RECORD_FIELDS = {
+  ...CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS,
+  video: true,
+} as const satisfies RecordGqlOperationGqlRecordFields;
+
+export const useCallRecordingForTranscript = (): {
   callRecording: WidgetCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
   refetch: () => Promise<unknown>;
 } => {
-  const { restriction } = useCallRecordingWidgetRestriction({
-    requiredFieldNames: ['status', 'summary', 'createdAt'],
+  const { restriction, isFieldRestricted } = useCallRecordingWidgetRestriction({
+    requiredFieldNames: ['status', 'transcript', 'createdAt'],
   });
   const shouldSkipQuery = isDefined(restriction);
 
   const {
-    selectedCallRecordingId,
+    callRecordingId,
     targetKind,
-    loading: selectedCallRecordingIdLoading,
-    error: selectedCallRecordingIdError,
-    refetch: refetchSelectedCallRecordingId,
-  } = useSelectedCallRecordingId({ skip: shouldSkipQuery });
+    loading: callRecordingIdLoading,
+    error: callRecordingIdError,
+    refetch: refetchCallRecordingId,
+  } = useCallRecordingIdForWidget({ skip: shouldSkipQuery });
 
   const {
     record: callRecording,
@@ -44,29 +49,25 @@ export const useSelectedCallRecordingForSummary = (): {
     refetch: refetchCallRecording,
   } = useFindOneRecord<WidgetCallRecordingCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
-    objectRecordId: selectedCallRecordingId,
-    recordGqlFields: CALL_RECORDING_SUMMARY_RECORD_FIELDS,
+    objectRecordId: callRecordingId,
+    recordGqlFields: isFieldRestricted('video')
+      ? CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS
+      : CALL_RECORDING_TRANSCRIPT_WITH_VIDEO_RECORD_FIELDS,
     withSoftDeleted: targetKind === 'callRecording',
-    skip: shouldSkipQuery || !isDefined(selectedCallRecordingId),
+    skip: shouldSkipQuery || !isDefined(callRecordingId),
   });
 
   const refetch = useCallback(async () => {
     await Promise.all([
-      refetchSelectedCallRecordingId(),
-      isDefined(selectedCallRecordingId)
-        ? refetchCallRecording()
-        : Promise.resolve(),
+      refetchCallRecordingId(),
+      isDefined(callRecordingId) ? refetchCallRecording() : Promise.resolve(),
     ]);
-  }, [
-    refetchCallRecording,
-    refetchSelectedCallRecordingId,
-    selectedCallRecordingId,
-  ]);
+  }, [refetchCallRecording, refetchCallRecordingId, callRecordingId]);
 
   return {
     callRecording,
-    loading: selectedCallRecordingIdLoading || callRecordingLoading,
-    error: selectedCallRecordingIdError ?? callRecordingError,
+    loading: callRecordingIdLoading || callRecordingLoading,
+    error: callRecordingIdError ?? callRecordingError,
     restriction,
     refetch,
   };

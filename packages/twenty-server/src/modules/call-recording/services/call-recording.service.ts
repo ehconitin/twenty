@@ -23,7 +23,7 @@ const CALL_RECORDING_SELECTION_ORDER = {
 export class CallRecordingService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async findSelectedCallRecordingId(
+  async findCallRecordingIdForCalendarEvent(
     calendarEventId: string,
   ): Promise<string | undefined> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {

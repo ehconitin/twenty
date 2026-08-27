@@ -1,15 +1,15 @@
-import { SELECTED_CALL_RECORDING_ID } from '@/page-layout/widgets/call-recording/graphql/queries/selectedCallRecordingId';
+import { CALL_RECORDING_ID_FOR_CALENDAR_EVENT } from '@/page-layout/widgets/call-recording/graphql/queries/callRecordingIdForCalendarEvent';
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useSelectedCallRecordingId = ({
+export const useCallRecordingIdForWidget = ({
   skip,
 }: {
   skip: boolean;
 }): {
-  selectedCallRecordingId: string | undefined;
+  callRecordingId: string | undefined;
   targetKind: 'calendarEvent' | 'callRecording' | undefined;
   loading: boolean;
   error: Error | undefined;
@@ -23,9 +23,9 @@ export const useSelectedCallRecordingId = ({
     data,
     loading,
     error,
-    refetch: refetchSelectedCallRecordingId,
-  } = useQuery<{ selectedCallRecordingId: string | null }>(
-    SELECTED_CALL_RECORDING_ID,
+    refetch: refetchCallRecordingIdForCalendarEvent,
+  } = useQuery<{ callRecordingIdForCalendarEvent: string | null }>(
+    CALL_RECORDING_ID_FOR_CALENDAR_EVENT,
     {
       variables: { calendarEventId: targetRecordId ?? '' },
       skip:
@@ -33,21 +33,21 @@ export const useSelectedCallRecordingId = ({
     },
   );
 
-  const selectedCallRecordingId =
+  const callRecordingId =
     targetKind === 'callRecording'
       ? targetRecordId
-      : (data?.selectedCallRecordingId ?? undefined);
+      : (data?.callRecordingIdForCalendarEvent ?? undefined);
 
   const refetch = useCallback(async () => {
     if (skip || targetKind !== 'calendarEvent') {
       return;
     }
 
-    await refetchSelectedCallRecordingId();
-  }, [refetchSelectedCallRecordingId, skip, targetKind]);
+    await refetchCallRecordingIdForCalendarEvent();
+  }, [refetchCallRecordingIdForCalendarEvent, skip, targetKind]);
 
   return {
-    selectedCallRecordingId,
+    callRecordingId,
     targetKind,
     loading,
     error,
