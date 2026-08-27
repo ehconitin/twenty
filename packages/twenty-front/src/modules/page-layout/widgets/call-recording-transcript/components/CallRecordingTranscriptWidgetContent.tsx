@@ -2,7 +2,6 @@ import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recordi
 import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useMemo } from 'react';
 import {
@@ -23,22 +22,22 @@ export const CallRecordingTranscriptWidgetContent = () => {
     queryScope: 'call-recording-transcript',
   });
 
-  const canExposeCallRecordingHeaderData =
+  const canExposeCallRecordingData =
     !loading && !isDefined(error) && !isDefined(restriction);
 
-  const callRecordingForHeader = canExposeCallRecordingHeaderData
+  const callRecordingForDisplay = canExposeCallRecordingData
     ? callRecording
     : undefined;
 
   const transcriptEntries = useMemo(
     () =>
-      parseCallRecordingTranscriptEntries(callRecordingForHeader?.transcript),
-    [callRecordingForHeader?.transcript],
+      parseCallRecordingTranscriptEntries(callRecordingForDisplay?.transcript),
+    [callRecordingForDisplay?.transcript],
   );
 
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
+  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForDisplay);
 
-  const calendarEventHeaderCount = canExposeCallRecordingHeaderData
+  const calendarEventHeaderCount = canExposeCallRecordingData
     ? callRecordingsCount
     : 0;
 
@@ -50,10 +49,6 @@ export const CallRecordingTranscriptWidgetContent = () => {
   return (
     <>
       <WidgetHeaderCountEffect count={headerCount} />
-      <CallRecordingTranscriptHeaderDataEffect
-        transcriptEntries={transcriptEntries}
-        videoFileUrl={videoFileUrl}
-      />
       <CallRecordingTranscriptBody
         callRecording={callRecording}
         transcriptEntries={transcriptEntries}

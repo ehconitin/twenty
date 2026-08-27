@@ -2,9 +2,7 @@ import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-re
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const getCallRecordingSummaryMarkdown = (
-  callRecording:
-    | Pick<WidgetCallRecordingCandidate, 'summary'>
-    | undefined,
+  callRecording: Pick<WidgetCallRecordingCandidate, 'summary'> | undefined,
 ): string | undefined => {
   const trimmedSummaryMarkdown = callRecording?.summary?.markdown?.trim();
 

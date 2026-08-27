@@ -1,9 +1,9 @@
 import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
 import { act, renderHook } from '@testing-library/react';
-import { CallRecordingStatus } from '~/generated/graphql';
 
 const mockUseFindManyRecords = jest.fn();
 const mockUseListenToEventsForQuery = jest.fn();
+const mockRefetchSelectedCallRecording = jest.fn();
 
 const mockLayoutRenderingContext: {
   targetRecordIdentifier?: {
@@ -25,33 +25,18 @@ let findManyRecordsResult: {
   refetch: jest.Mock;
 };
 
-let objectPermissionsResult: {
-  canReadObjectRecords: boolean;
-  restrictedFields: Record<string, { canRead?: boolean | null }>;
+let selectedCallRecordingResult: {
+  callRecording: Record<string, unknown> | undefined;
+  loading: boolean;
+  error: Error | undefined;
+  restriction: undefined;
+  refetch: jest.Mock;
 };
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
-    objectMetadataItem: {
-      id: 'call-recording-object-id',
-      labelSingular: 'Call Recording',
-      fields: [
-        { id: 'status-field-id', name: 'status', label: 'Status' },
-        { id: 'transcript-field-id', name: 'transcript', label: 'Transcript' },
-        { id: 'summary-field-id', name: 'summary', label: 'Summary' },
-        { id: 'video-field-id', name: 'video', label: 'Video' },
-        {
-          id: 'created-at-field-id',
-          name: 'createdAt',
-          label: 'Creation date',
-        },
-      ],
-    },
+    objectMetadataItem: { id: 'call-recording-object-id' },
   }),
-}));
-
-jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
-  useObjectPermissionsForObject: () => objectPermissionsResult,
 }));
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
@@ -61,6 +46,13 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
     return findManyRecordsResult;
   },
 }));
+
+jest.mock(
+  '@/page-layout/widgets/call-recording/hooks/useSelectedCallRecording',
+  () => ({
+    useSelectedCallRecording: () => selectedCallRecordingResult,
+  }),
+);
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => mockLayoutRenderingContext,
@@ -79,24 +71,9 @@ jest.mock(
   }),
 );
 
-const readyCallRecording = {
-  __typename: 'CallRecording',
-  id: 'ready-call-recording-id',
-  status: CallRecordingStatus.COMPLETED,
-  transcript: [
-    {
-      participant: { name: 'Ada' },
-      words: [{ text: 'Hello', start_timestamp: { relative: 0 } }],
-    },
-  ],
-  summary: null,
-  createdAt: '2026-08-07T09:55:00.000Z',
-};
-
 describe('useWidgetCallRecording', () => {
   beforeEach(() => {
-    mockUseFindManyRecords.mockClear();
-    mockUseListenToEventsForQuery.mockClear();
+    jest.clearAllMocks();
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'calendar-event-id',
       targetObjectNameSingular: 'calendarEvent',
@@ -108,90 +85,31 @@ describe('useWidgetCallRecording', () => {
       error: undefined,
       refetch: jest.fn(),
     };
-    objectPermissionsResult = {
-      canReadObjectRecords: true,
-      restrictedFields: {},
+    selectedCallRecordingResult = {
+      callRecording: { id: 'selected-call-recording-id' },
+      loading: false,
+      error: undefined,
+      restriction: undefined,
+      refetch: mockRefetchSelectedCallRecording,
     };
   });
 
-  it('queries transcript fields for the current calendar event in arrival order', () => {
+  it('fetches only the count for the calendar event', () => {
     renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
+      useWidgetCallRecording({ queryScope: 'call-recording-transcript' }),
     );
 
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({
-        objectNameSingular: 'callRecording',
-        filter: { calendarEventId: { eq: 'calendar-event-id' } },
-        orderBy: [{ createdAt: 'AscNullsLast' }, { id: 'AscNullsFirst' }],
-        recordGqlFields: {
-          id: true,
-          status: true,
-          transcript: true,
-          video: true,
-          createdAt: true,
-        },
-        skip: false,
-      }),
-    );
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith({
+      objectNameSingular: 'callRecording',
+      filter: { calendarEventId: { eq: 'calendar-event-id' } },
+      recordGqlFields: { id: true },
+      limit: 1,
+      withSoftDeleted: false,
+      skip: false,
+    });
   });
 
-  it('queries the target record itself on a call recording record page', () => {
-    mockLayoutRenderingContext.targetRecordIdentifier = {
-      id: 'call-recording-id',
-      targetObjectNameSingular: 'callRecording',
-    };
-
-    renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({
-        objectNameSingular: 'callRecording',
-        filter: { id: { eq: 'call-recording-id' } },
-        skip: false,
-      }),
-    );
-  });
-
-  it('follows the record page into a soft-deleted recording, but not a calendar event', () => {
-    mockLayoutRenderingContext.targetRecordIdentifier = {
-      id: 'call-recording-id',
-      targetObjectNameSingular: 'callRecording',
-    };
-
-    renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(mockUseFindManyRecords).toHaveBeenLastCalledWith(
-      expect.objectContaining({ withSoftDeleted: true }),
-    );
-
-    mockLayoutRenderingContext.targetRecordIdentifier = {
-      id: 'calendar-event-id',
-      targetObjectNameSingular: 'calendarEvent',
-    };
-
-    renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(mockUseFindManyRecords).toHaveBeenLastCalledWith(
-      expect.objectContaining({ withSoftDeleted: false }),
-    );
-  });
-
-  it('scopes the SSE query id to the call recording target record', () => {
+  it('counts the target itself and includes soft-deleted records on a call recording page', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'call-recording-id',
       targetObjectNameSingular: 'callRecording',
@@ -201,14 +119,73 @@ describe('useWidgetCallRecording', () => {
       useWidgetCallRecording({ queryScope: 'call-recording-summary' }),
     );
 
-    expect(mockUseListenToEventsForQuery).toHaveBeenCalledWith(
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
-        queryId: 'call-recording-summary-call-recording-id',
+        filter: { id: { eq: 'call-recording-id' } },
+        withSoftDeleted: true,
+        skip: false,
       }),
     );
   });
 
-  it('scopes the SSE query id per widget', () => {
+  it('uses totalCount instead of the fetched page length', () => {
+    findManyRecordsResult.totalCount = 75;
+
+    const { result } = renderHook(() =>
+      useWidgetCallRecording({ queryScope: 'call-recording-transcript' }),
+    );
+
+    expect(result.current.callRecordingsCount).toBe(75);
+    expect(result.current.callRecording).toEqual({
+      id: 'selected-call-recording-id',
+    });
+  });
+
+  it('combines selected-record and count loading and errors', () => {
+    selectedCallRecordingResult.loading = true;
+    const countError = new Error('Count failed');
+    findManyRecordsResult.error = countError;
+
+    const { result } = renderHook(() =>
+      useWidgetCallRecording({ queryScope: 'call-recording-transcript' }),
+    );
+
+    expect(result.current.loading).toBe(true);
+    expect(result.current.error).toBe(countError);
+  });
+
+  it('refetches the selected record and count after SSE reconnects', async () => {
+    renderHook(() =>
+      useWidgetCallRecording({ queryScope: 'call-recording-transcript' }),
+    );
+
+    const { onSseReconnected } = mockUseListenToEventsForQuery.mock
+      .calls[0][0] as { onSseReconnected: () => Promise<void> };
+
+    await act(async () => {
+      await onSseReconnected();
+    });
+
+    expect(mockRefetchSelectedCallRecording).toHaveBeenCalledTimes(1);
+    expect(findManyRecordsResult.refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips the count outside supported record pages', () => {
+    mockLayoutRenderingContext.targetRecordIdentifier = {
+      id: 'person-id',
+      targetObjectNameSingular: 'person',
+    };
+
+    renderHook(() =>
+      useWidgetCallRecording({ queryScope: 'call-recording-transcript' }),
+    );
+
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
+  it('keeps the SSE query identity scoped to the widget query', () => {
     renderHook(() =>
       useWidgetCallRecording({ queryScope: 'call-recording-summary' }),
     );
@@ -217,221 +194,6 @@ describe('useWidgetCallRecording', () => {
       expect.objectContaining({
         queryId: 'call-recording-summary-calendar-event-id',
       }),
-    );
-
-    renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(mockUseListenToEventsForQuery).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        queryId: 'call-recording-transcript-calendar-event-id',
-      }),
-    );
-  });
-
-  it('refetches after the SSE client reconnects', async () => {
-    renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    const { onSseReconnected } = mockUseListenToEventsForQuery.mock
-      .calls[0][0] as {
-      onSseReconnected: () => Promise<void>;
-    };
-
-    await act(async () => {
-      await onSseReconnected();
-    });
-
-    expect(findManyRecordsResult.refetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('skips the query outside a calendar event or call recording record page', () => {
-    mockLayoutRenderingContext.targetRecordIdentifier = {
-      id: 'person-id',
-      targetObjectNameSingular: 'person',
-    };
-
-    const { result } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({ skip: true }),
-    );
-    expect(result.current.callRecording).toBeUndefined();
-  });
-
-  it('skips the query when there is no target record', () => {
-    mockLayoutRenderingContext.targetRecordIdentifier = undefined;
-
-    const { result } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({ skip: true }),
-    );
-    expect(result.current.callRecording).toBeUndefined();
-  });
-
-  it('reports an object restriction and skips the query without read permission', () => {
-    objectPermissionsResult = {
-      canReadObjectRecords: false,
-      restrictedFields: {},
-    };
-
-    const { result } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(result.current.restriction).toEqual({
-      type: 'object',
-      objectName: 'Call Recording',
-    });
-    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
-      expect.objectContaining({ skip: true }),
-    );
-  });
-
-  it('reports a field restriction only for the scope that reads the field', () => {
-    objectPermissionsResult = {
-      canReadObjectRecords: true,
-      restrictedFields: { 'summary-field-id': { canRead: false } },
-    };
-
-    const { result: summaryResult } = renderHook(() =>
-      useWidgetCallRecording({ queryScope: 'call-recording-summary' }),
-    );
-
-    expect(summaryResult.current.restriction).toEqual({
-      type: 'field',
-      fieldNames: ['Summary'],
-    });
-
-    const { result: transcriptResult } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(transcriptResult.current.restriction).toBeUndefined();
-  });
-
-  it('keeps transcripts available when the optional video field is restricted', () => {
-    findManyRecordsResult.totalCount = 3;
-    objectPermissionsResult = {
-      canReadObjectRecords: true,
-      restrictedFields: { 'video-field-id': { canRead: false } },
-    };
-
-    const { result: transcriptResult } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(transcriptResult.current.restriction).toBeUndefined();
-    expect(transcriptResult.current.callRecordingsCount).toBe(3);
-    expect(mockUseFindManyRecords).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        recordGqlFields: {
-          id: true,
-          status: true,
-          transcript: true,
-          createdAt: true,
-        },
-        skip: false,
-      }),
-    );
-  });
-
-  it('returns the total call recording count beyond the fetched page', () => {
-    findManyRecordsResult.records = [readyCallRecording];
-    findManyRecordsResult.totalCount = 75;
-
-    const { result } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(result.current.callRecordingsCount).toBe(75);
-  });
-
-  it('passes loading through and resolves to no recording without records', () => {
-    findManyRecordsResult.loading = true;
-
-    const { result, rerender } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(result.current.loading).toBe(true);
-
-    act(() => {
-      findManyRecordsResult.loading = false;
-      rerender();
-    });
-
-    expect(result.current.loading).toBe(false);
-    expect(result.current.callRecording).toBeUndefined();
-  });
-
-  it('passes query errors through', () => {
-    const queryError = new Error('Query failed');
-    findManyRecordsResult.error = queryError;
-
-    const { result } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(result.current.error).toBe(queryError);
-  });
-
-  it('reacts when a cached in-progress recording completes', () => {
-    findManyRecordsResult.records = [
-      {
-        ...readyCallRecording,
-        status: CallRecordingStatus.PROCESSING,
-        transcript: { status: 'PENDING' },
-      },
-    ];
-
-    const { result, rerender } = renderHook(() =>
-      useWidgetCallRecording({
-        queryScope: 'call-recording-transcript',
-      }),
-    );
-
-    expect(result.current.callRecording?.status).toBe(
-      CallRecordingStatus.PROCESSING,
-    );
-
-    act(() => {
-      findManyRecordsResult.records = [readyCallRecording];
-      rerender();
-    });
-
-    expect(result.current.callRecording?.status).toBe(
-      CallRecordingStatus.COMPLETED,
-    );
-    expect(result.current.callRecording?.transcript).toEqual(
-      readyCallRecording.transcript,
     );
   });
 });

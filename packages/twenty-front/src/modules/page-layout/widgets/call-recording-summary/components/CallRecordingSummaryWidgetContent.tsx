@@ -1,8 +1,6 @@
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
 import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
 import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
-import { CallRecordingSummaryHeaderDataEffect } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryHeaderDataEffect';
-import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,14 +9,10 @@ export const CallRecordingSummaryWidgetContent = () => {
   const { callRecording, callRecordingsCount, loading, error, restriction } =
     useWidgetCallRecording({ queryScope: 'call-recording-summary' });
 
-  const canExposeCallRecordingHeaderData =
+  const canExposeCallRecordingCount =
     !loading && !isDefined(error) && !isDefined(restriction);
 
-  const summaryMarkdown = getCallRecordingSummaryMarkdown(
-    canExposeCallRecordingHeaderData ? callRecording : undefined,
-  );
-
-  const calendarEventHeaderCount = canExposeCallRecordingHeaderData
+  const calendarEventHeaderCount = canExposeCallRecordingCount
     ? callRecordingsCount
     : 0;
 
@@ -30,7 +24,6 @@ export const CallRecordingSummaryWidgetContent = () => {
   return (
     <>
       <WidgetHeaderCountEffect count={headerCount} />
-      <CallRecordingSummaryHeaderDataEffect summaryMarkdown={summaryMarkdown} />
       <CallRecordingSummaryBody
         callRecording={callRecording}
         loading={loading}
