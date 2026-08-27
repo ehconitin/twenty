@@ -1,7 +1,7 @@
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
-import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
+import { useCallRecordingTranscriptWidgetData } from '@/page-layout/widgets/call-recording-transcript/hooks/useCallRecordingTranscriptWidgetData';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useMemo } from 'react';
 import {
@@ -18,9 +18,7 @@ export const CallRecordingTranscriptWidgetContent = () => {
     error,
     restriction,
     refetch,
-  } = useWidgetCallRecording({
-    queryScope: 'call-recording-transcript',
-  });
+  } = useCallRecordingTranscriptWidgetData();
 
   const canExposeCallRecordingData =
     !loading && !isDefined(error) && !isDefined(restriction);

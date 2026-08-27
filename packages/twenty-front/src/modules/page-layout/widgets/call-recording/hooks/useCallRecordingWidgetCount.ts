@@ -2,10 +2,7 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
-import {
-  type CallRecordingWidgetQueryScope,
-  useSelectedCallRecording,
-} from '@/page-layout/widgets/call-recording/hooks/useSelectedCallRecording';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
@@ -13,29 +10,22 @@ import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useWidgetCallRecording = ({
-  queryScope,
+export const useCallRecordingWidgetCount = ({
+  restriction,
+  refetchSelectedCallRecording,
 }: {
-  queryScope: CallRecordingWidgetQueryScope;
+  restriction: WidgetAccessDenialInfo | undefined;
+  refetchSelectedCallRecording: () => Promise<unknown>;
 }): {
-  callRecording: WidgetCallRecordingCandidate | undefined;
   callRecordingsCount: number;
   loading: boolean;
   error: Error | undefined;
-  restriction: WidgetAccessDenialInfo | undefined;
   refetch: () => Promise<unknown>;
 } => {
+  const widget = useCurrentWidget();
   const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
   const targetKind = callRecordingWidgetTarget?.targetKind;
   const targetRecordId = callRecordingWidgetTarget?.recordId;
-
-  const {
-    callRecording,
-    loading: selectedCallRecordingLoading,
-    error: selectedCallRecordingError,
-    restriction,
-    refetch: refetchSelectedCallRecording,
-  } = useSelectedCallRecording({ queryScope });
 
   const { objectMetadataItem: callRecordingObjectMetadataItem } =
     useObjectMetadataItem({
@@ -57,8 +47,8 @@ export const useWidgetCallRecording = ({
   const {
     records: callRecordingCountRecords,
     totalCount: callRecordingsTotalCount,
-    loading: callRecordingsCountLoading,
-    error: callRecordingsCountError,
+    loading,
+    error,
     refetch: refetchCallRecordingsCount,
   } = useFindManyRecords<WidgetCallRecordingCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
@@ -72,9 +62,7 @@ export const useWidgetCallRecording = ({
   const operationSignature = useMemo(
     () => ({
       objectNameSingular: CoreObjectNameSingular.CallRecording,
-      variables: {
-        filter: callRecordingFilter,
-      },
+      variables: { filter: callRecordingFilter },
     }),
     [callRecordingFilter],
   );
@@ -86,24 +74,18 @@ export const useWidgetCallRecording = ({
     ]);
   }, [refetchCallRecordingsCount, refetchSelectedCallRecording]);
 
-  const refetchCallRecordingOnSseReconnected = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
-
   useListenToEventsForQuery({
-    queryId: `${queryScope}-${targetRecordId}`,
+    queryId: `call-recording-widget-${widget.id}-${targetRecordId}`,
     operationSignature,
     skip: shouldSkipQuery,
-    onSseReconnected: refetchCallRecordingOnSseReconnected,
+    onSseReconnected: refetch,
   });
 
   const handleCallRecordingOperation = useCallback(() => {
-    if (shouldSkipQuery) {
-      return;
+    if (!shouldSkipQuery) {
+      refetch();
     }
-
-    refetch();
-  }, [shouldSkipQuery, refetch]);
+  }, [refetch, shouldSkipQuery]);
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleCallRecordingOperation,
@@ -111,12 +93,10 @@ export const useWidgetCallRecording = ({
   });
 
   return {
-    callRecording,
     callRecordingsCount:
       callRecordingsTotalCount ?? callRecordingCountRecords.length,
-    loading: selectedCallRecordingLoading || callRecordingsCountLoading,
-    error: selectedCallRecordingError ?? callRecordingsCountError,
-    restriction,
+    loading,
+    error,
     refetch,
   };
 };

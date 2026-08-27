@@ -1,5 +1,5 @@
 import { useCallRecordingsSeeAllHref } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingsSeeAllHref';
-import { useSelectedCallRecording } from '@/page-layout/widgets/call-recording/hooks/useSelectedCallRecording';
+import { useSelectedCallRecordingForSummary } from '@/page-layout/widgets/call-recording/hooks/useSelectedCallRecordingForSummary';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
@@ -14,7 +14,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 export const WidgetActionCallRecordingSummary = () => {
   const widget = useCurrentWidget();
   const { callRecording, loading, error, restriction } =
-    useSelectedCallRecording({ queryScope: 'call-recording-summary' });
+    useSelectedCallRecordingForSummary();
   const widgetHeaderCount = useAtomComponentFamilyStateValue(
     widgetHeaderCountComponentFamilyState,
     widget.id,
