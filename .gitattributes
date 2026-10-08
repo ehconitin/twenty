@@ -26,3 +26,8 @@
 *.ttf binary
 *.eot binary
 
+# GraphQL codegen output, collapsed in GitHub PR diffs to hide regeneration churn
+packages/twenty-client-sdk/src/metadata/generated/** linguist-generated=true
+packages/twenty-front/src/generated/** linguist-generated=true
+packages/twenty-front/src/generated-metadata/** linguist-generated=true
+packages/twenty-front/src/generated-admin/** linguist-generated=true
