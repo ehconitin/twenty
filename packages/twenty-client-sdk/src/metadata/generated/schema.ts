@@ -2945,6 +2945,7 @@ export interface PageLayout {
     createdAt: Scalars['DateTime']
     defaultTabToFocusOnMobileAndSidePanelId?: Scalars['UUID']
     deletedAt?: Scalars['DateTime']
+    filters?: PageLayoutFilter[]
     id: Scalars['UUID']
     isFirstTabPinned: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
@@ -2955,6 +2956,28 @@ export interface PageLayout {
     universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     __typename: 'PageLayout'
+}
+
+export interface PageLayoutFilter {
+    defaultValue?: PageLayoutFilterValue
+    id: Scalars['UUID']
+    label: Scalars['String']
+    position: Scalars['Float']
+    type: PageLayoutFilterType
+    __typename: 'PageLayoutFilter'
+}
+
+export interface PageLayoutFilterCondition {
+    operand: ViewFilterOperand
+    value: Scalars['String']
+    __typename: 'PageLayoutFilterCondition'
+}
+
+export type PageLayoutFilterType = 'DATE'
+
+export interface PageLayoutFilterValue {
+    conditions: PageLayoutFilterCondition[]
+    __typename: 'PageLayoutFilterValue'
 }
 
 export interface PageLayoutTab {
@@ -7780,6 +7803,7 @@ export interface PageLayoutGenqlSelection{
     createdAt?: boolean | number
     defaultTabToFocusOnMobileAndSidePanelId?: boolean | number
     deletedAt?: boolean | number
+    filters?: PageLayoutFilterGenqlSelection
     id?: boolean | number
     isFirstTabPinned?: boolean | number
     isSystemSideEffect?: boolean | number
@@ -7792,6 +7816,35 @@ export interface PageLayoutGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface PageLayoutFilterGenqlSelection{
+    defaultValue?: PageLayoutFilterValueGenqlSelection
+    id?: boolean | number
+    label?: boolean | number
+    position?: boolean | number
+    type?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PageLayoutFilterConditionGenqlSelection{
+    operand?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PageLayoutFilterConditionInput {operand: ViewFilterOperand,value: Scalars['String']}
+
+export interface PageLayoutFilterInput {defaultValue?: (PageLayoutFilterValueInput | null),id: Scalars['UUID'],label: Scalars['String'],position: Scalars['Float'],type: PageLayoutFilterType}
+
+export interface PageLayoutFilterValueGenqlSelection{
+    conditions?: PageLayoutFilterConditionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PageLayoutFilterValueInput {conditions: PageLayoutFilterConditionInput[]}
 
 export interface PageLayoutTabGenqlSelection{
     applicationId?: boolean | number
@@ -8957,7 +9010,7 @@ export interface UpdatePageLayoutWidgetInput {conditionalAvailabilityExpression?
 
 export interface UpdatePageLayoutWidgetWithIdInput {conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),id: Scalars['UUID'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
 
-export interface UpdatePageLayoutWithTabsInput {isFirstTabPinned?: (Scalars['Boolean'] | null),name: Scalars['String'],objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[],type: PageLayoutType}
+export interface UpdatePageLayoutWithTabsInput {filters?: (PageLayoutFilterInput[] | null),isFirstTabPinned?: (Scalars['Boolean'] | null),name: Scalars['String'],objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[],type: PageLayoutType}
 
 export interface UpdateRoleInput {
 /** The id of the role to update */
@@ -11660,6 +11713,30 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const PageLayoutFilter_possibleTypes: string[] = ['PageLayoutFilter']
+    export const isPageLayoutFilter = (obj?: { __typename?: any } | null): obj is PageLayoutFilter => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutFilter"')
+      return PageLayoutFilter_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PageLayoutFilterCondition_possibleTypes: string[] = ['PageLayoutFilterCondition']
+    export const isPageLayoutFilterCondition = (obj?: { __typename?: any } | null): obj is PageLayoutFilterCondition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutFilterCondition"')
+      return PageLayoutFilterCondition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PageLayoutFilterValue_possibleTypes: string[] = ['PageLayoutFilterValue']
+    export const isPageLayoutFilterValue = (obj?: { __typename?: any } | null): obj is PageLayoutFilterValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutFilterValue"')
+      return PageLayoutFilterValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const PageLayoutTab_possibleTypes: string[] = ['PageLayoutTab']
     export const isPageLayoutTab = (obj?: { __typename?: any } | null): obj is PageLayoutTab => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutTab"')
@@ -13382,6 +13459,10 @@ export const enumOnboardingStatus = {
 export const enumOpenRecordIn = {
    RECORD_PAGE: 'RECORD_PAGE' as const,
    SIDE_PANEL: 'SIDE_PANEL' as const
+}
+
+export const enumPageLayoutFilterType = {
+   DATE: 'DATE' as const
 }
 
 export const enumPageLayoutTabLayoutMode = {
