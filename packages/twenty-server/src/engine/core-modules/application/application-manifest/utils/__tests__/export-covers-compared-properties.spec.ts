@@ -690,7 +690,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
     },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: ['filters'],
     knownGaps: PAGE_LAYOUT_KIND_GAPS,
   },
   {

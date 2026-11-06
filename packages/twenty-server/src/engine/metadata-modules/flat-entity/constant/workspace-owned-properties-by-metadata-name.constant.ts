@@ -11,7 +11,7 @@ export const WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME: Partial<{
   agent: ['createdByUserWorkspaceId', 'isPrivate'],
   agentChatChannel: ['name', 'icon', 'color', 'position'],
   mcpServer: ['isActive'],
-  pageLayout: ['isFirstTabPinned'],
+  pageLayout: ['isFirstTabPinned', 'filters'],
   role: ['canBeAssignedToApplications'],
   view: ['createdByUserWorkspaceId'],
   workflow: ['createdByUserWorkspaceId', 'workspaceWorkflowId', 'isPrivate'],
