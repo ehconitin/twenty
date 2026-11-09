@@ -299,6 +299,7 @@ type AggregateChartConfiguration {
   aggregateFieldMetadataId: UUID!
   aggregateOperation: AggregateOperations!
   configurationType: WidgetConfigurationType!
+  dashboardFilterBindings: [DashboardFilterBinding!]
   description: String
   displayDataLabel: Boolean
   filter: JSON
@@ -1034,6 +1035,7 @@ type BarChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   color: String
   configurationType: WidgetConfigurationType!
+  dashboardFilterBindings: [DashboardFilterBinding!]
   description: String
   displayDataLabel: Boolean
   displayLegend: Boolean
@@ -2119,6 +2121,11 @@ input CursorPaging {
   last: Int
 }
 
+type DashboardFilterBinding {
+  fieldMetadataId: UUID
+  pageLayoutFilterId: UUID!
+}
+
 """Database Event Action"""
 enum DatabaseEventAction {
   CREATED
@@ -3115,6 +3122,7 @@ type LineChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   color: String
   configurationType: WidgetConfigurationType!
+  dashboardFilterBindings: [DashboardFilterBinding!]
   description: String
   displayDataLabel: Boolean
   displayLegend: Boolean
@@ -4374,6 +4382,7 @@ type PieChartConfiguration {
   aggregateOperation: AggregateOperations!
   color: String
   configurationType: WidgetConfigurationType!
+  dashboardFilterBindings: [DashboardFilterBinding!]
   dateGranularity: ObjectRecordGroupByDateGranularity
   description: String
   displayDataLabel: Boolean
@@ -4775,6 +4784,7 @@ type RecordSharingRoleDTO {
 
 type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
+  dashboardFilterBindings: [DashboardFilterBinding!]
   isUIEditable: Boolean
   recordLimit: Int
   viewId: String

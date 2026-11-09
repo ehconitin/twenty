@@ -5,11 +5,16 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import {
+  type DashboardFilterBinding,
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import {
+  TEST_BAR_CHART_CONFIGURATION,
+  TEST_FIELD_METADATA_ID_1,
+} from '~/testing/mock-data/widget-configurations';
 
 const makeWidget = (
   overrides: Partial<PageLayoutWidget> & { id: string },
@@ -96,6 +101,32 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(secondWidget).toMatchObject({
       conditionalDisplay: null,
       conditionalAvailability,
+    });
+  });
+
+  it('should send the dashboard filter bindings of a widget unchanged', () => {
+    const dashboardFilterBindings: DashboardFilterBinding[] = [
+      {
+        __typename: 'DashboardFilterBinding',
+        pageLayoutFilterId: '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01',
+        fieldMetadataId: TEST_FIELD_METADATA_ID_1,
+      },
+    ];
+    const widget = makeWidget({
+      id: 'w1',
+      type: WidgetType.GRAPH,
+      configuration: {
+        ...TEST_BAR_CHART_CONFIGURATION,
+        dashboardFilterBindings,
+      },
+    });
+
+    const result = convertPageLayoutDraftToUpdateInput(
+      makeDraft([makeTab('tab-1', [widget])]),
+    );
+
+    expect(result.tabs[0].widgets[0].configuration).toMatchObject({
+      dashboardFilterBindings,
     });
   });
 

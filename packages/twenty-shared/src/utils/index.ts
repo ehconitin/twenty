@@ -291,6 +291,7 @@ export { isNativePageKey } from './navigation/isNativePageKey';
 export { normalizeViewFieldLabel } from './normalizeViewFieldLabel';
 export { getEffectiveDashboardPageLayoutFilters } from './pageLayout/getEffectiveDashboardPageLayoutFilters';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
+export { isFieldBindableToDashboardFilter } from './pageLayout/isFieldBindableToDashboardFilter';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';
