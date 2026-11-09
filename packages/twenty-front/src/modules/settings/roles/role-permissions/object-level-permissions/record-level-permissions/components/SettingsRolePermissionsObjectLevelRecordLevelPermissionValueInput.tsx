@@ -30,7 +30,7 @@ import { type RLSDynamicValue } from '@/object-record/record-filter/types/Record
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/contexts/RecordLevelPermissionVariablePickerContext';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -285,7 +285,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
             defaultValue={recordFilter.value}
             onChange={(relativeDateFilter: RelativeDateFilter) =>
               applyObjectFilterDropdownFilterValue(
-                stringifyRelativeDateFilter(relativeDateFilter),
+                stringifyRelativeDateFilterWithDetectedStartDay(
+                  relativeDateFilter,
+                ),
               )
             }
             isDateTimeField={recordFilter.type === FieldMetadataType.DATE_TIME}
