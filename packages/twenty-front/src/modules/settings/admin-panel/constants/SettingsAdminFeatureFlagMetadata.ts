@@ -88,4 +88,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`HTTP requests in the logic function runtime`,
     description: msg`Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda.`,
   },
+  [FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED]: {
+    label: msg`Dashboard filters`,
+    description: msg`Show a Date range filter on dashboards and choose, per widget, which date it filters. Enable after the instance upgrade completes.`,
+  },
 };
