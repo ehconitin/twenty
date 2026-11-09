@@ -237,6 +237,7 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { getEffectiveDashboardPageLayoutFilters } from './pageLayout/getEffectiveDashboardPageLayoutFilters';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
+export { isFieldBindableToDashboardFilter } from './pageLayout/isFieldBindableToDashboardFilter';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';

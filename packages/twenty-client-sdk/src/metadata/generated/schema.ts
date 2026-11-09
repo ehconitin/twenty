@@ -231,6 +231,7 @@ export interface AggregateChartConfiguration {
     aggregateFieldMetadataId: Scalars['UUID']
     aggregateOperation: AggregateOperations
     configurationType: WidgetConfigurationType
+    dashboardFilterBindings?: DashboardFilterBinding[]
     description?: Scalars['String']
     displayDataLabel?: Scalars['Boolean']
     filter?: Scalars['JSON']
@@ -830,6 +831,7 @@ export interface BarChartConfiguration {
     axisNameDisplay?: AxisNameDisplay
     color?: Scalars['String']
     configurationType: WidgetConfigurationType
+    dashboardFilterBindings?: DashboardFilterBinding[]
     description?: Scalars['String']
     displayDataLabel?: Scalars['Boolean']
     displayLegend?: Scalars['Boolean']
@@ -1427,6 +1429,12 @@ export interface CreditUsedItem {
     operation?: UsageOperationType
     resource?: UsageResourceType
     __typename: 'CreditUsedItem'
+}
+
+export interface DashboardFilterBinding {
+    fieldMetadataId?: Scalars['UUID']
+    pageLayoutFilterId: Scalars['UUID']
+    __typename: 'DashboardFilterBinding'
 }
 
 
@@ -2029,6 +2037,7 @@ export interface LineChartConfiguration {
     axisNameDisplay?: AxisNameDisplay
     color?: Scalars['String']
     configurationType: WidgetConfigurationType
+    dashboardFilterBindings?: DashboardFilterBinding[]
     description?: Scalars['String']
     displayDataLabel?: Scalars['Boolean']
     displayLegend?: Scalars['Boolean']
@@ -3081,6 +3090,7 @@ export interface PieChartConfiguration {
     aggregateOperation: AggregateOperations
     color?: Scalars['String']
     configurationType: WidgetConfigurationType
+    dashboardFilterBindings?: DashboardFilterBinding[]
     dateGranularity?: ObjectRecordGroupByDateGranularity
     description?: Scalars['String']
     displayDataLabel?: Scalars['Boolean']
@@ -3434,6 +3444,7 @@ export interface RecordSharingRoleDTO {
 
 export interface RecordTableConfiguration {
     configurationType: WidgetConfigurationType
+    dashboardFilterBindings?: DashboardFilterBinding[]
     isUIEditable?: Scalars['Boolean']
     recordLimit?: Scalars['Int']
     viewId?: Scalars['String']
@@ -4763,6 +4774,7 @@ export interface AggregateChartConfigurationGenqlSelection{
     aggregateFieldMetadataId?: boolean | number
     aggregateOperation?: boolean | number
     configurationType?: boolean | number
+    dashboardFilterBindings?: DashboardFilterBindingGenqlSelection
     description?: boolean | number
     displayDataLabel?: boolean | number
     filter?: boolean | number
@@ -5409,6 +5421,7 @@ export interface BarChartConfigurationGenqlSelection{
     axisNameDisplay?: boolean | number
     color?: boolean | number
     configurationType?: boolean | number
+    dashboardFilterBindings?: DashboardFilterBindingGenqlSelection
     description?: boolean | number
     displayDataLabel?: boolean | number
     displayLegend?: boolean | number
@@ -6139,6 +6152,13 @@ first?: (Scalars['Int'] | null),
 /** Paginate last */
 last?: (Scalars['Int'] | null)}
 
+export interface DashboardFilterBindingGenqlSelection{
+    fieldMetadataId?: boolean | number
+    pageLayoutFilterId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
 
 export interface DeleteOneFieldInput {
@@ -6861,6 +6881,7 @@ export interface LineChartConfigurationGenqlSelection{
     axisNameDisplay?: boolean | number
     color?: boolean | number
     configurationType?: boolean | number
+    dashboardFilterBindings?: DashboardFilterBindingGenqlSelection
     description?: boolean | number
     displayDataLabel?: boolean | number
     displayLegend?: boolean | number
@@ -7951,6 +7972,7 @@ export interface PieChartConfigurationGenqlSelection{
     aggregateOperation?: boolean | number
     color?: boolean | number
     configurationType?: boolean | number
+    dashboardFilterBindings?: DashboardFilterBindingGenqlSelection
     dateGranularity?: boolean | number
     description?: boolean | number
     displayDataLabel?: boolean | number
@@ -8340,6 +8362,7 @@ export interface RecordSharingRoleDTOGenqlSelection{
 
 export interface RecordTableConfigurationGenqlSelection{
     configurationType?: boolean | number
+    dashboardFilterBindings?: DashboardFilterBindingGenqlSelection
     isUIEditable?: boolean | number
     recordLimit?: boolean | number
     viewId?: boolean | number
@@ -10805,6 +10828,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isCreditUsedItem = (obj?: { __typename?: any } | null): obj is CreditUsedItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreditUsedItem"')
       return CreditUsedItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DashboardFilterBinding_possibleTypes: string[] = ['DashboardFilterBinding']
+    export const isDashboardFilterBinding = (obj?: { __typename?: any } | null): obj is DashboardFilterBinding => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDashboardFilterBinding"')
+      return DashboardFilterBinding_possibleTypes.includes(obj.__typename)
     }
     
 
