@@ -21,6 +21,8 @@ import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/pag
 import { RecordTableLayoutSelectionSection } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutSelectionSection';
 import { RecordTableSettingsFilterAndSortRows } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { WidgetDashboardFilterBindingsSection } from '@/side-panel/pages/page-layout/components/dashboard/WidgetDashboardFilterBindingsSection';
+import { useDashboardFiltersForWidgetBindings } from '@/side-panel/pages/page-layout/hooks/useDashboardFiltersForWidgetBindings';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
 import { useRecordTableWidgetInEditModeView } from '@/side-panel/pages/page-layout/hooks/useRecordTableWidgetInEditModeView';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -75,6 +77,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
+  const { dashboardFilterBindingItemIds } =
+    useDashboardFiltersForWidgetBindings({
+      pageLayoutId,
+      objectMetadataId: widgetInEditMode?.objectMetadataId,
+    });
 
   const configuration = widgetInEditMode?.configuration;
   const isRecordTableConfiguration =
@@ -202,6 +209,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
             : []),
         ]
       : []),
+    ...dashboardFilterBindingItemIds,
   ];
 
   return (
@@ -432,6 +440,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                 </>
               )}
             </SidePanelGroup>
+            <WidgetDashboardFilterBindingsSection widget={widgetInEditMode} />
           </SidePanelList>
         </StyledSettingsContainer>
         <WidgetSettingsFooter pageLayoutId={pageLayoutId} />

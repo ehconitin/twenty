@@ -64,6 +64,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        dashboardFilterBindings {
+          pageLayoutFilterId
+          fieldMetadataId
+        }
         groupMode
         layout
         isCumulative
@@ -95,6 +99,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        dashboardFilterBindings {
+          pageLayoutFilterId
+          fieldMetadataId
+        }
         isStacked
         isCumulative
         splitMultiValueFields
@@ -119,6 +127,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        dashboardFilterBindings {
+          pageLayoutFilterId
+          fieldMetadataId
+        }
         timezone
         firstDayOfTheWeek
       }
@@ -131,6 +143,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         numberFormat
         description
         filter
+        dashboardFilterBindings {
+          pageLayoutFilterId
+          fieldMetadataId
+        }
         prefix
         suffix
         timezone
@@ -220,6 +236,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         viewId
         recordLimit
         isUIEditable
+        dashboardFilterBindings {
+          pageLayoutFilterId
+          fieldMetadataId
+        }
       }
       ... on WorkflowConfiguration {
         configurationType
