@@ -1,4 +1,5 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useWidgetDashboardFilter } from '@/page-layout/hooks/useWidgetDashboardFilter';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
@@ -61,6 +62,8 @@ export const GraphWidgetBarChartRenderer = () => {
     configuration: widget.configuration,
   });
 
+  const { recordFilters: dashboardRecordFilters } = useWidgetDashboardFilter();
+
   const navigate = useNavigate();
   const configuration = widget.configuration;
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
@@ -122,6 +125,7 @@ export const GraphWidgetBarChartRenderer = () => {
       viewId: indexViewId,
       timezone: userTimezone,
       firstDayOfTheWeek: userFirstDayOfTheWeek,
+      dashboardRecordFilters,
     });
 
     const url = getAppPath(
