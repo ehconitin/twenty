@@ -34,18 +34,22 @@ const THIS_MONTH_VALUE = {
 };
 
 const DASHBOARD_FILTERS = {
+  pageLayoutFilters: [
+    {
+      id: DATE_RANGE_FILTER_ID,
+      label: 'Date range',
+      type: PageLayoutFilterType.DATE,
+      position: 0,
+      defaultValue: null,
+    },
+  ],
   values: [THIS_MONTH_VALUE],
   timeZone: 'Asia/Tokyo',
   firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
 };
 
 const filterOn = (
-  ...recordFilters: {
-    id?: string;
-    fieldMetadataId: string;
-    operand: ViewFilterOperand;
-    value?: string;
-  }[]
+  ...recordFilters: { fieldMetadataId: string; operand: ViewFilterOperand }[]
 ) => ({
   recordFilters,
   recordFilterGroups: [],
@@ -94,11 +98,22 @@ describe('computeDashboardFilterForWidget', () => {
           { createdAt: { lt: expect.any(String) } },
         ],
       },
+      indicators: [
+        {
+          pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+          label: 'Date range',
+          hasValue: true,
+          kind: 'APPLIED',
+          fieldLabel: 'Creation date',
+          overlapsWidgetFilter: false,
+          replacedWidgetConditions: [],
+        },
+      ],
     });
   });
 
   it('should resolve a record table on a date its view filters on', () => {
-    const { appliedFields } = computeDashboardFilterForWidget({
+    const { appliedFields, indicators } = computeDashboardFilterForWidget({
       dashboardFilters: DASHBOARD_FILTERS,
       configuration: RECORD_TABLE_CONFIGURATION,
       fields: [CLOSE_DATE_FIELD, CREATED_AT_FIELD],
@@ -116,48 +131,100 @@ describe('computeDashboardFilterForWidget', () => {
         source: 'WIDGET_FILTER',
       },
     ]);
+    expect(indicators).toMatchObject([
+      { overlapsWidgetFilter: true, replacedWidgetConditions: [] },
+    ]);
   });
 
-  it("should list the widget's own period the value replaces", () => {
+  it("should report the widget's own period the value replaces", () => {
+    const thisQuarter = {
+      id: 'this-quarter',
+      fieldMetadataId: CLOSE_DATE_FIELD.id,
+      operand: ViewFilterOperand.IS_RELATIVE,
+      value: 'THIS_1_QUARTER',
+    };
+
     expect(
       computeDashboardFilterForWidget({
         dashboardFilters: DASHBOARD_FILTERS,
-        configuration: RECORD_TABLE_CONFIGURATION,
+        configuration: AGGREGATE_CONFIGURATION,
         fields: [CLOSE_DATE_FIELD, CREATED_AT_FIELD],
-        widgetFilter: filterOn(
-          {
-            id: 'this-quarter',
-            fieldMetadataId: CLOSE_DATE_FIELD.id,
-            operand: ViewFilterOperand.IS_RELATIVE,
-            value: 'THIS_1_QUARTER',
-          },
-          {
-            id: 'in-the-past',
-            fieldMetadataId: CLOSE_DATE_FIELD.id,
-            operand: ViewFilterOperand.IS_IN_PAST,
-          },
-        ),
+        widgetFilter: filterOn(thisQuarter),
         filterValueDependencies: {},
-      }).replacedWidgetRecordFilterIds,
-    ).toEqual(['this-quarter']);
+      }),
+    ).toMatchObject({
+      replacedWidgetRecordFilterIds: ['this-quarter'],
+      indicators: [
+        {
+          fieldLabel: 'Close date',
+          overlapsWidgetFilter: false,
+          replacedWidgetConditions: [thisQuarter],
+        },
+      ],
+    });
   });
 
-  it('should report a widget set to not applied', () => {
-    const { recordFilters, appliedFields } = computeDashboardFilterForWidget({
-      dashboardFilters: DASHBOARD_FILTERS,
-      configuration: {
-        ...RECORD_TABLE_CONFIGURATION,
-        dashboardFilterBindings: [
-          { pageLayoutFilterId: DATE_RANGE_FILTER_ID, fieldMetadataId: null },
-        ],
+  it('should report a widget set to ignored', () => {
+    const { recordFilters, appliedFields, indicators } =
+      computeDashboardFilterForWidget({
+        dashboardFilters: DASHBOARD_FILTERS,
+        configuration: {
+          ...RECORD_TABLE_CONFIGURATION,
+          dashboardFilterBindings: [
+            { pageLayoutFilterId: DATE_RANGE_FILTER_ID, fieldMetadataId: null },
+          ],
+        },
+        fields: [CREATED_AT_FIELD],
+        widgetFilter: NO_WIDGET_FILTER,
+        filterValueDependencies: {},
+      });
+
+    expect(recordFilters).toEqual([]);
+    expect(appliedFields).toEqual([]);
+    expect(indicators).toEqual([
+      {
+        pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+        label: 'Date range',
+        hasValue: true,
+        kind: 'IGNORED',
       },
-      fields: [CREATED_AT_FIELD],
-      widgetFilter: NO_WIDGET_FILTER,
+    ]);
+  });
+
+  it('should resolve the field of each filter without a value', () => {
+    const { recordFilters, indicators } = computeDashboardFilterForWidget({
+      dashboardFilters: { ...DASHBOARD_FILTERS, values: [] },
+      configuration: RECORD_TABLE_CONFIGURATION,
+      fields: [CLOSE_DATE_FIELD, CREATED_AT_FIELD],
+      widgetFilter: filterOn({
+        fieldMetadataId: CLOSE_DATE_FIELD.id,
+        operand: ViewFilterOperand.IS_IN_PAST,
+      }),
       filterValueDependencies: {},
     });
 
     expect(recordFilters).toEqual([]);
-    expect(appliedFields).toEqual([]);
+    expect(indicators).toEqual([
+      {
+        pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+        label: 'Date range',
+        hasValue: false,
+        kind: 'APPLIED',
+        fieldLabel: 'Close date',
+      },
+    ]);
+  });
+
+  it('should show no indicator until the fields have loaded', () => {
+    expect(
+      computeDashboardFilterForWidget({
+        dashboardFilters: DASHBOARD_FILTERS,
+        configuration: RECORD_TABLE_CONFIGURATION,
+        fields: [],
+        widgetFilter: NO_WIDGET_FILTER,
+        filterValueDependencies: {},
+      }).indicators,
+    ).toEqual([]);
   });
 
   it('should ignore widgets that show no records', () => {
@@ -171,7 +238,7 @@ describe('computeDashboardFilterForWidget', () => {
         widgetFilter: NO_WIDGET_FILTER,
         filterValueDependencies: {},
       }),
-    ).toMatchObject({ recordFilters: [], appliedFields: [] });
+    ).toMatchObject({ recordFilters: [], appliedFields: [], indicators: [] });
   });
 
   it('should mark the widget invalid when a value cannot be resolved', () => {
@@ -192,7 +259,12 @@ describe('computeDashboardFilterForWidget', () => {
         fields: [CREATED_AT_FIELD],
         widgetFilter: NO_WIDGET_FILTER,
         filterValueDependencies: {},
-      }).isInvalid,
-    ).toBe(true);
+      }),
+    ).toMatchObject({
+      isInvalid: true,
+      indicators: [
+        { kind: 'APPLIED', fieldLabel: 'Creation date', hasValue: false },
+      ],
+    });
   });
 });

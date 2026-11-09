@@ -16,6 +16,8 @@ type PageLayoutWidgetCardHeaderProps = {
   title: string;
   onRemove?: (e?: MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
+  headerPills?: ReactNode;
+  shouldMeasureHeaderPills?: boolean;
   className?: string;
 };
 
@@ -28,6 +30,8 @@ export const PageLayoutWidgetCardHeader = ({
   title,
   onRemove,
   forbiddenDisplay,
+  headerPills,
+  shouldMeasureHeaderPills,
   className,
 }: PageLayoutWidgetCardHeaderProps) => {
   const widgetCardHovered = useAtomComponentFamilyStateValue(
@@ -51,6 +55,8 @@ export const PageLayoutWidgetCardHeader = ({
       title={title}
       onRemove={onRemove}
       forbiddenDisplay={forbiddenDisplay}
+      headerPills={headerPills}
+      shouldMeasureHeaderPills={shouldMeasureHeaderPills}
     />
   );
 };
