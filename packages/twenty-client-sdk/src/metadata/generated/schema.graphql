@@ -1079,7 +1079,9 @@ type BarChartData {
 
 input BarChartDataInput {
   configuration: JSON!
+  dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
+  viewerTimeZone: String
 }
 
 """Display mode for bar charts with secondary grouping"""
@@ -2126,6 +2128,12 @@ type DashboardFilterBinding {
   pageLayoutFilterId: UUID!
 }
 
+input DashboardFilterValueInput {
+  conditions: [PageLayoutFilterConditionInput!]!
+  pageLayoutFilterId: UUID!
+  type: PageLayoutFilterType!
+}
+
 """Database Event Action"""
 enum DatabaseEventAction {
   CREATED
@@ -3160,7 +3168,9 @@ type LineChartData {
 
 input LineChartDataInput {
   configuration: JSON!
+  dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
+  viewerTimeZone: String
 }
 
 type LineChartDataPoint {
@@ -4411,7 +4421,9 @@ type PieChartData {
 
 input PieChartDataInput {
   configuration: JSON!
+  dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
+  viewerTimeZone: String
 }
 
 type PieChartDataItem {

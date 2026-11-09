@@ -6,7 +6,7 @@ import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropd
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import {
   RecordFilterOperand,
@@ -37,7 +37,9 @@ export const useGetInitialFilterValue = () => {
       );
 
       return {
-        value: stringifyRelativeDateFilter(newRelativeDateFilter),
+        value: stringifyRelativeDateFilterWithDetectedStartDay(
+          newRelativeDateFilter,
+        ),
         displayValue: getRelativeDateDisplayValue(newRelativeDateFilter),
       };
     }
