@@ -131,9 +131,8 @@ const validateOverrideFieldOrThrow = ({
 
 export const buildChartGqlOperationFilterOrThrow = ({
   widgetFilter,
-  widgetTimeZone,
   dashboardFilterValues,
-  viewerTimeZone,
+  timeZone,
   dashboardFilterBindings,
   groupByFieldMetadataIds,
   widgetFilterFieldMetadataIds,
@@ -144,9 +143,8 @@ export const buildChartGqlOperationFilterOrThrow = ({
   currentWorkspaceMemberId,
 }: {
   widgetFilter?: ChartFilter;
-  widgetTimeZone: string;
   dashboardFilterValues: DashboardFilterValue[] | null | undefined;
-  viewerTimeZone: string | null | undefined;
+  timeZone: string;
   dashboardFilterBindings: DashboardFilterBinding[] | null | undefined;
   groupByFieldMetadataIds: string[];
   widgetFilterFieldMetadataIds: string[];
@@ -156,7 +154,7 @@ export const buildChartGqlOperationFilterOrThrow = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   currentWorkspaceMemberId?: string;
 }): ObjectRecordFilter => {
-  const convertFilter = (filter: ChartFilter | undefined, timeZone: string) =>
+  const convertFilter = (filter: ChartFilter | undefined) =>
     convertChartFilterToGqlOperationFilter({
       filter,
       flatFieldMetadataMaps,
@@ -166,13 +164,7 @@ export const buildChartGqlOperationFilterOrThrow = ({
     });
 
   if (!isNonEmptyArray(dashboardFilterValues)) {
-    return convertFilter(widgetFilter, widgetTimeZone);
-  }
-
-  if (!isDefined(viewerTimeZone)) {
-    throw createInvalidDashboardFilterException(
-      'a viewer time zone is required with dashboard filter values',
-    );
+    return convertFilter(widgetFilter);
   }
 
   const objectFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
@@ -215,7 +207,7 @@ export const buildChartGqlOperationFilterOrThrow = ({
       groupByFieldMetadataIds,
       widgetFilterFieldMetadataIds,
       fields: objectFlatFieldMetadatas,
-      timeZone: viewerTimeZone,
+      timeZone,
       firstDayOfTheWeek: convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
         firstDayOfTheWeek,
         FirstDayOfTheWeek.MONDAY,
@@ -231,7 +223,7 @@ export const buildChartGqlOperationFilterOrThrow = ({
     });
 
   return combineFilters([
-    convertFilter(widgetFilterWithoutReplacedPeriods, widgetTimeZone),
-    convertFilter({ recordFilters }, viewerTimeZone),
+    convertFilter(widgetFilterWithoutReplacedPeriods),
+    convertFilter({ recordFilters }),
   ]);
 };
