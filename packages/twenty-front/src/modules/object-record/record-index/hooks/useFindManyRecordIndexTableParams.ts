@@ -2,13 +2,13 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
+import { useRecordIndexQueryRecordFilters } from '@/object-record/record-index/hooks/useRecordIndexQueryRecordFilters';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -36,18 +36,13 @@ export const useFindManyRecordIndexTableParams = (
 
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
 
-  const currentRecordFilterGroups = useAtomComponentStateValue(
-    currentRecordFilterGroupsComponentState,
-    instanceId,
-  );
+  const {
+    recordFilters: currentRecordFilters,
+    recordFilterGroups: currentRecordFilterGroups,
+  } = useRecordIndexQueryRecordFilters(instanceId);
 
   const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
-    instanceId,
-  );
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
     instanceId,
   );
 
@@ -91,10 +86,13 @@ export const useFindManyRecordIndexTableParams = (
     objectMetadataItems,
   );
 
+  const additionalFilter = useRecordIndexAdditionalFilter();
+
   const combinedFilter = combineFilters([
     currentFilters,
     recordGroupFilter,
     anyFieldFilter,
+    additionalFilter,
   ]);
 
   return {
