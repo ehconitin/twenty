@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { type DashboardFilterBinding } from 'twenty-shared/types';
-import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DASHBOARD_FILTER_BINDINGS_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/constants/dashboard-filter-bindings-schema.constant';
@@ -14,7 +14,6 @@ import {
   PageLayoutException,
   PageLayoutExceptionCode,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { isOwnedByThirdPartyApplication } from 'src/engine/metadata-modules/page-layout/utils/is-owned-by-third-party-application.util';
 
 type PageLayoutWidgetConfiguration = FlatPageLayoutWidget['configuration'];
 
@@ -35,31 +34,14 @@ const parseDashboardFilterBindingsOrThrow = (
   return parsedDashboardFilterBindings.data;
 };
 
-const getComparableDashboardFilterBindings = (
-  dashboardFilterBindings: DashboardFilterBinding[] | null | undefined,
-): string[] =>
-  (dashboardFilterBindings ?? [])
-    .map(
-      ({ pageLayoutFilterId, fieldMetadataId }) =>
-        `${pageLayoutFilterId}:${fieldMetadataId}`,
-    )
-    .sort();
-
 export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
   existingWidget,
   configuration,
   fieldMetadataUniversalIdentifierById,
-  workspaceCustomApplicationUniversalIdentifier,
 }: {
-  existingWidget:
-    | Pick<
-        FlatPageLayoutWidget,
-        'id' | 'configuration' | 'applicationUniversalIdentifier'
-      >
-    | undefined;
+  existingWidget: Pick<FlatPageLayoutWidget, 'configuration'> | undefined;
   configuration: PageLayoutWidgetConfiguration;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
-  workspaceCustomApplicationUniversalIdentifier: string;
 }): PageLayoutWidgetConfiguration => {
   if (
     !isDefined(configuration) ||
@@ -112,30 +94,5 @@ export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
     };
   }
 
-  if (
-    !isOwnedByThirdPartyApplication({
-      applicationUniversalIdentifier:
-        existingWidget.applicationUniversalIdentifier,
-      workspaceCustomApplicationUniversalIdentifier,
-    })
-  ) {
-    return { ...configuration, dashboardFilterBindings };
-  }
-
-  if (
-    !fastDeepEqual(
-      getComparableDashboardFilterBindings(dashboardFilterBindings),
-      getComparableDashboardFilterBindings(existingDashboardFilterBindings),
-    )
-  ) {
-    throw new PageLayoutException(
-      `Dashboard filter bindings of page layout widget "${existingWidget.id}" are defined by the application that installed it and cannot be changed`,
-      PageLayoutExceptionCode.DASHBOARD_FILTER_BINDINGS_NOT_EDITABLE,
-    );
-  }
-
-  return {
-    ...configuration,
-    dashboardFilterBindings: existingDashboardFilterBindings,
-  };
+  return { ...configuration, dashboardFilterBindings };
 };
