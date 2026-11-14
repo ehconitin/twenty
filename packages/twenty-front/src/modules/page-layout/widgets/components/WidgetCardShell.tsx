@@ -128,10 +128,6 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
-            shouldMeasureHeaderPills={
-              isNonEmptyArray(dashboardFilterHeaderContent.fieldLabels) ||
-              isNonEmptyArray(dashboardFilterHeaderContent.pills)
-            }
             headerPills={
               hasDashboardFilterHeaderItems ? (
                 <WidgetDashboardFilterHeaderItems

@@ -516,17 +516,13 @@ export const DashboardFilterPillKeepsItsTextOnANumberTile: Story = {
     const pillText = await canvas.findByText('Ignores Date range');
     const title = canvas.getByText('Total Pipeline Value This Quarter');
 
-    // The pill shows its text until the header is measured, so assert after that
-    for (let frame = 0; frame < 3; frame++) {
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-    }
     expect(pillText.getBoundingClientRect().width).toBeGreaterThan(40);
     expect(pillText.scrollWidth).toBe(pillText.clientWidth);
     expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
   },
 };
 
-export const DashboardFilterPillCollapsesToItsIconInANarrowHeader: Story = {
+export const DashboardFilterPillTruncatesInANarrowHeader: Story = {
   render: () => (
     <DashboardFilterWidgetCardShellStory
       title="Total Pipeline Value This Quarter"
@@ -542,18 +538,12 @@ export const DashboardFilterPillCollapsesToItsIconInANarrowHeader: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    await waitFor(() =>
-      expect(
-        canvas.getByText('Ignores Date range').getBoundingClientRect().width,
-      ).toBeLessThanOrEqual(1),
-    );
+    const pillText = await canvas.findByText('Ignores Date range');
+    const pill = pillText.parentElement;
 
-    const pill = canvas.getByText('Ignores Date range').parentElement;
-
-    expect(pill?.getBoundingClientRect().width).toBeLessThan(32);
+    expect(pillText).toBeVisible();
+    expect(pillText.getBoundingClientRect().width).toBeGreaterThan(40);
     expect(pill?.querySelector('svg')).toBeVisible();
-    // The text stays in the pill for screen readers
-    expect(pill).toHaveTextContent('Ignores Date range');
 
     if (isDefined(pill)) {
       await userEvent.hover(pill);
@@ -579,12 +569,6 @@ const OVERLAP_CHART_FILTER = {
   recordFilterGroups: [],
 };
 
-const waitForHeaderMeasurement = async () => {
-  for (let frame = 0; frame < 3; frame++) {
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-  }
-};
-
 export const DashboardFilterPillKeepsItsTextNextToAShortTitle: Story = {
   render: () => (
     <DashboardFilterWidgetCardShellStory
@@ -598,8 +582,6 @@ export const DashboardFilterPillKeepsItsTextNextToAShortTitle: Story = {
     const pillText = await canvas.findByText('Also filtered on Close date');
     const title = canvas.getByText('Revenue');
 
-    await waitForHeaderMeasurement();
-
     expect(pillText.getBoundingClientRect().width).toBeGreaterThan(100);
     expect(pillText.scrollWidth).toBe(pillText.clientWidth);
     expect(title.scrollWidth).toBe(title.clientWidth);
@@ -609,7 +591,7 @@ export const DashboardFilterPillKeepsItsTextNextToAShortTitle: Story = {
 // iPhone 13; story viewport parameters do not resize the vitest browser
 const PHONE_VIEWPORT = { width: 390, height: 844 };
 
-export const DashboardFilterPillTruncatesInsteadOfCollapsingOnAPhone: Story = {
+export const DashboardFilterPillTruncatesOnAPhone: Story = {
   beforeEach: async () => {
     const { page } = await import('vitest/browser');
     const previousViewport = {
@@ -643,8 +625,6 @@ export const DashboardFilterPillTruncatesInsteadOfCollapsingOnAPhone: Story = {
     const canvas = within(canvasElement);
     const pillText = await canvas.findByText('Ignores Date range');
     const title = canvas.getByText('Total Pipeline Value This Quarter');
-
-    await waitForHeaderMeasurement();
 
     expect(pillText).toBeVisible();
     expect(pillText.getBoundingClientRect().width).toBeGreaterThan(40);
@@ -685,52 +665,6 @@ export const DashboardFilterIndicatorFocusRingIsNotClipped: Story = {
   },
 };
 
-const findMeasuringCopies = (canvasElement: HTMLElement) =>
-  [...canvasElement.querySelectorAll('[aria-hidden="true"]')].filter(
-    (element) => getComputedStyle(element).visibility === 'hidden',
-  );
-
-export const DashboardFilterMeasuringCopiesStayOutOfReach: Story = {
-  render: () => (
-    <DashboardFilterWidgetCardShellStory
-      title="Total Pipeline Value This Quarter"
-      width={240}
-      dashboardFilterBindings={[
-        {
-          pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
-          fieldMetadataId: null,
-        },
-      ]}
-    />
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Ignores Date range');
-    const measuringCopies = findMeasuringCopies(canvasElement);
-
-    expect(measuringCopies).toHaveLength(2);
-    for (const measuringCopy of measuringCopies) {
-      expect(
-        measuringCopy.querySelector(
-          'a[href], button, input, [tabindex]:not([tabindex="-1"])',
-        ),
-      ).toBeNull();
-    }
-  },
-};
-
-export const DashboardFilterIndicatorAloneMeasuresNothing: Story = {
-  render: () => <DashboardFilterWidgetCardShellStory />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByLabelText(CREATED_AT_FIELD_LABEL);
-
-    expect(findMeasuringCopies(canvasElement)).toHaveLength(0);
-  },
-};
-
 export const DashboardFilterUnavailableStatusKeepsItsText: Story = {
   render: () => (
     <DashboardFilterWidgetCardShellStory
@@ -748,8 +682,6 @@ export const DashboardFilterUnavailableStatusKeepsItsText: Story = {
     const canvas = within(canvasElement);
     const statusText = await canvas.findByText('Date range field unavailable');
     const title = canvas.getByText('Total Pipeline Value This Quarter');
-
-    await waitForHeaderMeasurement();
 
     const statusContent = statusText.parentElement ?? statusText;
 
