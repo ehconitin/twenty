@@ -1,11 +1,7 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { WIDGET_CARD_HEADER_PILLS_MAX_WIDTH_RATIO } from '@/page-layout/constants/WidgetCardHeaderPillsMaxWidthRatio';
-import { WidgetCardHeaderPillsMaxWidthContext } from '@/page-layout/contexts/WidgetCardHeaderPillsMaxWidthContext';
-import { getWidgetCardHeaderPillsMaxWidth } from '@/page-layout/utils/getWidgetCardHeaderPillsMaxWidth';
 import { WidgetCardHeaderHoverReveal } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderHoverReveal';
-import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { styled } from '@linaria/react';
-import { type ReactNode, useMemo, useRef, useState } from 'react';
+import { type ReactNode } from 'react';
 import { IconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconTrash } from 'twenty-ui/icon';
@@ -28,7 +24,6 @@ export type WidgetCardHeaderProps = {
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
   headerPills?: ReactNode;
-  shouldMeasureHeaderPills?: boolean;
   className?: string;
   isResizing?: boolean;
 };
@@ -57,27 +52,7 @@ const StyledTitleContainer = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
-  position: relative;
   user-select: none;
-`;
-
-type MeasuredPart = 'header' | 'title' | 'titleNatural' | 'pills';
-
-const StyledTitleMeasure = styled.div`
-  position: absolute;
-  visibility: hidden;
-  white-space: nowrap;
-  width: max-content;
-
-  &::before {
-    content: attr(data-title);
-  }
-
-  &[data-count]::after {
-    content: attr(data-count);
-    font-weight: ${themeCssVariables.font.weight.regular};
-    margin-left: ${themeCssVariables.spacing[1]};
-  }
 `;
 
 const StyledCount = styled.span`
@@ -86,18 +61,16 @@ const StyledCount = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
-// Keeps its natural width up to the room it is given, so the title truncates first; the padding keeps focus rings inside the clip
-const StyledHeaderPillsContainer = styled.div<{ maxWidth: string }>`
+// The max width leaves the title some room before both truncate; the padding keeps focus rings inside the clip
+const StyledHeaderPillsContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   margin: calc(-1 * ${themeCssVariables.spacing[1]});
-  max-width: ${({ maxWidth }) => maxWidth};
+  max-width: calc(100% - min(${themeCssVariables.spacing[20]}, 40%));
   min-width: 0;
   overflow: hidden;
   padding: ${themeCssVariables.spacing[1]};
-  position: relative;
 `;
 
 const StyledRightContainer = styled.div`
@@ -125,114 +98,27 @@ export const WidgetCardHeader = ({
   onRemove,
   forbiddenDisplay,
   headerPills,
-  shouldMeasureHeaderPills = false,
   className,
 }: WidgetCardHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
 
-  const headerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const titleMeasureRef = useRef<HTMLDivElement>(null);
-  const pillsRef = useRef<HTMLDivElement>(null);
-  const [widths, setWidths] = useState<Partial<Record<MeasuredPart, number>>>(
-    {},
-  );
-  const widthChangeHandlers = useMemo(() => {
-    const getWidthChangeHandler =
-      (part: MeasuredPart) =>
-      ({ width }: { width: number }) =>
-        setWidths((previousWidths) =>
-          previousWidths[part] === width
-            ? previousWidths
-            : { ...previousWidths, [part]: width },
-        );
-
-    return {
-      header: getWidthChangeHandler('header'),
-      title: getWidthChangeHandler('title'),
-      titleNatural: getWidthChangeHandler('titleNatural'),
-      pills: getWidthChangeHandler('pills'),
-    };
-  }, []);
-  const isHeaderPillsMeasured =
-    isDefined(headerPills) && shouldMeasureHeaderPills;
-
-  const pillsMaxWidth =
-    isHeaderPillsMeasured &&
-    isDefined(widths.header) &&
-    isDefined(widths.title) &&
-    isDefined(widths.titleNatural) &&
-    isDefined(widths.pills)
-      ? getWidgetCardHeaderPillsMaxWidth({
-          headerWidth: widths.header,
-          titleWidth: widths.title,
-          titleNaturalWidth: widths.titleNatural,
-          pillsWidth: widths.pills,
-        })
-      : null;
-
-  const titleText = isEmpty ? t`Add Widget` : title;
-
   const isRemoveButtonShown =
     !isResizing && !isEmpty && isInEditMode && isDefined(onRemove);
 
   const shouldInset = variant === 'flush';
   return (
-    <StyledWidgetCardHeader
-      ref={headerRef}
-      className={className}
-      shouldInset={shouldInset}
-    >
+    <StyledWidgetCardHeader className={className} shouldInset={shouldInset}>
       <AnimatePresence initial={false}>
         {!isEmpty && isInEditMode && <WidgetGrip className="drag-handle" />}
       </AnimatePresence>
-      <StyledTitleContainer ref={titleRef}>
-        <OverflowingTextWithTooltip text={titleText} />
+      <StyledTitleContainer>
+        <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
         {isDefined(count) && <StyledCount>{formatNumber(count)}</StyledCount>}
-        {isHeaderPillsMeasured && (
-          <StyledTitleMeasure
-            ref={titleMeasureRef}
-            aria-hidden
-            data-title={titleText}
-            data-count={isDefined(count) ? formatNumber(count) : undefined}
-          />
-        )}
       </StyledTitleContainer>
       {isDefined(headerPills) && (
-        <StyledHeaderPillsContainer
-          ref={pillsRef}
-          maxWidth={
-            isDefined(pillsMaxWidth)
-              ? `${pillsMaxWidth}px`
-              : `${WIDGET_CARD_HEADER_PILLS_MAX_WIDTH_RATIO * 100}%`
-          }
-        >
-          {isHeaderPillsMeasured && (
-            <>
-              <NodeDimensionEffect
-                elementRef={headerRef}
-                onDimensionChange={widthChangeHandlers.header}
-              />
-              <NodeDimensionEffect
-                elementRef={titleRef}
-                onDimensionChange={widthChangeHandlers.title}
-              />
-              <NodeDimensionEffect
-                elementRef={titleMeasureRef}
-                onDimensionChange={widthChangeHandlers.titleNatural}
-              />
-              <NodeDimensionEffect
-                elementRef={pillsRef}
-                onDimensionChange={widthChangeHandlers.pills}
-              />
-            </>
-          )}
-          <WidgetCardHeaderPillsMaxWidthContext.Provider value={pillsMaxWidth}>
-            {headerPills}
-          </WidgetCardHeaderPillsMaxWidthContext.Provider>
-        </StyledHeaderPillsContainer>
+        <StyledHeaderPillsContainer>{headerPills}</StyledHeaderPillsContainer>
       )}
       <StyledRightContainer>
         {actions}
