@@ -1,8 +1,8 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import { type buildDashboardFilterForWidget } from 'twenty-shared/utils';
+import { type buildDashboardFilterForWidgetOrThrow } from 'twenty-shared/utils';
 
 export type WidgetDashboardFilter = ReturnType<
-  typeof buildDashboardFilterForWidget
+  typeof buildDashboardFilterForWidgetOrThrow
 > & {
   replacedWidgetRecordFilterIds: string[];
   isInvalid: boolean;

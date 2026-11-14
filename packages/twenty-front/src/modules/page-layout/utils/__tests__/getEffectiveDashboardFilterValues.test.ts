@@ -5,7 +5,7 @@ import {
   PageLayoutFilterType,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { buildDashboardFilterForWidget } from 'twenty-shared/utils';
+import { buildDashboardFilterForWidgetOrThrow } from 'twenty-shared/utils';
 
 const DATE = PageLayoutFilterType.DATE;
 
@@ -153,7 +153,7 @@ describe('getEffectiveDashboardFilterValues', () => {
     });
 
     const buildWithFallbackWeekStart = (firstDayOfTheWeek: FirstDayOfTheWeek) =>
-      buildDashboardFilterForWidget({
+      buildDashboardFilterForWidgetOrThrow({
         values,
         bindings: [
           { pageLayoutFilterId: 'date-range', fieldMetadataId: 'close' },

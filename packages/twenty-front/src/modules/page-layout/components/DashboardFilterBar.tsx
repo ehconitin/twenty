@@ -49,7 +49,7 @@ export const DashboardFilterBar = () => {
         isNonEmptyArray(pageLayoutFiltersDifferingFromDefault) && (
           <LightButton
             emphasis="subtle"
-            data-testid="cancel-button"
+            data-testid="dashboard-filter-reset-button"
             onClick={resetDashboardFilterValues}
           >
             {t`Reset`}

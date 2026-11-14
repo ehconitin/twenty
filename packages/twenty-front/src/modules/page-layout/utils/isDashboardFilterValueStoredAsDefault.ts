@@ -2,10 +2,13 @@ import { getDashboardFilterValueToStore } from '@/page-layout/utils/getDashboard
 import { isPageLayoutFilterValueEqual } from '@/page-layout/utils/isPageLayoutFilterValueEqual';
 import { type PageLayoutFilterValue } from 'twenty-shared/types';
 
-export const isDashboardFilterValueStoredAsDefault = (
-  value: PageLayoutFilterValue | null,
-  defaultValue: PageLayoutFilterValue | null | undefined,
-) =>
+export const isDashboardFilterValueStoredAsDefault = ({
+  value,
+  defaultValue,
+}: {
+  value: PageLayoutFilterValue | null;
+  defaultValue: PageLayoutFilterValue | null | undefined;
+}) =>
   isPageLayoutFilterValueEqual({
     firstValue: getDashboardFilterValueToStore(value),
     secondValue: getDashboardFilterValueToStore(defaultValue ?? null),
