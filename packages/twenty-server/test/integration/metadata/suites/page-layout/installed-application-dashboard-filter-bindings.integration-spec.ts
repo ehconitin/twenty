@@ -1,4 +1,3 @@
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -229,7 +228,7 @@ describe('Installed application dashboard filter bindings', () => {
     );
   });
 
-  it('should reject a workspace save that changes the bindings', async () => {
+  it('should save a workspace change to the bindings', async () => {
     const { errors, storedWidget } = await saveInstalledDashboard((widget) => [
       withDashboardFilterBindings(widget, (dashboardFilterBindings) =>
         dashboardFilterBindings.map((binding) => ({
@@ -239,10 +238,14 @@ describe('Installed application dashboard filter bindings', () => {
       ),
     ]);
 
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-      normalizeMessage: (message) =>
-        message.replace(storedWidget.id, '<widgetId>'),
+    expect(errors).toBeUndefined();
+    expect(await findStoredConfiguration(storedWidget.id)).toMatchObject({
+      dashboardFilterBindings: [
+        {
+          pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
+          fieldMetadataId: null,
+        },
+      ],
     });
   });
 

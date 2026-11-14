@@ -294,8 +294,6 @@ export class PageLayoutWidgetService {
             configuration: createInput.configuration,
             fieldMetadataUniversalIdentifierById:
               flatFieldMetadataMaps.universalIdentifierById,
-            workspaceCustomApplicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
           }),
         },
         workspaceId,
@@ -470,8 +468,6 @@ export class PageLayoutWidgetService {
               ),
               fieldMetadataUniversalIdentifierById:
                 existingFlatFieldMetadataMaps.universalIdentifierById,
-              workspaceCustomApplicationUniversalIdentifier:
-                workspaceCustomFlatApplication.universalIdentifier,
             }),
           }
         : updateData;

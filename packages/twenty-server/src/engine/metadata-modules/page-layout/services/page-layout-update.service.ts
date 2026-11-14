@@ -133,8 +133,6 @@ export class PageLayoutUpdateService {
           configuration: widgetInput.configuration,
           fieldMetadataUniversalIdentifierById:
             flatFieldMetadataMaps.universalIdentifierById,
-          workspaceCustomApplicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
         }),
       })),
     }));
