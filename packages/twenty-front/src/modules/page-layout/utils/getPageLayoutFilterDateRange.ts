@@ -1,3 +1,4 @@
+import { type PageLayoutFilterDateRange } from '@/page-layout/types/PageLayoutFilterDateRange';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -7,7 +8,7 @@ import {
 
 export const getPageLayoutFilterDateRange = (
   pageLayoutFilterValue: Pick<PageLayoutFilterValue, 'conditions'> | null,
-): { startDate: string | null; endDate: string | null } => {
+): PageLayoutFilterDateRange => {
   const conditions = pageLayoutFilterValue?.conditions ?? [];
 
   const startDate = conditions.find(

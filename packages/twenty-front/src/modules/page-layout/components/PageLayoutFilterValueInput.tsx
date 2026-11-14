@@ -67,7 +67,6 @@ export const PageLayoutFilterValueInput = ({
       ? storedRelativeDateFilter.data
       : DEFAULT_RELATIVE_DATE_FILTER_VALUE;
 
-  // The calendar reads the editor's timezone and week start unless the value carries its own
   const relativeDate = resolveRelativeDateFilterStringified(
     stringifyRelativeDateFilterWithDetectedStartDay(
       isNonEmptyString(relativeDateFilterToShow.timezone)
