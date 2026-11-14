@@ -984,6 +984,16 @@ type BarChartData {
 input BarChartDataInput {
   configuration: JSON!
   objectMetadataId: UUID!
+
+  """
+  Days the primary date axis must cover, shown as empty buckets where there is no data
+  """
+  primaryAxisDateRange: ChartDateRangeInput
+
+  """
+  Time zone for date buckets and relative date filters, instead of the one stored on the widget
+  """
+  viewerTimeZone: String
 }
 
 """Display mode for bar charts with secondary grouping"""
@@ -1323,6 +1333,12 @@ enum CaptchaDriverType {
 
 type ChannelSyncSuccess {
   success: Boolean!
+}
+
+input ChartDateRangeInput {
+  """Last day of the range, included"""
+  end: String
+  start: String
 }
 
 """Format used to display the chart value"""
@@ -3040,6 +3056,16 @@ type LineChartData {
 input LineChartDataInput {
   configuration: JSON!
   objectMetadataId: UUID!
+
+  """
+  Days the primary date axis must cover, shown as empty buckets where there is no data
+  """
+  primaryAxisDateRange: ChartDateRangeInput
+
+  """
+  Time zone for date buckets and relative date filters, instead of the one stored on the widget
+  """
+  viewerTimeZone: String
 }
 
 type LineChartDataPoint {
@@ -4265,6 +4291,11 @@ type PieChartData {
 input PieChartDataInput {
   configuration: JSON!
   objectMetadataId: UUID!
+
+  """
+  Time zone for date buckets and relative date filters, instead of the one stored on the widget
+  """
+  viewerTimeZone: String
 }
 
 type PieChartDataItem {

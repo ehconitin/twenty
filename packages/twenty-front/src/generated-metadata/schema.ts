@@ -1076,6 +1076,10 @@ export type BarChartData = {
 export type BarChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  /** Days the primary date axis must cover, shown as empty buckets where there is no data */
+  primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
+  /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
+  viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -1434,6 +1438,12 @@ export enum CaptchaDriverType {
 export type ChannelSyncSuccess = {
   __typename?: 'ChannelSyncSuccess';
   success: Scalars['Boolean']['output'];
+};
+
+export type ChartDateRangeInput = {
+  /** Last day of the range, included */
+  end?: InputMaybe<Scalars['String']['input']>;
+  start?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Format used to display the chart value */
@@ -3213,6 +3223,10 @@ export type LineChartData = {
 export type LineChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  /** Days the primary date axis must cover, shown as empty buckets where there is no data */
+  primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
+  /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
+  viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LineChartDataPoint = {
@@ -6050,6 +6064,8 @@ export type PieChartData = {
 export type PieChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
+  viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PieChartDataItem = {

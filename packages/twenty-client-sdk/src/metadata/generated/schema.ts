@@ -5467,7 +5467,11 @@ export interface BarChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BarChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID']}
+export interface BarChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
+/** Days the primary date axis must cover, shown as empty buckets where there is no data */
+primaryAxisDateRange?: (ChartDateRangeInput | null),
+/** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
+viewerTimeZone?: (Scalars['String'] | null)}
 
 export interface BarChartSeriesGenqlSelection{
     key?: boolean | number
@@ -5773,6 +5777,10 @@ export interface ChannelSyncSuccessGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface ChartDateRangeInput {
+/** Last day of the range, included */
+end?: (Scalars['String'] | null),start?: (Scalars['String'] | null)}
 
 export interface ChatConfigurationGenqlSelection{
     configurationType?: boolean | number
@@ -6921,7 +6929,11 @@ export interface LineChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface LineChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID']}
+export interface LineChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
+/** Days the primary date axis must cover, shown as empty buckets where there is no data */
+primaryAxisDateRange?: (ChartDateRangeInput | null),
+/** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
+viewerTimeZone?: (Scalars['String'] | null)}
 
 export interface LineChartDataPointGenqlSelection{
     x?: boolean | number
@@ -8003,7 +8015,9 @@ export interface PieChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PieChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID']}
+export interface PieChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
+/** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
+viewerTimeZone?: (Scalars['String'] | null)}
 
 export interface PieChartDataItemGenqlSelection{
     key?: boolean | number

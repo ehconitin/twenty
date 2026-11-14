@@ -1,7 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsTimeZone,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -19,4 +25,13 @@ export class PieChartDataInput {
   @Type(() => PieChartConfigurationDTO)
   @IsNotEmpty()
   configuration: PieChartConfigurationDTO;
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'Time zone for date buckets and relative date filters, instead of the one stored on the widget',
+  })
+  @IsOptional()
+  @IsTimeZone()
+  viewerTimeZone?: string | null;
 }
