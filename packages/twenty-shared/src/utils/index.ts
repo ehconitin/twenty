@@ -237,7 +237,7 @@ export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
-export { buildDashboardFilterForWidget } from './pageLayout/buildDashboardFilterForWidget';
+export { buildDashboardFilterForWidgetOrThrow } from './pageLayout/buildDashboardFilterForWidgetOrThrow';
 export { getChartReferencedFieldMetadataIds } from './pageLayout/getChartReferencedFieldMetadataIds';
 export { getDashboardFilterCandidateFieldMetadataIds } from './pageLayout/getDashboardFilterCandidateFieldMetadataIds';
 export { getDashboardFilterConditionValueIssue } from './pageLayout/getDashboardFilterConditionValueIssue';

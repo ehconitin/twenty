@@ -8,7 +8,7 @@ import {
 } from '@/types';
 import { computeRecordGqlOperationFilter } from '@/utils/filter/computeRecordGqlOperationFilter';
 import { combineFilters } from '@/utils/filter/utils/combineFilters';
-import { buildDashboardFilterForWidget } from '@/utils/pageLayout/buildDashboardFilterForWidget';
+import { buildDashboardFilterForWidgetOrThrow } from '@/utils/pageLayout/buildDashboardFilterForWidgetOrThrow';
 import { InvalidDashboardFilterError } from '@/utils/pageLayout/InvalidDashboardFilterError';
 
 const PERIOD_FILTER_ID = 'period-filter-id';
@@ -52,9 +52,9 @@ const dateFilterValue = (
 ) => ({ pageLayoutFilterId, type: PageLayoutFilterType.DATE, conditions });
 
 const buildForWidget = (
-  args: Partial<Parameters<typeof buildDashboardFilterForWidget>[0]>,
+  args: Partial<Parameters<typeof buildDashboardFilterForWidgetOrThrow>[0]>,
 ) =>
-  buildDashboardFilterForWidget({
+  buildDashboardFilterForWidgetOrThrow({
     values: [],
     bindings: null,
     groupByFieldMetadataIds: [],
@@ -96,7 +96,7 @@ const toGqlOperationFilter = (
     filterValueDependencies: { timeZone },
   });
 
-describe('buildDashboardFilterForWidget', () => {
+describe('buildDashboardFilterForWidgetOrThrow', () => {
   it('should return no record filter when no filter has a value', () => {
     expect(buildForWidget({ values: [] })).toEqual({
       recordFilters: [],
