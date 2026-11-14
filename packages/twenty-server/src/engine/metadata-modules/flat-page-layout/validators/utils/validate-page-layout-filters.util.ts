@@ -6,11 +6,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { PAGE_LAYOUT_FILTERS_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout/constants/page-layout-filters-schema.constant';
 import { VALUE_FORMAT_FIELD_TYPE_BY_PAGE_LAYOUT_FILTER_TYPE } from 'src/engine/metadata-modules/flat-page-layout/constants/value-format-field-type-by-page-layout-filter-type.constant';
 import { validatePageLayoutFilterDefaultValue } from 'src/engine/metadata-modules/flat-page-layout/validators/utils/validate-page-layout-filter-default-value.util';
+import { type PageLayoutFilterValidationError } from 'src/engine/metadata-modules/flat-page-layout/types/page-layout-filter-validation-error.type';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-
-type PageLayoutFilterValidationError =
-  FlatEntityValidationError<PageLayoutExceptionCode>;
 
 export const validatePageLayoutFilters = ({
   filters: rawFilters,
