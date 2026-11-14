@@ -1,10 +1,10 @@
-import { DASHBOARD_FILTER_QUERY_PARAM_KEY } from '@/page-layout/constants/DashboardFilterQueryParamKey';
+import { isDashboardFilterSearchParamKey } from '@/page-layout/utils/isDashboardFilterSearchParamKey';
 
 export const removeDashboardFilterValuesFromSearchParams = (
   searchParams: URLSearchParams,
 ): URLSearchParams =>
   new URLSearchParams(
     [...searchParams.entries()].filter(
-      ([key]) => !key.startsWith(`${DASHBOARD_FILTER_QUERY_PARAM_KEY}[`),
+      ([key]) => !isDashboardFilterSearchParamKey(key),
     ),
   );

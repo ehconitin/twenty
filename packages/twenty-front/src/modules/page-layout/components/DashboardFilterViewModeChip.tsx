@@ -4,7 +4,6 @@ import { useSetDashboardFilterValue } from '@/page-layout/hooks/useSetDashboardF
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { type DashboardFilters } from '@/page-layout/types/DashboardFilters';
 import { getPageLayoutFilterDisplayLabel } from '@/page-layout/utils/getPageLayoutFilterDisplayLabel';
 import { getDashboardFilterValueToStore } from '@/page-layout/utils/getDashboardFilterValueToStore';
 import { isDashboardFilterValueStoredAsDefault } from '@/page-layout/utils/isDashboardFilterValueStoredAsDefault';
@@ -15,10 +14,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconCheck } from 'twenty-ui/icon';
-import { type PageLayoutFilterValue } from '~/generated-metadata/graphql';
+import {
+  type PageLayoutFilter,
+  type PageLayoutFilterValue,
+} from '~/generated-metadata/graphql';
 
 type DashboardFilterViewModeChipProps = {
-  pageLayoutFilter: DashboardFilters['pageLayoutFilters'][number];
+  pageLayoutFilter: Pick<PageLayoutFilter, 'id' | 'label' | 'defaultValue'>;
   urlValue: PageLayoutFilterValue | undefined;
 };
 
@@ -71,7 +73,7 @@ export const DashboardFilterViewModeChip = ({
       onChange={handleChange}
     >
       {canEditDashboardFilterDefaults &&
-        !isDashboardFilterValueStoredAsDefault(value, defaultValue) && (
+        !isDashboardFilterValueStoredAsDefault({ value, defaultValue }) && (
           <>
             <Dropdown.Separator />
             <Dropdown.Section>

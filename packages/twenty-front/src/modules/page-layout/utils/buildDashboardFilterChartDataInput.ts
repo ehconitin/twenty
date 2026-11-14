@@ -2,8 +2,7 @@ import { type DashboardFilterValue } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type BarChartDataInput } from '~/generated-metadata/graphql';
 
-// The server resolves each widget's field, so every filter with a value is sent;
-// the time zone is always sent so buckets follow the viewer, filtered or not
+// The time zone is sent even unfiltered so buckets follow the viewer
 export const buildDashboardFilterChartDataInput = ({
   values,
   viewerTimeZone,
