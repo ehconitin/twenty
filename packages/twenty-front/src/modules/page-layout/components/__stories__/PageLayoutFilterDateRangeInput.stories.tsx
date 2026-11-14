@@ -1,4 +1,5 @@
 import { PageLayoutFilterDateRangeInput } from '@/page-layout/components/PageLayoutFilterDateRangeInput';
+import { type PageLayoutFilterDateRange } from '@/page-layout/types/PageLayoutFilterDateRange';
 import { getPageLayoutFilterDateRange } from '@/page-layout/utils/getPageLayoutFilterDateRange';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -6,10 +7,8 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { type PageLayoutFilterValue } from '~/generated-metadata/graphql';
 
-type DateRange = { startDate: string | null; endDate: string | null };
-
 type PageLayoutFilterDateRangeInputStoryProps = {
-  initialDateRange: DateRange;
+  initialDateRange: PageLayoutFilterDateRange;
   onChange: (value: PageLayoutFilterValue | null) => void;
 };
 
@@ -44,7 +43,7 @@ const meta: Meta<typeof PageLayoutFilterDateRangeInputStory> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const BOTH_BOUNDS: DateRange = {
+const BOTH_BOUNDS: PageLayoutFilterDateRange = {
   startDate: '2026-03-10',
   endDate: '2026-03-20',
 };
