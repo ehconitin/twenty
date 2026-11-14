@@ -30,7 +30,7 @@ describe('getPageLayoutFilterValueMode', () => {
   );
 
   it.each(['PAST_3_HOUR', 'SOON', 'PAST_999999_DAY'])(
-    'should read the relative date %s, which the picker cannot show, as custom',
+    'should read the relative date %s, which the picker cannot show, as other',
     (value) => {
       expect(
         getPageLayoutFilterValueMode({
@@ -54,7 +54,7 @@ describe('getPageLayoutFilterValueMode', () => {
     [[ViewFilterOperand.IS_TODAY]],
     [[ViewFilterOperand.IS_AFTER, ViewFilterOperand.IS_AFTER]],
     [[ViewFilterOperand.IS_RELATIVE, ViewFilterOperand.IS_BEFORE]],
-  ])('should read %j, which the editor cannot edit, as custom', (operands) => {
+  ])('should read %j, which the editor cannot edit, as other', (operands) => {
     expect(getPageLayoutFilterValueMode(buildValue(operands))).toBe('OTHER');
   });
 
@@ -62,7 +62,7 @@ describe('getPageLayoutFilterValueMode', () => {
     ['an empty', '2024-03-10', '2024-03-10'],
     ['a reversed', '2024-03-10', '2024-03-01'],
   ])(
-    'should read %s range, which has no day to show, as custom',
+    'should read %s range, which has no day to show, as other',
     (_, startDate, dayAfterEndDate) => {
       expect(
         getPageLayoutFilterValueMode(buildRange(startDate, dayAfterEndDate)),
