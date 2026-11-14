@@ -18,8 +18,8 @@ const RENEWAL_DATE_FIELD = {
   name: 'renewalDate',
   type: FieldMetadataType.DATE,
 };
-const DEACTIVATED_DATE_FIELD = {
-  id: 'deactivated-date-field-id',
+const SIGNATURE_DATE_FIELD = {
+  id: 'signature-date-field-id',
   name: 'signatureDate',
   type: FieldMetadataType.DATE,
 };
@@ -38,7 +38,7 @@ const FIELDS = [
   CREATED_AT_FIELD,
   CLOSE_DATE_FIELD,
   RENEWAL_DATE_FIELD,
-  DEACTIVATED_DATE_FIELD,
+  SIGNATURE_DATE_FIELD,
   DELETED_AT_FIELD,
   STAGE_FIELD,
 ];
@@ -73,18 +73,18 @@ describe('resolveDashboardFilterFieldForWidget', () => {
     ).toEqual({ fieldMetadataId: RENEWAL_DATE_FIELD.id, source: 'OVERRIDE' });
   });
 
-  it('should keep an override to a deactivated field', () => {
+  it('should keep an override to a date field the widget does not otherwise use', () => {
     expect(
       resolve({
         bindings: [
           {
             pageLayoutFilterId: PERIOD_FILTER_ID,
-            fieldMetadataId: DEACTIVATED_DATE_FIELD.id,
+            fieldMetadataId: SIGNATURE_DATE_FIELD.id,
           },
         ],
       }),
     ).toEqual({
-      fieldMetadataId: DEACTIVATED_DATE_FIELD.id,
+      fieldMetadataId: SIGNATURE_DATE_FIELD.id,
       source: 'OVERRIDE',
     });
   });
@@ -156,21 +156,21 @@ describe('resolveDashboardFilterFieldForWidget', () => {
     ).toEqual({ fieldMetadataId: CREATED_AT_FIELD.id, source: 'CREATED_AT' });
   });
 
-  it('should infer a deactivated field the widget still groups by or filters on', () => {
+  it('should infer a date field the widget only groups by or only filters on', () => {
     expect(
       resolve({
-        groupByFieldMetadataIds: [DEACTIVATED_DATE_FIELD.id],
+        groupByFieldMetadataIds: [SIGNATURE_DATE_FIELD.id],
       }),
     ).toEqual({
-      fieldMetadataId: DEACTIVATED_DATE_FIELD.id,
+      fieldMetadataId: SIGNATURE_DATE_FIELD.id,
       source: 'GROUP_BY',
     });
     expect(
       resolve({
-        widgetFilterFieldMetadataIds: [DEACTIVATED_DATE_FIELD.id],
+        widgetFilterFieldMetadataIds: [SIGNATURE_DATE_FIELD.id],
       }),
     ).toEqual({
-      fieldMetadataId: DEACTIVATED_DATE_FIELD.id,
+      fieldMetadataId: SIGNATURE_DATE_FIELD.id,
       source: 'WIDGET_FILTER',
     });
   });
