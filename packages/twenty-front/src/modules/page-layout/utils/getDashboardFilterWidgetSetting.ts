@@ -4,14 +4,16 @@ import { DASHBOARD_FILTER_DEFAULT_OPTION_VALUE } from '@/page-layout/constants/D
 import { DASHBOARD_FILTER_IGNORED_OPTION_VALUE } from '@/page-layout/constants/DashboardFilterIgnoredOptionValue';
 import { type DashboardFilterWidgetField } from '@/page-layout/types/DashboardFilterWidgetField';
 import { type DashboardFilterWidgetSetting } from '@/page-layout/types/DashboardFilterWidgetSetting';
-import { type DashboardFilterBinding } from 'twenty-shared/types';
+import {
+  type DashboardFilterBinding,
+  type PageLayoutFilter,
+} from 'twenty-shared/types';
 import {
   type getDashboardFilterCandidateFieldMetadataIds,
   isDefined,
   isFieldBindableToDashboardFilter,
   resolveDashboardFilterFieldForWidget,
 } from 'twenty-shared/utils';
-import { type PageLayoutFilter } from '~/generated-metadata/graphql';
 
 export const getDashboardFilterWidgetSetting = ({
   pageLayoutFilter,
