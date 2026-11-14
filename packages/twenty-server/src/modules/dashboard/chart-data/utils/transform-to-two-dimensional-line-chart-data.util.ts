@@ -55,6 +55,10 @@ export const transformToTwoDimensionalLineChartData = ({
 }): LineChartDataDTO => {
   const isStacked = configuration.isStacked ?? false;
 
+  const maxSeries = isStacked
+    ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
+    : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
+
   const isDescOrder =
     configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
@@ -68,6 +72,8 @@ export const transformToTwoDimensionalLineChartData = ({
       isTwoDimensional: true,
       splitMultiValueFields: configuration.splitMultiValueFields,
       dateRange: gapFillingDateRange,
+      maximumNumberOfDateGroups: LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+      maximumNumberOfSecondDimensionValues: maxSeries,
     });
 
   const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);
@@ -168,10 +174,6 @@ export const transformToTwoDimensionalLineChartData = ({
     secondarySelectOptions,
     secondaryAxisGroupByField,
   });
-
-  const maxSeries = isStacked
-    ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
-    : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
 
   const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 

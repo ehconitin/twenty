@@ -55,6 +55,7 @@ export const transformToOneDimensionalLineChartData = ({
       isTwoDimensional: false,
       splitMultiValueFields: configuration.splitMultiValueFields,
       dateRange: gapFillingDateRange,
+      maximumNumberOfDateGroups: LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
     });
 
   const selectOptions = getSelectOptions(primaryAxisGroupByField);

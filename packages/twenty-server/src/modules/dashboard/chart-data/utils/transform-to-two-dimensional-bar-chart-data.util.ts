@@ -72,6 +72,9 @@ export const transformToTwoDimensionalBarChartData = ({
       isTwoDimensional: true,
       splitMultiValueFields: configuration.splitMultiValueFields,
       dateRange: gapFillingDateRange,
+      maximumNumberOfDateGroups: BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+      maximumNumberOfSecondDimensionValues:
+        BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR,
       maximumNumberOfSegments: isStacked
         ? undefined
         : BAR_CHART_MAXIMUM_NUMBER_OF_BARS,

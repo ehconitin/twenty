@@ -23,7 +23,7 @@ export const generateDateGroupsCoveringRange = ({
   granularity: SupportedDateGranularityForGapFilling;
   maximumNumberOfDateGroups: number;
 }) => {
-  const dataDateGroups = () =>
+  const generateDataDateGroups = () =>
     generateDateGroupsInRange({
       startDate: minDate,
       endDate: maxDate,
@@ -40,7 +40,7 @@ export const generateDateGroupsCoveringRange = ({
       : maxDate;
 
   if (startDate === minDate && endDate === maxDate) {
-    return dataDateGroups();
+    return generateDataDateGroups();
   }
 
   const extendedDateGroups = generateDateGroupsInRange({
@@ -51,6 +51,6 @@ export const generateDateGroupsCoveringRange = ({
 
   return extendedDateGroups.wasTruncated ||
     extendedDateGroups.dates.length > maximumNumberOfDateGroups
-    ? dataDateGroups()
+    ? generateDataDateGroups()
     : extendedDateGroups;
 };

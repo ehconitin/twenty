@@ -2,8 +2,6 @@ import { Temporal } from 'temporal-polyfill';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, sortPlainDate } from 'twenty-shared/utils';
 
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
 import { DATE_GRANULARITIES_WITHOUT_GAP_FILLING } from 'src/modules/dashboard/chart-data/constants/date-granularities-without-gap-filling.constant';
 import { type SupportedDateGranularityForGapFilling } from 'src/modules/dashboard/chart-data/constants/supported-date-granularity-for-gap-filling.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
@@ -20,6 +18,7 @@ type FillDateGapsParams = {
   dateGranularity: ObjectRecordGroupByDateGranularity | null | undefined;
   isDescOrder?: boolean;
   dateRange?: DateRangeBounds;
+  maximumNumberOfDateGroups: number;
 };
 
 export const fillDateGaps = ({
@@ -27,6 +26,7 @@ export const fillDateGaps = ({
   dateGranularity,
   isDescOrder = false,
   dateRange,
+  maximumNumberOfDateGroups,
 }: FillDateGapsParams): FillDateGapsResult => {
   if (data.length === 0) {
     return { data, wasTruncated: false };
@@ -75,7 +75,7 @@ export const fillDateGaps = ({
     maxDate,
     dateRange,
     granularity: dateGranularity as SupportedDateGranularityForGapFilling,
-    maximumNumberOfDateGroups: BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+    maximumNumberOfDateGroups,
   });
 
   const orderedDates = isDescOrder ? [...allDates].reverse() : allDates;
@@ -102,6 +102,8 @@ type FillDateGapsTwoDimensionalParams = {
   dateGranularity: ObjectRecordGroupByDateGranularity | null | undefined;
   isDescOrder?: boolean;
   dateRange?: DateRangeBounds;
+  maximumNumberOfDateGroups: number;
+  maximumNumberOfSecondDimensionValues: number;
   maximumNumberOfSegments?: number;
 };
 
@@ -110,6 +112,8 @@ export const fillDateGapsTwoDimensional = ({
   dateGranularity,
   isDescOrder = false,
   dateRange,
+  maximumNumberOfDateGroups,
+  maximumNumberOfSecondDimensionValues,
   maximumNumberOfSegments,
 }: FillDateGapsTwoDimensionalParams): FillDateGapsResult => {
   if (data.length === 0) {
@@ -172,10 +176,10 @@ export const fillDateGapsTwoDimensional = ({
           maximumNumberOfSegments /
             Math.min(
               uniqueSecondDimensionValues.size,
-              BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR,
+              maximumNumberOfSecondDimensionValues,
             ),
         )
-      : BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+      : maximumNumberOfDateGroups,
   });
 
   const orderedDates = isDescOrder ? [...allDates].reverse() : allDates;

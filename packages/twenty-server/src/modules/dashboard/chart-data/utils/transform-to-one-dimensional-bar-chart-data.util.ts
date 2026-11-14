@@ -61,6 +61,7 @@ export const transformToOneDimensionalBarChartData = ({
       isTwoDimensional: false,
       splitMultiValueFields: configuration.splitMultiValueFields,
       dateRange: gapFillingDateRange,
+      maximumNumberOfDateGroups: BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
     });
 
   const selectOptions = getSelectOptions(primaryAxisGroupByField);

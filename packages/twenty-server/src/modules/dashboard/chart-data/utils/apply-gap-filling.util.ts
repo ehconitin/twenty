@@ -24,28 +24,38 @@ type ApplyGapFillingParams = {
   dateGranularity: ObjectRecordGroupByDateGranularity | null | undefined;
   omitNullValues: boolean;
   isDescOrder: boolean;
-  isTwoDimensional: boolean;
   splitMultiValueFields?: boolean;
   dateRange?: DateRangeBounds;
-  maximumNumberOfSegments?: number;
-};
+  maximumNumberOfDateGroups: number;
+} & (
+  | { isTwoDimensional: false }
+  | {
+      isTwoDimensional: true;
+      maximumNumberOfSecondDimensionValues: number;
+      maximumNumberOfSegments?: number;
+    }
+);
 
 type ApplyGapFillingResult = {
   data: GroupByRawResult[];
   wasTruncated: boolean;
 };
 
-export const applyGapFilling = ({
-  data,
-  primaryAxisGroupByField,
-  dateGranularity,
-  omitNullValues,
-  isDescOrder,
-  isTwoDimensional,
-  splitMultiValueFields,
-  dateRange,
-  maximumNumberOfSegments,
-}: ApplyGapFillingParams): ApplyGapFillingResult => {
+export const applyGapFilling = (
+  params: ApplyGapFillingParams,
+): ApplyGapFillingResult => {
+  const {
+    data,
+    primaryAxisGroupByField,
+    dateGranularity,
+    omitNullValues,
+    isDescOrder,
+    isTwoDimensional,
+    splitMultiValueFields,
+    dateRange,
+    maximumNumberOfDateGroups,
+  } = params;
+
   if (omitNullValues) {
     return { data, wasTruncated: false };
   }
@@ -58,19 +68,23 @@ export const applyGapFilling = ({
   );
 
   if (isPrimaryFieldDate) {
-    const dateResult = isTwoDimensional
+    const dateResult = params.isTwoDimensional
       ? fillDateGapsTwoDimensional({
           data: currentData,
           dateGranularity,
           isDescOrder,
           dateRange,
-          maximumNumberOfSegments,
+          maximumNumberOfDateGroups,
+          maximumNumberOfSecondDimensionValues:
+            params.maximumNumberOfSecondDimensionValues,
+          maximumNumberOfSegments: params.maximumNumberOfSegments,
         })
       : fillDateGaps({
           data: currentData,
           dateGranularity,
           isDescOrder,
           dateRange,
+          maximumNumberOfDateGroups,
         });
 
     currentData = dateResult.data;

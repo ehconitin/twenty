@@ -6,12 +6,16 @@ import {
   fillDateGapsTwoDimensional,
 } from 'src/modules/dashboard/chart-data/utils/fill-date-gaps.util';
 
+const MAXIMUM_NUMBER_OF_DATE_GROUPS = 100;
+const MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES = 50;
+
 describe('fillDateGaps', () => {
   describe('edge cases', () => {
     it('should return empty data unchanged', () => {
       const result = fillDateGaps({
         data: [],
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual([]);
@@ -27,6 +31,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: null,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual(data);
@@ -42,6 +47,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: undefined,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual(data);
@@ -59,6 +65,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual(data);
@@ -74,6 +81,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual(data);
@@ -89,6 +97,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual(data);
@@ -104,6 +113,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.NONE,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toEqual(data);
@@ -121,6 +131,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toHaveLength(3);
@@ -149,6 +160,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toHaveLength(3);
@@ -166,6 +178,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
         isDescOrder: true,
       });
 
@@ -186,6 +199,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toHaveLength(4);
@@ -207,6 +221,7 @@ describe('fillDateGaps', () => {
       const result = fillDateGaps({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       });
 
       expect(result.data).toHaveLength(4);
@@ -225,6 +240,9 @@ describe('fillDateGapsTwoDimensional', () => {
       const result = fillDateGapsTwoDimensional({
         data: [],
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues:
+          MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
       });
 
       expect(result.data).toEqual([]);
@@ -240,6 +258,9 @@ describe('fillDateGapsTwoDimensional', () => {
       const result = fillDateGapsTwoDimensional({
         data,
         dateGranularity: null,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues:
+          MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
       });
 
       expect(result.data).toEqual(data);
@@ -257,6 +278,9 @@ describe('fillDateGapsTwoDimensional', () => {
       const result = fillDateGapsTwoDimensional({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues:
+          MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
       });
 
       expect(result.data).toEqual(data);
@@ -275,6 +299,9 @@ describe('fillDateGapsTwoDimensional', () => {
       const result = fillDateGapsTwoDimensional({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues:
+          MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
       });
 
       expect(result.data).toHaveLength(6);
@@ -316,6 +343,9 @@ describe('fillDateGapsTwoDimensional', () => {
       const result = fillDateGapsTwoDimensional({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues:
+          MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
       });
 
       expect(result.data).toHaveLength(3);
@@ -338,6 +368,9 @@ describe('fillDateGapsTwoDimensional', () => {
       const result = fillDateGapsTwoDimensional({
         data,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues:
+          MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
         isDescOrder: true,
       });
 
@@ -358,6 +391,7 @@ describe('fillDateGaps with records that have no value', () => {
         { groupByDimensionValues: [null], aggregateValue: 7 },
       ],
       dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
     });
 
     expect(result.data).toEqual([
@@ -375,6 +409,7 @@ describe('fillDateGaps with records that have no value', () => {
         { groupByDimensionValues: [null], aggregateValue: 7 },
       ],
       dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       isDescOrder: true,
     });
 
@@ -393,6 +428,9 @@ describe('fillDateGaps with records that have no value', () => {
         { groupByDimensionValues: [null, 'Y'], aggregateValue: 2 },
       ],
       dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+      maximumNumberOfSecondDimensionValues:
+        MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
     });
 
     expect(result.data).toEqual([
@@ -417,6 +455,7 @@ describe('fillDateGaps with a dashboard filter range', () => {
     fillDateGaps({
       data,
       dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       dateRange,
       isDescOrder,
     }).data.map(({ groupByDimensionValues: [date] }) => date);
@@ -462,6 +501,7 @@ describe('fillDateGaps with a dashboard filter range', () => {
     const result = fillDateGaps({
       data,
       dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
       dateRange: {
         start: Temporal.PlainDate.from('2023-01-01'),
         end: Temporal.PlainDate.from('2024-03-05'),
@@ -472,6 +512,43 @@ describe('fillDateGaps with a dashboard filter range', () => {
     expect(result.wasTruncated).toBe(false);
   });
 
+  it('should keep the data bounds when the range exceeds the given date group cap', () => {
+    const result = fillDateGaps({
+      data,
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: 3,
+      dateRange: {
+        start: Temporal.PlainDate.from('2024-03-02'),
+        end: Temporal.PlainDate.from('2024-03-05'),
+      },
+    });
+
+    expect(result.data).toEqual(data);
+  });
+
+  it('should split the segment budget by the capped number of secondary values', () => {
+    const fillWithSecondDimensionCap = (
+      maximumNumberOfSecondDimensionValues: number,
+    ) =>
+      fillDateGapsTwoDimensional({
+        data: [
+          { groupByDimensionValues: ['2024-03-04', 'A'], aggregateValue: 5 },
+          { groupByDimensionValues: ['2024-03-04', 'B'], aggregateValue: 2 },
+        ],
+        dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+        maximumNumberOfSecondDimensionValues,
+        maximumNumberOfSegments: 6,
+        dateRange: {
+          start: Temporal.PlainDate.from('2024-03-01'),
+          end: Temporal.PlainDate.from('2024-03-06'),
+        },
+      }).data.length;
+
+    expect(fillWithSecondDimensionCap(2)).toBe(2);
+    expect(fillWithSecondDimensionCap(1)).toBe(12);
+  });
+
   it('should extend every secondary series of a two dimensional chart', () => {
     const result = fillDateGapsTwoDimensional({
       data: [
@@ -479,6 +556,9 @@ describe('fillDateGaps with a dashboard filter range', () => {
         { groupByDimensionValues: ['2024-03-04', 'B'], aggregateValue: 2 },
       ],
       dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      maximumNumberOfDateGroups: MAXIMUM_NUMBER_OF_DATE_GROUPS,
+      maximumNumberOfSecondDimensionValues:
+        MAXIMUM_NUMBER_OF_SECOND_DIMENSION_VALUES,
       dateRange: {
         start: Temporal.PlainDate.from('2024-03-03'),
         end: Temporal.PlainDate.from('2024-03-05'),
