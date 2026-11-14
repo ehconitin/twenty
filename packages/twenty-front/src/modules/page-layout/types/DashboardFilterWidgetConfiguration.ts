@@ -11,4 +11,5 @@ export type DashboardFilterWidgetConfiguration = Pick<
   primaryAxisGroupByFieldMetadataId?: string | null;
   groupByFieldMetadataId?: string | null;
   filter?: ChartFilter | null;
+  viewId?: string | null;
 };
