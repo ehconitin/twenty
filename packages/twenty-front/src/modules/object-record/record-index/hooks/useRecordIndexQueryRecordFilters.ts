@@ -5,7 +5,6 @@ import { omitRecordFiltersExcludedFromQueries } from '@/object-record/record-ind
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
 
-// Excluded filters stay in the index state, so filter editors still show and save them.
 // Groups are left as they are: an emptied group compiles to an empty `and`, which filters nothing.
 export const useRecordIndexQueryRecordFilters = (instanceId?: string) => {
   const currentRecordFilters = useAtomComponentStateValue(
