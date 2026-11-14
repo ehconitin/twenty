@@ -21,8 +21,6 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -257,27 +255,6 @@ describe('Page layout widget update should apply the dashboard filter binding ru
       });
     });
 
-    it('should reject a change to the bindings', async () => {
-      const { errors } = await updateOnePageLayoutWidget({
-        expectToFail: true,
-        gqlFields: 'id',
-        input: {
-          id: installedWidget.id,
-          configuration: {
-            ...installedWidget.configuration,
-            dashboardFilterBindings: [],
-          },
-        },
-      });
-
-      expect(errors).toHaveLength(1);
-      expect(errors?.[0].extensions?.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(errors?.[0].message).toContain('cannot be changed');
-      expect(await findStoredConfiguration(installedWidget.id)).toEqual(
-        installedWidget.configuration,
-      );
-    });
-
     it('should accept a save that keeps the bindings unchanged', async () => {
       const { errors } = await updateOnePageLayoutWidget({
         expectToFail: false,
@@ -292,6 +269,26 @@ describe('Page layout widget update should apply the dashboard filter binding ru
       expect(await findStoredConfiguration(installedWidget.id)).toEqual(
         installedWidget.configuration,
       );
+    });
+
+    it('should save a change to the bindings', async () => {
+      const { errors } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        gqlFields: 'id',
+        input: {
+          id: installedWidget.id,
+          configuration: {
+            ...installedWidget.configuration,
+            dashboardFilterBindings: [],
+          },
+        },
+      });
+
+      expect(errors).toBeUndefined();
+      expect(await findStoredConfiguration(installedWidget.id)).toEqual({
+        ...installedWidget.configuration,
+        dashboardFilterBindings: [],
+      });
     });
   });
 });
