@@ -1,4 +1,5 @@
 import { PageLayoutFilterDateRangeInput } from '@/page-layout/components/PageLayoutFilterDateRangeInput';
+import { type PageLayoutFilterDateRange } from '@/page-layout/types/PageLayoutFilterDateRange';
 import { getPageLayoutFilterDateRange } from '@/page-layout/utils/getPageLayoutFilterDateRange';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -18,10 +19,8 @@ jest.mock('twenty-ui/components/input', () => ({
 i18n.load('en', {});
 i18n.activate('en');
 
-type DateRange = { startDate: string | null; endDate: string | null };
-
-const renderInput = (dateRange: DateRange) => {
-  const renderWithRange = (range: DateRange) => (
+const renderInput = (dateRange: PageLayoutFilterDateRange) => {
+  const renderWithRange = (range: PageLayoutFilterDateRange) => (
     <JotaiProvider store={createStore()}>
       <I18nProvider i18n={i18n}>
         <PageLayoutFilterDateRangeInput
@@ -65,7 +64,7 @@ describe('PageLayoutFilterDateRangeInput', () => {
 
   it('should move to the month of a start date typed in an empty range', async () => {
     const DateRangeInputWithState = () => {
-      const [dateRange, setDateRange] = useState<DateRange>({
+      const [dateRange, setDateRange] = useState<PageLayoutFilterDateRange>({
         startDate: null,
         endDate: null,
       });

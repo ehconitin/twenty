@@ -1,5 +1,6 @@
 import { type PageLayoutFilterValueMode } from '@/page-layout/types/PageLayoutFilterValueMode';
 import { getPageLayoutFilterDateRange } from '@/page-layout/utils/getPageLayoutFilterDateRange';
+import { isPageLayoutFilterDateRangeReversed } from '@/page-layout/utils/isPageLayoutFilterDateRangeReversed';
 import {
   getDashboardFilterConditionValueIssue,
   isDefined,
@@ -35,11 +36,8 @@ export const getPageLayoutFilterValueMode = (
     operands.every((operand) => DATE_RANGE_OPERANDS.includes(operand)) &&
     new Set(operands).size === operands.length;
 
-  const { startDate, endDate } = getPageLayoutFilterDateRange(
-    isDateRange ? pageLayoutFilterValue : null,
+  const isReversedRange = isPageLayoutFilterDateRangeReversed(
+    getPageLayoutFilterDateRange(isDateRange ? pageLayoutFilterValue : null),
   );
-  // An empty or reversed range has no day the editor can show
-  const hasNoDay =
-    isDefined(startDate) && isDefined(endDate) && endDate < startDate;
-  return isDateRange && !hasNoDay ? 'CUSTOM_RANGE' : 'OTHER';
+  return isDateRange && !isReversedRange ? 'CUSTOM_RANGE' : 'OTHER';
 };

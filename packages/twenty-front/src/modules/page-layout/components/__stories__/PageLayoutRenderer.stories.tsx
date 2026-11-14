@@ -419,7 +419,6 @@ export const KeepsTheFirstTabVisibleOnAPhone: Story = {
       window.innerWidth,
     );
 
-    // The tab list absorbs the overflow, so the row around it and the bar never scrolls
     const rowAroundTabsAndBar = control.closest(
       '.page-layout-tab-list-print-hidden',
     );

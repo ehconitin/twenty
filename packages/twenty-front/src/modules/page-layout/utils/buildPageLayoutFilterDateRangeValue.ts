@@ -1,3 +1,4 @@
+import { type PageLayoutFilterDateRange } from '@/page-layout/types/PageLayoutFilterDateRange';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -10,10 +11,7 @@ import {
 export const buildPageLayoutFilterDateRangeValue = ({
   startDate,
   endDate,
-}: {
-  startDate: string | null;
-  endDate: string | null;
-}): PageLayoutFilterValue | null => {
+}: PageLayoutFilterDateRange): PageLayoutFilterValue | null => {
   const conditions = [
     ...(isNonEmptyString(startDate)
       ? [{ operand: ViewFilterOperand.IS_AFTER, value: startDate }]

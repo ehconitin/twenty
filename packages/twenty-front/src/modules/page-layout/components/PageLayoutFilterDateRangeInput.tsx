@@ -1,4 +1,6 @@
+import { type PageLayoutFilterDateRange } from '@/page-layout/types/PageLayoutFilterDateRange';
 import { buildPageLayoutFilterDateRangeValue } from '@/page-layout/utils/buildPageLayoutFilterDateRangeValue';
+import { isPageLayoutFilterDateRangeReversed } from '@/page-layout/utils/isPageLayoutFilterDateRangeReversed';
 import { DatePickerCalendar } from '@/ui/input/components/internal/date/components/DatePickerCalendar';
 import { DatePickerClearButton } from '@/ui/input/components/internal/date/components/DatePickerClearButton';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
@@ -42,7 +44,6 @@ const StyledBoundLabel = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-// The relative picker's covered days (its read-only month at half opacity), here between the two bounds
 const StyledCalendarContainer = styled(StyledDatePickerContainer)`
   .react-datepicker__day--in-range:hover {
     background-color: ${themeCssVariables.color.blue};
@@ -60,10 +61,8 @@ const StyledError = styled.div`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-type DateRange = { startDate: string | null; endDate: string | null };
-
 type PageLayoutFilterDateRangeInputProps = {
-  dateRange: DateRange;
+  dateRange: PageLayoutFilterDateRange;
   onChange: (value: PageLayoutFilterValue | null) => void;
 };
 
@@ -73,7 +72,8 @@ export const PageLayoutFilterDateRangeInput = ({
 }: PageLayoutFilterDateRangeInputProps) => {
   const { t } = useLingui();
   const instanceId = useId();
-  const [activeBound, setActiveBound] = useState<keyof DateRange>('startDate');
+  const [activeBound, setActiveBound] =
+    useState<keyof PageLayoutFilterDateRange>('startDate');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // The inputs keep their own text, so a refused date remounts them on the stored range
   const [inputsKey, setInputsKey] = useState(0);
@@ -81,13 +81,16 @@ export const PageLayoutFilterDateRangeInput = ({
   const { startDate, endDate } = dateRange;
   const activeBoundDate = dateRange[activeBound];
 
-  const handleBoundChange = (bound: keyof DateRange, date: string | null) => {
+  const handleBoundChange = ({
+    bound,
+    date,
+  }: {
+    bound: keyof PageLayoutFilterDateRange;
+    date: string | null;
+  }) => {
     const newDateRange = { ...dateRange, [bound]: date };
     const dateRangeValue = buildPageLayoutFilterDateRangeValue(newDateRange);
-    const isEndBeforeStart =
-      isNonEmptyString(newDateRange.startDate) &&
-      isNonEmptyString(newDateRange.endDate) &&
-      newDateRange.endDate < newDateRange.startDate;
+    const isEndBeforeStart = isPageLayoutFilterDateRangeReversed(newDateRange);
     const isOutOfSupportedYears = (dateRangeValue?.conditions ?? []).some(
       (condition) =>
         isDefined(getDashboardFilterConditionValueIssue(condition)),
@@ -118,7 +121,7 @@ export const PageLayoutFilterDateRangeInput = ({
     onChange(null);
   };
 
-  const bounds: { bound: keyof DateRange; label: string }[] = [
+  const bounds: { bound: keyof PageLayoutFilterDateRange; label: string }[] = [
     { bound: 'startDate', label: t`Start date` },
     { bound: 'endDate', label: t`End date` },
   ];
@@ -137,7 +140,7 @@ export const PageLayoutFilterDateRangeInput = ({
               variant="transparent"
               aria-label={label}
               date={dateRange[bound]}
-              onChange={(date) => handleBoundChange(bound, date)}
+              onChange={(date) => handleBoundChange({ bound, date })}
             />
           </StyledBoundRow>
         ))}
@@ -160,7 +163,7 @@ export const PageLayoutFilterDateRangeInput = ({
               ? { start: startDate, end: endDate }
               : undefined
           }
-          onSelect={(date) => handleBoundChange(activeBound, date)}
+          onSelect={(date) => handleBoundChange({ bound: activeBound, date })}
           renderHeader={(header) => (
             <DatePickerHeader
               instanceId={instanceId}
