@@ -30,7 +30,7 @@ export const useSetDashboardFilterValue = () => {
       setDashboardFilterValueInSearchParams({
         searchParams: new URLSearchParams(search),
         pageLayoutFilterId,
-        value: isDashboardFilterValueStoredAsDefault(value, defaultValue)
+        value: isDashboardFilterValueStoredAsDefault({ value, defaultValue })
           ? null
           : value,
       }),

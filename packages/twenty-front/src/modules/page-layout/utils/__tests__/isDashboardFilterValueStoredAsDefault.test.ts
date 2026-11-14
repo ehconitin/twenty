@@ -15,34 +15,37 @@ const range = (start: string, dayAfterEnd: string) => ({
 describe('isDashboardFilterValueStoredAsDefault', () => {
   it('should read an explicit empty value as no default', () => {
     expect(
-      isDashboardFilterValueStoredAsDefault({ conditions: [] }, null),
+      isDashboardFilterValueStoredAsDefault({
+        value: { conditions: [] },
+        defaultValue: null,
+      }),
     ).toBe(true);
   });
 
   it('should match a bare relative value with the same default stored with a time zone', () => {
     expect(
-      isDashboardFilterValueStoredAsDefault(
-        relative('THIS_1_MONTH'),
-        relative('THIS_1_MONTH;;Europe/Paris;;MONDAY;;'),
-      ),
+      isDashboardFilterValueStoredAsDefault({
+        value: relative('THIS_1_MONTH'),
+        defaultValue: relative('THIS_1_MONTH;;Europe/Paris;;MONDAY;;'),
+      }),
     ).toBe(true);
   });
 
   it('should match the same custom range', () => {
     expect(
-      isDashboardFilterValueStoredAsDefault(
-        range('2026-03-10', '2026-03-21'),
-        range('2026-03-10', '2026-03-21'),
-      ),
+      isDashboardFilterValueStoredAsDefault({
+        value: range('2026-03-10', '2026-03-21'),
+        defaultValue: range('2026-03-10', '2026-03-21'),
+      }),
     ).toBe(true);
   });
 
   it('should not match a different range', () => {
     expect(
-      isDashboardFilterValueStoredAsDefault(
-        range('2026-03-10', '2026-03-21'),
-        range('2026-03-10', '2026-03-22'),
-      ),
+      isDashboardFilterValueStoredAsDefault({
+        value: range('2026-03-10', '2026-03-21'),
+        defaultValue: range('2026-03-10', '2026-03-22'),
+      }),
     ).toBe(false);
   });
 });
