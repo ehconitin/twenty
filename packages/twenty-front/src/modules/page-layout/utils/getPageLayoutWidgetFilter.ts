@@ -5,7 +5,6 @@ import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { getRecordTableWidgetFilter } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetFilter';
 import { getRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewForDisplay';
 import { type View } from '@/views/types/View';
-import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getPageLayoutWidgetFilter = ({
@@ -14,7 +13,7 @@ export const getPageLayoutWidgetFilter = ({
   recordTableWidgetViewDrafts,
 }: {
   widget: Pick<PageLayoutWidget, 'id'> & {
-    configuration: DashboardFilterWidgetConfiguration & { viewId?: unknown };
+    configuration: DashboardFilterWidgetConfiguration;
   };
   viewsById: Map<string, View>;
   recordTableWidgetViewDrafts: Record<string, RecordTableWidgetViewSnapshot>;
@@ -23,7 +22,7 @@ export const getPageLayoutWidgetFilter = ({
 
   const view = getRecordTableWidgetViewForDisplay({
     draftSnapshot: recordTableWidgetViewDrafts[widget.id],
-    view: isString(viewId) ? viewsById.get(viewId) : undefined,
+    view: isDefined(viewId) ? viewsById.get(viewId) : undefined,
   });
 
   if (isDefined(view)) {
