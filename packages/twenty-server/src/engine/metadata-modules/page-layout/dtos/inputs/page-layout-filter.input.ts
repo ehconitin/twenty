@@ -20,7 +20,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class PageLayoutFilterConditionInput implements PageLayoutFilterCondition {
+class PageLayoutFilterConditionInput implements PageLayoutFilterCondition {
   @Field(() => ViewFilterOperand)
   @IsEnum(ViewFilterOperand)
   operand: ViewFilterOperand;
