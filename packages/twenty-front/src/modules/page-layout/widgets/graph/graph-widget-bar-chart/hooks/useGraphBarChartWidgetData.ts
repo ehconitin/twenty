@@ -57,12 +57,17 @@ export const useGraphBarChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput();
-
   const dataConfiguration = useMemo(
     () => extractBarChartDataConfiguration(configuration),
     [configuration],
   );
+
+  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput({
+    configuration: dataConfiguration,
+    primaryAxisDateField: objectMetadataItem.fields.find(
+      ({ id }) => id === configuration.primaryAxisGroupByFieldMetadataId,
+    ),
+  });
 
   const {
     data: queryData,
@@ -73,7 +78,6 @@ export const useGraphBarChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration: dataConfiguration,
         ...dashboardFilterChartDataInput,
       },
     },

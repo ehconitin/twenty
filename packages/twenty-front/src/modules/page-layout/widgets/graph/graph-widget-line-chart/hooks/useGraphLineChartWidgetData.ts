@@ -9,6 +9,7 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,9 +47,17 @@ export const useGraphLineChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput();
+  const dataConfiguration = useMemo(
+    () => extractLineChartDataConfiguration(configuration),
+    [configuration],
+  );
 
-  const dataConfiguration = extractLineChartDataConfiguration(configuration);
+  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput({
+    configuration: dataConfiguration,
+    primaryAxisDateField: objectMetadataItem.fields.find(
+      ({ id }) => id === configuration.primaryAxisGroupByFieldMetadataId,
+    ),
+  });
 
   const {
     data: queryData,
@@ -58,7 +67,6 @@ export const useGraphLineChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration: dataConfiguration,
         ...dashboardFilterChartDataInput,
       },
     },

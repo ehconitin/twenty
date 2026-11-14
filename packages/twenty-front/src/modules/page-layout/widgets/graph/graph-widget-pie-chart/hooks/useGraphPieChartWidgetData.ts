@@ -45,12 +45,14 @@ export const useGraphPieChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput();
-
   const dataConfiguration = useMemo(
     () => extractPieChartDataConfiguration(configuration),
     [configuration],
   );
+
+  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput({
+    configuration: dataConfiguration,
+  });
 
   const {
     data: queryData,
@@ -60,7 +62,6 @@ export const useGraphPieChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration: dataConfiguration,
         ...dashboardFilterChartDataInput,
       },
     },
