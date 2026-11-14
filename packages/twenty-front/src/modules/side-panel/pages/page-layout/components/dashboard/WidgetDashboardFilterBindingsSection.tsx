@@ -1,9 +1,7 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { DASHBOARD_FILTER_DEFAULT_OPTION_VALUE } from '@/page-layout/constants/DashboardFilterDefaultOptionValue';
 import { DASHBOARD_FILTER_IGNORED_OPTION_VALUE } from '@/page-layout/constants/DashboardFilterIgnoredOptionValue';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getDashboardFilterBindingsWithWidgetSetting } from '@/page-layout/utils/getDashboardFilterBindingsWithWidgetSetting';
@@ -11,7 +9,6 @@ import { getPageLayoutFilterDisplayLabel } from '@/page-layout/utils/getPageLayo
 import { getPageLayoutWidgetFilter } from '@/page-layout/utils/getPageLayoutWidgetFilter';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
 import { getWidgetDashboardFilterSettings } from '@/page-layout/utils/getWidgetDashboardFilterSettings';
-import { isPersistedPageLayoutWidgetReadOnly } from '@/page-layout/utils/isPersistedPageLayoutWidgetReadOnly';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { CHART_SETTINGS_DROPDOWN_SIDE_OFFSET } from '@/side-panel/pages/page-layout/constants/ChartSettingsDropdownSideOffset';
@@ -22,7 +19,6 @@ import { getDashboardFilterBindingItemId } from '@/side-panel/pages/page-layout/
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -35,7 +31,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type WidgetDashboardFilterBindingsSectionProps = {
   widget: PageLayoutWidget;
@@ -51,7 +46,6 @@ export const WidgetDashboardFilterBindingsSection = ({
     objectMetadataItemsByIdMapSelector,
   );
   const viewsByIdMap = useAtomStateValue(viewsByIdMapSelector);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -59,21 +53,10 @@ export const WidgetDashboardFilterBindingsSection = ({
     pageLayoutId,
     objectMetadataId: widget.objectMetadataId,
   });
-  const pageLayoutPersisted = useAtomComponentStateValue(
-    pageLayoutPersistedComponentState,
-    pageLayoutId,
-  );
   const recordTableWidgetViewDraft = useAtomComponentStateValue(
     recordTableWidgetViewDraftComponentState,
     pageLayoutId,
   );
-
-  const isReadOnly = isPersistedPageLayoutWidgetReadOnly({
-    persistedWidget: pageLayoutPersisted?.tabs
-      .flatMap((tab) => tab.widgets)
-      .find(({ id }) => id === widget.id),
-    currentWorkspace,
-  });
 
   if (!isNonEmptyArray(pageLayoutFilters)) {
     return null;
@@ -122,34 +105,22 @@ export const WidgetDashboardFilterBindingsSection = ({
           <SelectableListItem
             key={pageLayoutFilter.id}
             itemId={itemId}
-            onEnter={
-              isReadOnly
-                ? undefined
-                : () =>
-                    openDropdown({
-                      dropdownComponentInstanceIdFromProps: itemId,
-                    })
+            onEnter={() =>
+              openDropdown({
+                dropdownComponentInstanceIdFromProps: itemId,
+              })
             }
           >
             <DropdownRoot dropdownId={itemId} type="picker">
-              <Tooltip
-                content={t`Set by the app that installed this widget`}
-                delay={TooltipDelay.mediumDelay}
-                disabled={!isReadOnly}
-              >
-                <div>
-                  <CommandMenuItemDropdownTrigger
-                    id={itemId}
-                    Icon={IconCalendarEvent}
-                    label={label}
-                    description={
-                      options.find((option) => option.value === value)?.label
-                    }
-                    contextualTextPosition="right"
-                    disabled={isReadOnly}
-                  />
-                </div>
-              </Tooltip>
+              <CommandMenuItemDropdownTrigger
+                id={itemId}
+                Icon={IconCalendarEvent}
+                label={label}
+                description={
+                  options.find((option) => option.value === value)?.label
+                }
+                contextualTextPosition="right"
+              />
               <DropdownContent
                 side="bottom"
                 align="end"
