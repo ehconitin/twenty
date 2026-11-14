@@ -109,6 +109,50 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     ).toEqual(['after', 'this-quarter', 'before']);
   });
 
+  it('should keep every bound when the field has two afters and one before', () => {
+    const recordFilters = [
+      condition('after-2020', ViewFilterOperand.IS_AFTER),
+      condition('after-2024', ViewFilterOperand.IS_AFTER),
+      condition('before-2025', ViewFilterOperand.IS_BEFORE),
+    ];
+
+    expect(replace(recordFilters)).toEqual({
+      filter: { recordFilters, recordFilterGroups: [] },
+      replacedRecordFilters: [],
+      stillFilteredFieldMetadataIds: [CLOSE_DATE],
+    });
+  });
+
+  it('should keep every bound when the field has one after and two befores', () => {
+    const recordFilters = [
+      condition('after-2020', ViewFilterOperand.IS_AFTER),
+      condition('before-2024', ViewFilterOperand.IS_BEFORE),
+      condition('before-2025', ViewFilterOperand.IS_BEFORE),
+    ];
+
+    expect(replace(recordFilters)).toEqual({
+      filter: { recordFilters, recordFilterGroups: [] },
+      replacedRecordFilters: [],
+      stillFilteredFieldMetadataIds: [CLOSE_DATE],
+    });
+  });
+
+  it('should still replace a relative period next to bounds it cannot pair', () => {
+    const recordFilters = [
+      condition('after-2020', ViewFilterOperand.IS_AFTER),
+      condition('after-2024', ViewFilterOperand.IS_AFTER),
+      condition('before-2025', ViewFilterOperand.IS_BEFORE),
+    ];
+
+    const { filter, replacedRecordFilters } = replace([
+      ...recordFilters,
+      THIS_QUARTER,
+    ]);
+
+    expect(filter.recordFilters).toEqual(recordFilters);
+    expect(replacedRecordFilters).toEqual([THIS_QUARTER]);
+  });
+
   it('should replace two periods on the field', () => {
     const today = condition('today', ViewFilterOperand.IS_TODAY);
 

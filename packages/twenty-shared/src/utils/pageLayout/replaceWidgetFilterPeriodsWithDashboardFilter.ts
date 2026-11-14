@@ -15,22 +15,35 @@ type WidgetRecordFilterGroup = {
   parentRecordFilterGroupId?: string | null;
 };
 
+const countConditionsWithOperand = ({
+  conditions,
+  operand,
+}: {
+  conditions: WidgetRecordFilter[];
+  operand: ViewFilterOperand;
+}) => conditions.filter((condition) => condition.operand === operand).length;
+
 // An after + before pair is how the dashboard stores its own custom range
-const isPeriodCondition = (
-  { operand }: WidgetRecordFilter,
-  conditionsOnField: WidgetRecordFilter[],
-) =>
+const isPeriodCondition = ({
+  recordFilter: { operand },
+  conditionsOnField,
+}: {
+  recordFilter: WidgetRecordFilter;
+  conditionsOnField: WidgetRecordFilter[];
+}) =>
   DASHBOARD_FILTER_PERIOD_OPERANDS.some(
     (periodOperand) => periodOperand === operand,
   ) ||
   ((operand === ViewFilterOperand.IS_AFTER ||
     operand === ViewFilterOperand.IS_BEFORE) &&
-    conditionsOnField.some(
-      (condition) => condition.operand === ViewFilterOperand.IS_AFTER,
-    ) &&
-    conditionsOnField.some(
-      (condition) => condition.operand === ViewFilterOperand.IS_BEFORE,
-    ));
+    countConditionsWithOperand({
+      conditions: conditionsOnField,
+      operand: ViewFilterOperand.IS_AFTER,
+    }) === 1 &&
+    countConditionsWithOperand({
+      conditions: conditionsOnField,
+      operand: ViewFilterOperand.IS_BEFORE,
+    }) === 1);
 
 // Only conditions ANDed at the root can be replaced: ungrouped ones and those in the root group when it is an AND
 export const replaceWidgetFilterPeriodsWithDashboardFilter = <
@@ -75,13 +88,13 @@ export const replaceWidgetFilterPeriodsWithDashboardFilter = <
 
   const replacedRecordFilters = replaceableRecordFilters.filter(
     (recordFilter) =>
-      isPeriodCondition(
+      isPeriodCondition({
         recordFilter,
-        replaceableRecordFilters.filter(
+        conditionsOnField: replaceableRecordFilters.filter(
           ({ fieldMetadataId }) =>
             fieldMetadataId === recordFilter.fieldMetadataId,
         ),
-      ),
+      }),
   );
 
   const keptRecordFilters = recordFilters.filter(
