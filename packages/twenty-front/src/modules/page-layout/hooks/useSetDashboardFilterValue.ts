@@ -1,6 +1,6 @@
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { dashboardFilterSessionSearchFamilyState } from '@/page-layout/states/dashboardFilterSessionSearchFamilyState';
-import { getDashboardFilterSessionSearch } from '@/page-layout/utils/getDashboardFilterSessionSearch';
+import { getValidDashboardFilterSearch } from '@/page-layout/utils/getValidDashboardFilterSearch';
 import { isDashboardFilterValueStoredAsDefault } from '@/page-layout/utils/isDashboardFilterValueStoredAsDefault';
 import { removeDashboardFilterValuesFromSearchParams } from '@/page-layout/utils/removeDashboardFilterValuesFromSearchParams';
 import { setDashboardFilterValueInSearchParams } from '@/page-layout/utils/setDashboardFilterValueInSearchParams';
@@ -21,7 +21,7 @@ export const useSetDashboardFilterValue = () => {
   // The memory is written first, so the URL change never reads as a value to restore
   const replaceSearch = (searchParams: URLSearchParams) => {
     setDashboardFilterSessionSearch(
-      getDashboardFilterSessionSearch(searchParams),
+      getValidDashboardFilterSearch(searchParams),
     );
     // Keeps the tab hash and the router state, which setSearchParams drops
     // oxlint-disable-next-line twenty/no-navigate-prefer-link

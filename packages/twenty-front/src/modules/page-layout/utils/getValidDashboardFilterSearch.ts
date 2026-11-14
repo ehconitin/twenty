@@ -2,14 +2,14 @@ import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/utils/
 import { setDashboardFilterValueInSearchParams } from '@/page-layout/utils/setDashboardFilterValueInSearchParams';
 
 // Only values the bar can apply, re-serialized, so a malformed link is never remembered
-export const getDashboardFilterSessionSearch = (
+export const getValidDashboardFilterSearch = (
   searchParams: URLSearchParams,
 ): string =>
   Object.entries(parseDashboardFilterValuesFromSearchParams(searchParams))
     .reduce(
-      (sessionSearchParams, [pageLayoutFilterId, value]) =>
+      (validSearchParams, [pageLayoutFilterId, value]) =>
         setDashboardFilterValueInSearchParams({
-          searchParams: sessionSearchParams,
+          searchParams: validSearchParams,
           pageLayoutFilterId,
           value,
         }),
