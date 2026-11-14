@@ -8,11 +8,8 @@ import {
 import { isNonEmptyArray, isRecordFilterValueValid } from 'twenty-shared/utils';
 
 import { getFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-filter-condition-validation-issue.util';
+import { type PageLayoutFilterValidationError } from 'src/engine/metadata-modules/flat-page-layout/types/page-layout-filter-validation-error.type';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-
-type PageLayoutFilterValidationError =
-  FlatEntityValidationError<PageLayoutExceptionCode>;
 
 const validateCondition = ({
   condition: { operand, value },
