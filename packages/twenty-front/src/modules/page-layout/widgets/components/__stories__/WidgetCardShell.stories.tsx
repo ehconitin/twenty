@@ -142,11 +142,15 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
 
 const CREATED_AT_FIELD_LABEL = `Date range · ${createdAtField.label}`;
 
-const expectEditModeFieldLabel = async (
-  canvasElement: HTMLElement,
-  text: string,
-  fullText: string,
-) => {
+const expectEditModeFieldLabel = async ({
+  canvasElement,
+  text,
+  fullText,
+}: {
+  canvasElement: HTMLElement;
+  text: string;
+  fullText: string;
+}) => {
   const canvas = within(canvasElement);
   const body = within(canvasElement.ownerDocument.body);
   const label = await canvas.findByText(text);
@@ -665,7 +669,7 @@ export const DashboardFilterIndicatorFocusRingIsNotClipped: Story = {
   },
 };
 
-export const DashboardFilterUnavailableStatusKeepsItsText: Story = {
+export const DashboardFilterUnavailableStatusTruncatesInANarrowHeader: Story = {
   render: () => (
     <DashboardFilterWidgetCardShellStory
       title="Total Pipeline Value This Quarter"
@@ -751,11 +755,11 @@ export const DashboardFilterFieldLabelInEditMode: Story = {
     <DashboardFilterWidgetCardShellStory conditions={null} isInEditMode />
   ),
   play: async ({ canvasElement }) => {
-    await expectEditModeFieldLabel(
+    await expectEditModeFieldLabel({
       canvasElement,
-      createdAtField.label,
-      CREATED_AT_FIELD_LABEL,
-    );
+      text: createdAtField.label,
+      fullText: CREATED_AT_FIELD_LABEL,
+    });
   },
 };
 
@@ -770,11 +774,11 @@ export const DashboardFilterFieldLabelInEditModeOnANarrowWidget: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const label = await expectEditModeFieldLabel(
+    const label = await expectEditModeFieldLabel({
       canvasElement,
-      createdAtField.label,
-      CREATED_AT_FIELD_LABEL,
-    );
+      text: createdAtField.label,
+      fullText: CREATED_AT_FIELD_LABEL,
+    });
     const title = canvas.getByText('Total Pipeline Value This Quarter');
 
     expect(label.scrollWidth).toBe(label.clientWidth);
@@ -816,11 +820,11 @@ export const DashboardFilterIgnoredLabelInEditMode: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expectEditModeFieldLabel(
+    await expectEditModeFieldLabel({
       canvasElement,
-      'Ignored',
-      'Date range · Ignored',
-    );
+      text: 'Ignored',
+      fullText: 'Date range · Ignored',
+    });
     expect(canvas.queryByText('Ignores Date range')).not.toBeInTheDocument();
   },
 };
@@ -838,29 +842,17 @@ export const DashboardFilterUnavailableLabelInEditMode: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
-    await expectEditModeFieldLabel(
+    await expectEditModeFieldLabel({
       canvasElement,
-      'Unavailable field',
-      'Date range · Unavailable field',
-    );
+      text: 'Unavailable field',
+      fullText: 'Date range · Unavailable field',
+    });
   },
 };
 
 export const DashboardFilterOverlapPill: Story = {
   render: () => (
-    <DashboardFilterWidgetCardShellStory
-      chartFilter={{
-        recordFilters: [
-          {
-            id: 'close-date-condition',
-            fieldMetadataId: closeDateField.id,
-            operand: ViewFilterOperand.IS_NOT_EMPTY,
-            value: '',
-          },
-        ],
-        recordFilterGroups: [],
-      }}
-    />
+    <DashboardFilterWidgetCardShellStory chartFilter={OVERLAP_CHART_FILTER} />
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -921,11 +913,11 @@ export const DashboardFilterFieldLabelInEditModeWithAnInvalidDefault: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Invalid filter')).toBeVisible();
-    await expectEditModeFieldLabel(
+    await expectEditModeFieldLabel({
       canvasElement,
-      createdAtField.label,
-      CREATED_AT_FIELD_LABEL,
-    );
+      text: createdAtField.label,
+      fullText: CREATED_AT_FIELD_LABEL,
+    });
   },
 };
 
