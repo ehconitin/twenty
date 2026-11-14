@@ -16,6 +16,7 @@ import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/
 import { stringifyRelativeDateFilter } from '@/utils/filter/dates/utils/stringifyRelativeDateFilter';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { getDashboardFilterConditionValueIssue } from '@/utils/pageLayout/getDashboardFilterConditionValueIssue';
+import { SUPPORTED_ISO_YEAR_PREFIX } from '@/utils/pageLayout/internal/SupportedIsoYearPrefix';
 import { InvalidDashboardFilterError } from '@/utils/pageLayout/InvalidDashboardFilterError';
 import { resolveDashboardFilterFieldForWidget } from '@/utils/pageLayout/resolveDashboardFilterFieldForWidget';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -35,9 +36,6 @@ const isAppliedDashboardFilterFieldResolution = (
   resolution: DashboardFilterFieldResolution,
 ): resolution is AppliedDashboardFilterFieldResolution =>
   !isNull(resolution.fieldMetadataId);
-
-// Postgres rejects year 0 and ISO dates with an expanded year
-const SUPPORTED_ISO_YEAR_PREFIX = /^(?!0000)\d{4}-/;
 
 const turnPlainDateIntoInstantStringOrThrow = ({
   plainDate,
@@ -62,7 +60,7 @@ const turnPlainDateIntoInstantStringOrThrow = ({
   return instantString;
 };
 
-const convertConditionToRecordFilters = ({
+const convertConditionToRecordFiltersOrThrow = ({
   condition: { operand, value },
   fieldMetadataId,
   fieldType,
@@ -138,7 +136,7 @@ const convertConditionToRecordFilters = ({
   ];
 };
 
-export const buildDashboardFilterForWidget = ({
+export const buildDashboardFilterForWidgetOrThrow = ({
   values,
   bindings,
   groupByFieldMetadataIds,
@@ -195,7 +193,7 @@ export const buildDashboardFilterForWidget = ({
     appliedFields.push({ pageLayoutFilterId, ...resolution });
     recordFilters.push(
       ...conditions.flatMap((condition) =>
-        convertConditionToRecordFilters({
+        convertConditionToRecordFiltersOrThrow({
           condition,
           fieldMetadataId,
           fieldType: fieldTypeById.get(fieldMetadataId),

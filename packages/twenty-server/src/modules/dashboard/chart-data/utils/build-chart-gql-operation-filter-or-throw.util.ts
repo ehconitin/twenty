@@ -9,7 +9,7 @@ import {
   type PageLayoutFilterType,
 } from 'twenty-shared/types';
 import {
-  buildDashboardFilterForWidget,
+  buildDashboardFilterForWidgetOrThrow,
   combineFilters,
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
   InvalidDashboardFilterError,
@@ -44,11 +44,11 @@ const createInvalidDashboardFilterException = (context: string) =>
     ChartDataExceptionCode.INVALID_DASHBOARD_FILTER,
   );
 
-const buildDashboardFilterForWidgetOrThrow = (
-  input: Parameters<typeof buildDashboardFilterForWidget>[0],
+const buildDashboardFilterForWidgetOrThrowChartDataException = (
+  input: Parameters<typeof buildDashboardFilterForWidgetOrThrow>[0],
 ) => {
   try {
-    return buildDashboardFilterForWidget(input);
+    return buildDashboardFilterForWidgetOrThrow(input);
   } catch (error) {
     if (error instanceof InvalidDashboardFilterError) {
       throw createInvalidDashboardFilterException(error.message);
@@ -169,8 +169,11 @@ export const buildChartGqlOperationFilterOrThrow = ({
     return convertFilter(widgetFilter, widgetTimeZone);
   }
 
-  // A missing time zone fails the builder's time zone check
-  const timeZone = viewerTimeZone ?? '';
+  if (!isDefined(viewerTimeZone)) {
+    throw createInvalidDashboardFilterException(
+      'a viewer time zone is required with dashboard filter values',
+    );
+  }
 
   const objectFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
@@ -205,20 +208,19 @@ export const buildChartGqlOperationFilterOrThrow = ({
     }
   }
 
-  const { recordFilters, appliedFields } = buildDashboardFilterForWidgetOrThrow(
-    {
+  const { recordFilters, appliedFields } =
+    buildDashboardFilterForWidgetOrThrowChartDataException({
       values: dashboardFilterValues,
       bindings: dashboardFilterBindings,
       groupByFieldMetadataIds,
       widgetFilterFieldMetadataIds,
       fields: objectFlatFieldMetadatas,
-      timeZone,
+      timeZone: viewerTimeZone,
       firstDayOfTheWeek: convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
         firstDayOfTheWeek,
         FirstDayOfTheWeek.MONDAY,
       ),
-    },
-  );
+    });
 
   const { filter: widgetFilterWithoutReplacedPeriods } =
     replaceWidgetFilterPeriodsWithDashboardFilter({
@@ -230,6 +232,6 @@ export const buildChartGqlOperationFilterOrThrow = ({
 
   return combineFilters([
     convertFilter(widgetFilterWithoutReplacedPeriods, widgetTimeZone),
-    convertFilter({ recordFilters }, timeZone),
+    convertFilter({ recordFilters }, viewerTimeZone),
   ]);
 };

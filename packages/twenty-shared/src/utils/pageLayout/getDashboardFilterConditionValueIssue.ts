@@ -3,10 +3,11 @@ import { type PageLayoutFilterCondition, ViewFilterOperand } from '@/types';
 import { isSubDayRelativeDateFilterUnit } from '@/utils/filter/dates/utils/isSubDayRelativeDateFilterUnit';
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
 import { plainDateFilterValueSchema } from '@/utils/filter/utils/validation-schemas/filterValueScalarSchemas';
+import { SUPPORTED_ISO_YEAR_PREFIX } from '@/utils/pageLayout/internal/SupportedIsoYearPrefix';
 
 const MAX_RELATIVE_DATE_AMOUNT = 1000;
 
-const SUPPORTED_PLAIN_DATE_FORMAT = /^(?!0000)\d{4}-\d{2}-\d{2}$/;
+const PLAIN_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
 
 const getRelativeDateIssue = (value: string): string | undefined => {
   const relativeDateFilter =
@@ -41,7 +42,8 @@ export const getDashboardFilterConditionValueIssue = ({
   }
 
   const isSupportedPlainDate =
-    SUPPORTED_PLAIN_DATE_FORMAT.test(value) &&
+    PLAIN_DATE_FORMAT.test(value) &&
+    SUPPORTED_ISO_YEAR_PREFIX.test(value) &&
     plainDateFilterValueSchema.safeParse(value).success;
 
   return isSupportedPlainDate
