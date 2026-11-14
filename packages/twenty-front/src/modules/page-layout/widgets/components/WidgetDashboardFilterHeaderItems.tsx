@@ -1,21 +1,9 @@
-import { WidgetCardHeaderPillsMaxWidthContext } from '@/page-layout/contexts/WidgetCardHeaderPillsMaxWidthContext';
-import { hasWidgetDashboardFilterHeaderCollapsibleItem } from '@/page-layout/utils/hasWidgetDashboardFilterHeaderCollapsibleItem';
 import { type WidgetDashboardFilterHeaderContent } from '@/page-layout/types/WidgetDashboardFilterHeaderContent';
 import { WidgetCardHeaderHoverReveal } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderHoverReveal';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { styled } from '@linaria/react';
-import {
-  type ReactElement,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconFilter, IconFilterOff } from 'twenty-ui/icon';
-import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -36,6 +24,10 @@ const StyledPill = styled.div`
   padding: 0 ${themeCssVariables.spacing[1]};
   user-select: none;
   white-space: nowrap;
+
+  > svg {
+    flex-shrink: 0;
+  }
 `;
 
 const StyledFieldLabel = styled.div`
@@ -46,6 +38,10 @@ const StyledFieldLabel = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   white-space: nowrap;
+
+  > svg {
+    flex-shrink: 0;
+  }
 `;
 
 const StyledText = styled.span`
@@ -69,24 +65,6 @@ const StyledHoverIndicator = styled.span`
   }
 `;
 
-const StyledMeasure = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  visibility: hidden;
-  width: max-content;
-`;
-
-// The measured copy draws its text in CSS, so it never doubles the real text
-const StyledMeasuredText = styled.span`
-  &::after {
-    content: attr(data-text);
-  }
-`;
-
 type WidgetDashboardFilterHeaderItemsProps = {
   content: WidgetDashboardFilterHeaderContent;
 };
@@ -96,132 +74,65 @@ export const WidgetDashboardFilterHeaderItems = ({
 }: WidgetDashboardFilterHeaderItemsProps) => {
   const theme = useTheme();
   const isTouchDevice = useIsTouchDevice();
-  const maxWidth = useContext(WidgetCardHeaderPillsMaxWidthContext);
-  const measureRef = useRef<HTMLDivElement>(null);
-  const [naturalWidth, setNaturalWidth] = useState(0);
-  const handleMeasureDimensionChange = useCallback(
-    ({ width }: { width: number }) => setNaturalWidth(width),
-    [],
-  );
-
-  // Rather than truncate, items collapse to their icon, but only where hover can open the tooltip that names them
-  const canCollapse =
-    !isTouchDevice &&
-    hasWidgetDashboardFilterHeaderCollapsibleItem({ fieldLabels, pills });
-  const isCompact =
-    canCollapse && isDefined(maxWidth) && naturalWidth > maxWidth;
-
-  const renderItems = (isMeasure: boolean) => {
-    const renderText = ({
-      text,
-      isCollapsible = true,
-    }: {
-      text: string;
-      isCollapsible?: boolean;
-    }): ReactNode => {
-      if (isMeasure) {
-        return <StyledMeasuredText data-text={text} />;
-      }
-
-      if (isCompact && isCollapsible) {
-        return <VisuallyHidden>{text}</VisuallyHidden>;
-      }
-
-      return <StyledText>{text}</StyledText>;
-    };
-
-    const withTooltip = ({
-      key,
-      tooltip,
-      trigger,
-    }: {
-      key: string;
-      tooltip: string;
-      trigger: ReactElement;
-    }) =>
-      isMeasure ? (
-        <span key={key}>{trigger}</span>
-      ) : (
-        <Tooltip key={key} content={tooltip} delay={TooltipDelay.mediumDelay}>
-          {trigger}
-        </Tooltip>
-      );
-
-    return (
-      <>
-        {fieldLabels.map(({ pageLayoutFilterId, kind, text, fullText }) => {
-          const Icon = kind === 'APPLIED' ? IconCalendarEvent : IconFilterOff;
-
-          return withTooltip({
-            key: pageLayoutFilterId,
-            tooltip: fullText,
-            trigger: (
-              <StyledFieldLabel>
-                <Icon size={theme.icon.size.sm} />
-                {renderText({ text })}
-              </StyledFieldLabel>
-            ),
-          });
-        })}
-        {pills.map(({ pageLayoutFilterId, kind, text, tooltip }) => {
-          const Icon = kind === 'OVERLAP' ? IconFilter : IconFilterOff;
-
-          return withTooltip({
-            key: pageLayoutFilterId,
-            tooltip,
-            trigger:
-              kind === 'UNAVAILABLE' ? (
-                <StyledStatusContainer>
-                  <Status color="orange">
-                    {renderText({ text, isCollapsible: false })}
-                  </Status>
-                </StyledStatusContainer>
-              ) : (
-                <StyledPill>
-                  <Icon size={theme.icon.size.sm} />
-                  {renderText({ text })}
-                </StyledPill>
-              ),
-          });
-        })}
-        {isDefined(hoverIndicatorText) &&
-          (isMeasure ? (
-            <IconCalendarEvent size={theme.icon.size.sm} />
-          ) : (
-            <WidgetCardHeaderHoverReveal isAlwaysVisible={isTouchDevice}>
-              {withTooltip({
-                key: 'hover-indicator',
-                tooltip: hoverIndicatorText,
-                trigger: (
-                  <StyledHoverIndicator
-                    role="img"
-                    tabIndex={0}
-                    aria-label={hoverIndicatorText}
-                  >
-                    <IconCalendarEvent size={theme.icon.size.sm} />
-                  </StyledHoverIndicator>
-                ),
-              })}
-            </WidgetCardHeaderHoverReveal>
-          ))}
-      </>
-    );
-  };
 
   return (
     <>
-      {canCollapse && (
-        <>
-          <NodeDimensionEffect
-            elementRef={measureRef}
-            onDimensionChange={handleMeasureDimensionChange}
-          />
-          <StyledMeasure ref={measureRef} aria-hidden>
-            {renderItems(true)}
-          </StyledMeasure>
-        </>
+      {fieldLabels.map(({ pageLayoutFilterId, kind, text, fullText }) => {
+        const Icon = kind === 'APPLIED' ? IconCalendarEvent : IconFilterOff;
+
+        return (
+          <Tooltip
+            key={pageLayoutFilterId}
+            content={fullText}
+            delay={TooltipDelay.mediumDelay}
+          >
+            <StyledFieldLabel>
+              <Icon size={theme.icon.size.sm} />
+              <StyledText>{text}</StyledText>
+            </StyledFieldLabel>
+          </Tooltip>
+        );
+      })}
+      {pills.map(({ pageLayoutFilterId, kind, text, tooltip }) => {
+        const Icon = kind === 'OVERLAP' ? IconFilter : IconFilterOff;
+
+        return (
+          <Tooltip
+            key={pageLayoutFilterId}
+            content={tooltip}
+            delay={TooltipDelay.mediumDelay}
+          >
+            {kind === 'UNAVAILABLE' ? (
+              <StyledStatusContainer>
+                <Status color="orange">
+                  <StyledText>{text}</StyledText>
+                </Status>
+              </StyledStatusContainer>
+            ) : (
+              <StyledPill>
+                <Icon size={theme.icon.size.sm} />
+                <StyledText>{text}</StyledText>
+              </StyledPill>
+            )}
+          </Tooltip>
+        );
+      })}
+      {isDefined(hoverIndicatorText) && (
+        <WidgetCardHeaderHoverReveal isAlwaysVisible={isTouchDevice}>
+          <Tooltip
+            content={hoverIndicatorText}
+            delay={TooltipDelay.mediumDelay}
+          >
+            <StyledHoverIndicator
+              role="img"
+              tabIndex={0}
+              aria-label={hoverIndicatorText}
+            >
+              <IconCalendarEvent size={theme.icon.size.sm} />
+            </StyledHoverIndicator>
+          </Tooltip>
+        </WidgetCardHeaderHoverReveal>
       )}
-      {renderItems(false)}
     </>
   );
 };
