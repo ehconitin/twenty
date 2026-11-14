@@ -8,6 +8,7 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { PAGE_LAYOUT_WITH_DASHBOARD_FILTER_BINDINGS_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout/constants/page-layout-with-dashboard-filter-bindings-gql-fields.constant';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { fetchDashboardFilterBindingFieldIds } from 'test/integration/metadata/suites/page-layout/utils/fetch-dashboard-filter-binding-field-ids.util';
+import { findStoredConfiguration } from 'test/integration/metadata/suites/page-layout/utils/find-stored-configuration.util';
 import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
 import { saveDashboardWithAggregateWidget } from 'test/integration/metadata/suites/page-layout/utils/save-dashboard-with-aggregate-widget.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -26,15 +27,6 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const PERIOD_FILTER = DASHBOARD_DATE_RANGE_FILTER;
-
-const findStoredConfiguration = async (widgetId: string) => {
-  const [widget] = await globalThis.testDataSource.query(
-    `SELECT configuration FROM core."pageLayoutWidget" WHERE id = $1`,
-    [widgetId],
-  );
-
-  return widget?.configuration;
-};
 
 describe('Page layout widget update should apply the dashboard filter binding rules', () => {
   describe('on a workspace widget', () => {

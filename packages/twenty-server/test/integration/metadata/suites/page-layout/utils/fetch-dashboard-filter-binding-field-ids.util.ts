@@ -36,8 +36,14 @@ export const fetchDashboardFilterBindingFieldIds =
       return object;
     };
 
-    const findFieldId = (nameSingular: string, fieldName: string) => {
-      const field = findObject(nameSingular).fieldsList?.find(
+    const findFieldId = ({
+      objectNameSingular,
+      fieldName,
+    }: {
+      objectNameSingular: string;
+      fieldName: string;
+    }) => {
+      const field = findObject(objectNameSingular).fieldsList?.find(
         (fieldMetadata) => fieldMetadata.name === fieldName,
       );
 
@@ -48,11 +54,29 @@ export const fetchDashboardFilterBindingFieldIds =
 
     return {
       companyObjectMetadataId: findObject('company').id,
-      companyCreatedAtFieldId: findFieldId('company', 'createdAt'),
-      companyUpdatedAtFieldId: findFieldId('company', 'updatedAt'),
-      companyDeletedAtFieldId: findFieldId('company', 'deletedAt'),
-      companyNameFieldId: findFieldId('company', 'name'),
-      companyPositionFieldId: findFieldId('company', 'position'),
-      personCreatedAtFieldId: findFieldId('person', 'createdAt'),
+      companyCreatedAtFieldId: findFieldId({
+        objectNameSingular: 'company',
+        fieldName: 'createdAt',
+      }),
+      companyUpdatedAtFieldId: findFieldId({
+        objectNameSingular: 'company',
+        fieldName: 'updatedAt',
+      }),
+      companyDeletedAtFieldId: findFieldId({
+        objectNameSingular: 'company',
+        fieldName: 'deletedAt',
+      }),
+      companyNameFieldId: findFieldId({
+        objectNameSingular: 'company',
+        fieldName: 'name',
+      }),
+      companyPositionFieldId: findFieldId({
+        objectNameSingular: 'company',
+        fieldName: 'position',
+      }),
+      personCreatedAtFieldId: findFieldId({
+        objectNameSingular: 'person',
+        fieldName: 'createdAt',
+      }),
     };
   };
