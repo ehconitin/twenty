@@ -22,10 +22,13 @@ const UNAVAILABLE: WidgetDashboardFilterIndicator = {
   kind: 'UNAVAILABLE',
 };
 
-const getContent = (
-  indicator: WidgetDashboardFilterIndicator,
+const getContent = ({
+  indicator,
   isPageLayoutInEditMode = false,
-) =>
+}: {
+  indicator: WidgetDashboardFilterIndicator;
+  isPageLayoutInEditMode?: boolean;
+}) =>
   getWidgetDashboardFilterHeaderContent({
     indicators: [indicator],
     isPageLayoutInEditMode,
@@ -33,7 +36,7 @@ const getContent = (
 
 describe('getWidgetDashboardFilterHeaderContent', () => {
   it('should only offer the field on hover for a widget that follows the filter', () => {
-    expect(getContent(APPLIED)).toEqual({
+    expect(getContent({ indicator: APPLIED })).toEqual({
       fieldLabels: [],
       pills: [],
       hoverIndicatorText: 'Date range · Close date',
@@ -41,7 +44,7 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
   });
 
   it('should show nothing in view mode while the filter has no value', () => {
-    expect(getContent({ ...IGNORED, hasValue: false })).toEqual({
+    expect(getContent({ indicator: { ...IGNORED, hasValue: false } })).toEqual({
       fieldLabels: [],
       pills: [],
       hoverIndicatorText: null,
@@ -49,7 +52,7 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
   });
 
   it('should show an ignored pill and no field indicator', () => {
-    expect(getContent(IGNORED)).toEqual({
+    expect(getContent({ indicator: IGNORED })).toEqual({
       fieldLabels: [],
       pills: [
         {
@@ -64,7 +67,7 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
   });
 
   it('should explain an unavailable field in the pill tooltip', () => {
-    expect(getContent(UNAVAILABLE).pills).toEqual([
+    expect(getContent({ indicator: UNAVAILABLE }).pills).toEqual([
       {
         pageLayoutFilterId: 'date-range',
         kind: 'UNAVAILABLE',
@@ -81,7 +84,7 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
       kind: 'NO_DATE_FIELD',
     };
 
-    expect(getContent(noDateField).pills).toEqual([
+    expect(getContent({ indicator: noDateField }).pills).toEqual([
       {
         pageLayoutFilterId: 'date-range',
         kind: 'NO_DATE_FIELD',
@@ -89,7 +92,10 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
         tooltip: 'This widget has no date field for Date range.',
       },
     ]);
-    expect(getContent(noDateField, true).fieldLabels).toEqual([
+    expect(
+      getContent({ indicator: noDateField, isPageLayoutInEditMode: true })
+        .fieldLabels,
+    ).toEqual([
       {
         pageLayoutFilterId: 'date-range',
         kind: 'NO_DATE_FIELD',
@@ -100,7 +106,9 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
   });
 
   it('should show an overlap pill next to the field indicator', () => {
-    expect(getContent({ ...APPLIED, overlapsWidgetFilter: true })).toEqual({
+    expect(
+      getContent({ indicator: { ...APPLIED, overlapsWidgetFilter: true } }),
+    ).toEqual({
       fieldLabels: [],
       pills: [
         {
@@ -116,7 +124,10 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
 
   it('should always label the resolved field in edit mode, value or not', () => {
     expect(
-      getContent({ ...APPLIED, hasValue: false }, true).fieldLabels,
+      getContent({
+        indicator: { ...APPLIED, hasValue: false },
+        isPageLayoutInEditMode: true,
+      }).fieldLabels,
     ).toEqual([
       {
         pageLayoutFilterId: 'date-range',
@@ -125,7 +136,9 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
         fullText: 'Date range · Close date',
       },
     ]);
-    expect(getContent(IGNORED, true)).toEqual({
+    expect(
+      getContent({ indicator: IGNORED, isPageLayoutInEditMode: true }),
+    ).toEqual({
       fieldLabels: [
         {
           pageLayoutFilterId: 'date-range',
@@ -137,7 +150,10 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
       pills: [],
       hoverIndicatorText: null,
     });
-    expect(getContent(UNAVAILABLE, true).fieldLabels).toEqual([
+    expect(
+      getContent({ indicator: UNAVAILABLE, isPageLayoutInEditMode: true })
+        .fieldLabels,
+    ).toEqual([
       {
         pageLayoutFilterId: 'date-range',
         kind: 'UNAVAILABLE',
@@ -169,7 +185,9 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
   ])(
     'should name %s on hover, with no pill',
     (_title, replacedWidgetConditions, hoverIndicatorText) => {
-      expect(getContent({ ...APPLIED, replacedWidgetConditions })).toEqual({
+      expect(
+        getContent({ indicator: { ...APPLIED, replacedWidgetConditions } }),
+      ).toEqual({
         fieldLabels: [],
         pills: [],
         hoverIndicatorText,
@@ -179,15 +197,15 @@ describe('getWidgetDashboardFilterHeaderContent', () => {
 
   it('should name the replaced period in the edit-mode label tooltip', () => {
     expect(
-      getContent(
-        {
+      getContent({
+        indicator: {
           ...APPLIED,
           replacedWidgetConditions: [
             { operand: ViewFilterOperand.IS_RELATIVE, value: 'THIS_1_QUARTER' },
           ],
         },
-        true,
-      ).fieldLabels,
+        isPageLayoutInEditMode: true,
+      }).fieldLabels,
     ).toEqual([
       {
         pageLayoutFilterId: 'date-range',

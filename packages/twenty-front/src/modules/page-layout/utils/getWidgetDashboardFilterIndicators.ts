@@ -80,28 +80,30 @@ export const getWidgetDashboardFilterIndicators = ({
           appliedField.pageLayoutFilterId === pageLayoutFilterId,
       );
 
-      return isDefined(appliedField)
-        ? {
-            pageLayoutFilterId,
-            label,
-            kind: 'APPLIED',
-            fieldLabel,
-            hasValue: true,
-            overlapsWidgetFilter: stillFilteredFieldMetadataIds.includes(
-              appliedField.fieldMetadataId,
-            ),
-            replacedWidgetConditions: replacedRecordFilters.filter(
-              (recordFilter) =>
-                recordFilter.fieldMetadataId === appliedField.fieldMetadataId,
-            ),
-          }
-        : {
-            pageLayoutFilterId,
-            label,
-            kind: 'APPLIED',
-            fieldLabel,
-            hasValue: false,
-          };
+      if (!isDefined(appliedField)) {
+        return {
+          pageLayoutFilterId,
+          label,
+          kind: 'APPLIED',
+          fieldLabel,
+          hasValue: false,
+        };
+      }
+
+      return {
+        pageLayoutFilterId,
+        label,
+        kind: 'APPLIED',
+        fieldLabel,
+        hasValue: true,
+        overlapsWidgetFilter: stillFilteredFieldMetadataIds.includes(
+          appliedField.fieldMetadataId,
+        ),
+        replacedWidgetConditions: replacedRecordFilters.filter(
+          (recordFilter) =>
+            recordFilter.fieldMetadataId === appliedField.fieldMetadataId,
+        ),
+      };
     },
   );
 };
