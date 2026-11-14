@@ -41,7 +41,7 @@ exports[`Dashboard filter bindings update should fail when a binding has no filt
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
   },
   "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected string, received undefined
   → at [0].pageLayoutFilterId",
@@ -90,7 +90,7 @@ exports[`Dashboard filter bindings update should fail when a binding points at a
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "A dashboard filter is bound to a field that does not exist",
   },
   "message": "Dashboard filter "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01" is bound to field "5b2e7c4d-1a3f-4e6b-8c9d-0e1f2a3b4c99", which does not exist",
   "name": "UserInputError",
@@ -283,7 +283,7 @@ exports[`Dashboard filter bindings update should fail when the bindings are a li
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
   },
   "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected object, received array
   → at [0]",
@@ -295,7 +295,7 @@ exports[`Dashboard filter bindings update should fail when the bindings are a nu
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
   },
   "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected object, received null
   → at [0]",
@@ -307,7 +307,7 @@ exports[`Dashboard filter bindings update should fail when the bindings are a nu
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
   },
   "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected object, received number
   → at [0]",
@@ -319,7 +319,7 @@ exports[`Dashboard filter bindings update should fail when the bindings are a st
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
   },
   "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected array, received string",
   "name": "UserInputError",
@@ -330,7 +330,7 @@ exports[`Dashboard filter bindings update should fail when the bindings are not 
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "Invalid page layout data.",
+    "userFriendlyMessage": "Dashboard filter bindings are malformed",
   },
   "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected array, received object",
   "name": "UserInputError",

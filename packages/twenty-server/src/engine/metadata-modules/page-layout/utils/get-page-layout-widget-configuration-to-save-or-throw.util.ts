@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { type DashboardFilterBinding } from 'twenty-shared/types';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
@@ -5,6 +6,7 @@ import { z } from 'zod';
 
 import { DASHBOARD_FILTER_BINDINGS_SCHEMA } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/constants/dashboard-filter-bindings-schema.constant';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { dropDashboardFilterBindingsToMissingFields } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/drop-dashboard-filter-bindings-to-missing-fields.util';
 import { isDashboardFilterBindingToMissingField } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-dashboard-filter-binding-to-missing-field.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
@@ -26,6 +28,7 @@ const parseDashboardFilterBindingsOrThrow = (
     throw new PageLayoutException(
       `Dashboard filter bindings are malformed: ${z.prettifyError(parsedDashboardFilterBindings.error)}`,
       PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      { userFriendlyMessage: msg`Dashboard filter bindings are malformed` },
     );
   }
 
@@ -82,6 +85,9 @@ export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
     throw new PageLayoutException(
       `Dashboard filter "${dashboardFilterBindingToMissingField.pageLayoutFilterId}" is bound to field "${dashboardFilterBindingToMissingField.fieldMetadataId}", which does not exist`,
       PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      {
+        userFriendlyMessage: msg`A dashboard filter is bound to a field that does not exist`,
+      },
     );
   }
 
@@ -93,17 +99,11 @@ export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
     'dashboardFilterBindings' in existingWidget.configuration
       ? existingWidget.configuration.dashboardFilterBindings
       : undefined;
-  const existingDashboardFilterBindings = isDefined(
-    storedDashboardFilterBindings,
-  )
-    ? storedDashboardFilterBindings.filter(
-        (dashboardFilterBinding) =>
-          !isDashboardFilterBindingToMissingField({
-            dashboardFilterBinding,
-            fieldMetadataUniversalIdentifierById,
-          }),
-      )
-    : storedDashboardFilterBindings;
+  const existingDashboardFilterBindings =
+    dropDashboardFilterBindingsToMissingFields({
+      dashboardFilterBindings: storedDashboardFilterBindings,
+      fieldMetadataUniversalIdentifierById,
+    });
 
   if (isUndefined(dashboardFilterBindings)) {
     return {
