@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type DateRangeBounds } from 'src/modules/dashboard/chart-data/types/date-range-bounds.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import {
   fillDateGaps,
@@ -23,24 +24,38 @@ type ApplyGapFillingParams = {
   dateGranularity: ObjectRecordGroupByDateGranularity | null | undefined;
   omitNullValues: boolean;
   isDescOrder: boolean;
-  isTwoDimensional: boolean;
   splitMultiValueFields?: boolean;
-};
+  dateRange?: DateRangeBounds;
+  maximumNumberOfDateGroups: number;
+} & (
+  | { isTwoDimensional: false }
+  | {
+      isTwoDimensional: true;
+      maximumNumberOfSecondDimensionValues: number;
+      maximumNumberOfSegments?: number;
+    }
+);
 
 type ApplyGapFillingResult = {
   data: GroupByRawResult[];
   wasTruncated: boolean;
 };
 
-export const applyGapFilling = ({
-  data,
-  primaryAxisGroupByField,
-  dateGranularity,
-  omitNullValues,
-  isDescOrder,
-  isTwoDimensional,
-  splitMultiValueFields,
-}: ApplyGapFillingParams): ApplyGapFillingResult => {
+export const applyGapFilling = (
+  params: ApplyGapFillingParams,
+): ApplyGapFillingResult => {
+  const {
+    data,
+    primaryAxisGroupByField,
+    dateGranularity,
+    omitNullValues,
+    isDescOrder,
+    isTwoDimensional,
+    splitMultiValueFields,
+    dateRange,
+    maximumNumberOfDateGroups,
+  } = params;
+
   if (omitNullValues) {
     return { data, wasTruncated: false };
   }
@@ -53,15 +68,24 @@ export const applyGapFilling = ({
   );
 
   if (isPrimaryFieldDate) {
-    const fillDateGapsFn = isTwoDimensional
-      ? fillDateGapsTwoDimensional
-      : fillDateGaps;
-
-    const dateResult = fillDateGapsFn({
-      data: currentData,
-      dateGranularity,
-      isDescOrder,
-    });
+    const dateResult = params.isTwoDimensional
+      ? fillDateGapsTwoDimensional({
+          data: currentData,
+          dateGranularity,
+          isDescOrder,
+          dateRange,
+          maximumNumberOfDateGroups,
+          maximumNumberOfSecondDimensionValues:
+            params.maximumNumberOfSecondDimensionValues,
+          maximumNumberOfSegments: params.maximumNumberOfSegments,
+        })
+      : fillDateGaps({
+          data: currentData,
+          dateGranularity,
+          isDescOrder,
+          dateRange,
+          maximumNumberOfDateGroups,
+        });
 
     currentData = dateResult.data;
     wasTruncated = dateResult.wasTruncated;

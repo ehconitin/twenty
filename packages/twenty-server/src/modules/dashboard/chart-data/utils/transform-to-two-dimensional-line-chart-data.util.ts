@@ -17,6 +17,7 @@ import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-b
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { applyCumulativeToLineDataPoints } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-line-data-points.util';
+import { type DateRangeBounds } from 'src/modules/dashboard/chart-data/types/date-range-bounds.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
@@ -33,6 +34,7 @@ export const transformToTwoDimensionalLineChartData = ({
   configuration,
   userTimezone,
   firstDayOfTheWeek,
+  gapFillingDateRange,
   seriesIdPrefix,
   primaryRelationLabelResolution,
   secondaryRelationLabelResolution,
@@ -45,12 +47,17 @@ export const transformToTwoDimensionalLineChartData = ({
   configuration: LineChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
+  gapFillingDateRange?: DateRangeBounds;
   seriesIdPrefix: string;
   primaryRelationLabelResolution: RelationLabelResolution | undefined;
   secondaryRelationLabelResolution: RelationLabelResolution | undefined;
   i18n: I18n;
 }): LineChartDataDTO => {
   const isStacked = configuration.isStacked ?? false;
+
+  const maxSeries = isStacked
+    ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
+    : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
 
   const isDescOrder =
     configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
@@ -64,6 +71,9 @@ export const transformToTwoDimensionalLineChartData = ({
       isDescOrder,
       isTwoDimensional: true,
       splitMultiValueFields: configuration.splitMultiValueFields,
+      dateRange: gapFillingDateRange,
+      maximumNumberOfDateGroups: LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+      maximumNumberOfSecondDimensionValues: maxSeries,
     });
 
   const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);
@@ -164,10 +174,6 @@ export const transformToTwoDimensionalLineChartData = ({
     secondarySelectOptions,
     secondaryAxisGroupByField,
   });
-
-  const maxSeries = isStacked
-    ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
-    : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
 
   const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
