@@ -1,4 +1,3 @@
-import { WidgetCardHeaderPillsMaxWidthContext } from '@/page-layout/contexts/WidgetCardHeaderPillsMaxWidthContext';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -9,8 +8,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore } from 'jotai';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const WIDGET_ID = 'widget-dashboard-filter-header-items-story';
@@ -24,13 +22,11 @@ const EMPTY_CONTENT: WidgetDashboardFilterHeaderContent = {
 type WidgetDashboardFilterHeaderItemsStoryProps = {
   content: WidgetDashboardFilterHeaderContent;
   isWidgetHovered: boolean;
-  maxWidth: number | null;
 };
 
 const WidgetDashboardFilterHeaderItemsStory = ({
   content,
   isWidgetHovered,
-  maxWidth,
 }: WidgetDashboardFilterHeaderItemsStoryProps) => {
   const store = createStore();
 
@@ -47,11 +43,9 @@ const WidgetDashboardFilterHeaderItemsStory = ({
       <WidgetComponentInstanceContext.Provider
         value={{ instanceId: WIDGET_ID }}
       >
-        <WidgetCardHeaderPillsMaxWidthContext.Provider value={maxWidth}>
-          <div style={{ display: 'flex', gap: 4, position: 'relative' }}>
-            <WidgetDashboardFilterHeaderItems content={content} />
-          </div>
-        </WidgetCardHeaderPillsMaxWidthContext.Provider>
+        <div style={{ display: 'flex', gap: 4 }}>
+          <WidgetDashboardFilterHeaderItems content={content} />
+        </div>
       </WidgetComponentInstanceContext.Provider>
     </PageLayoutTestWrapper>
   );
@@ -61,7 +55,7 @@ const meta: Meta<typeof WidgetDashboardFilterHeaderItemsStory> = {
   title: 'Modules/PageLayout/Widgets/WidgetDashboardFilterHeaderItems',
   component: WidgetDashboardFilterHeaderItemsStory,
   decorators: [ComponentDecorator],
-  args: { content: EMPTY_CONTENT, isWidgetHovered: false, maxWidth: null },
+  args: { content: EMPTY_CONTENT, isWidgetHovered: false },
 };
 
 export default meta;
@@ -225,7 +219,7 @@ const PILLS: WidgetDashboardFilterHeaderContent['pills'] = [
 ];
 
 export const PillsShowTheirTextWhenTheyFit: Story = {
-  args: { content: { ...EMPTY_CONTENT, pills: PILLS }, maxWidth: 1000 },
+  args: { content: { ...EMPTY_CONTENT, pills: PILLS } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -234,35 +228,5 @@ export const PillsShowTheirTextWhenTheyFit: Story = {
 
       expect(pillText.getBoundingClientRect().width).toBeGreaterThan(40);
     }
-  },
-};
-
-export const PillsCollapseToTheirIconInANarrowHeader: Story = {
-  args: { content: { ...EMPTY_CONTENT, pills: PILLS }, maxWidth: 120 },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-
-    for (const { text, kind } of PILLS) {
-      await waitFor(() =>
-        kind === 'UNAVAILABLE'
-          ? expect(
-              canvas.getByText(text).getBoundingClientRect().width,
-            ).toBeGreaterThan(1)
-          : expect(
-              canvas.getByText(text).getBoundingClientRect().width,
-            ).toBeLessThanOrEqual(1),
-      );
-    }
-
-    const ignoredPill = canvas.getByText('Ignores Date range').parentElement;
-
-    expect(ignoredPill?.querySelector('svg')).toBeVisible();
-
-    if (isDefined(ignoredPill)) {
-      await userEvent.hover(ignoredPill);
-    }
-
-    expect(await body.findByText(PILLS[0].tooltip)).toBeVisible();
   },
 };
