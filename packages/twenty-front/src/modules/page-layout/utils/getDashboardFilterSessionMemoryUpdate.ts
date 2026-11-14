@@ -1,5 +1,6 @@
 import { type DashboardFilterSessionMemoryUpdate } from '@/page-layout/types/DashboardFilterSessionMemoryUpdate';
-import { getDashboardFilterSessionSearch } from '@/page-layout/utils/getDashboardFilterSessionSearch';
+import { getAppliedDashboardFilterSearch } from '@/page-layout/utils/getAppliedDashboardFilterSearch';
+import { getValidDashboardFilterSearch } from '@/page-layout/utils/getValidDashboardFilterSearch';
 import { removeDashboardFilterValuesFromSearchParams } from '@/page-layout/utils/removeDashboardFilterValuesFromSearchParams';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -11,16 +12,25 @@ export const getDashboardFilterSessionMemoryUpdate = ({
   rememberedDashboardFilterSearch: string;
 }): DashboardFilterSessionMemoryUpdate => {
   const searchParams = new URLSearchParams(search);
-  const urlDashboardFilterSearch =
-    getDashboardFilterSessionSearch(searchParams);
+  const appliedDashboardFilterSearch = getAppliedDashboardFilterSearch({
+    searchParams,
+    rememberedDashboardFilterSearch,
+  });
 
-  if (isNonEmptyString(urlDashboardFilterSearch)) {
-    return urlDashboardFilterSearch === rememberedDashboardFilterSearch
-      ? { type: 'NONE' }
-      : { type: 'REMEMBER', dashboardFilterSearch: urlDashboardFilterSearch };
+  if (!isNonEmptyString(appliedDashboardFilterSearch)) {
+    return { type: 'NONE' };
   }
 
-  if (!isNonEmptyString(rememberedDashboardFilterSearch)) {
+  if (appliedDashboardFilterSearch !== rememberedDashboardFilterSearch) {
+    return {
+      type: 'REMEMBER',
+      dashboardFilterSearch: appliedDashboardFilterSearch,
+    };
+  }
+
+  if (
+    getValidDashboardFilterSearch(searchParams) === appliedDashboardFilterSearch
+  ) {
     return { type: 'NONE' };
   }
 
@@ -28,7 +38,7 @@ export const getDashboardFilterSessionMemoryUpdate = ({
     type: 'RESTORE',
     search: new URLSearchParams([
       ...removeDashboardFilterValuesFromSearchParams(searchParams).entries(),
-      ...new URLSearchParams(rememberedDashboardFilterSearch).entries(),
+      ...new URLSearchParams(appliedDashboardFilterSearch).entries(),
     ]).toString(),
   };
 };

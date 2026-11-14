@@ -1,15 +1,15 @@
-import { getDashboardFilterSessionSearch } from '@/page-layout/utils/getDashboardFilterSessionSearch';
+import { getValidDashboardFilterSearch } from '@/page-layout/utils/getValidDashboardFilterSearch';
 import { DASHBOARD_DATE_RANGE_FILTER_ID } from 'twenty-shared/constants';
 
 const KEY = `dashboardFilter[${DASHBOARD_DATE_RANGE_FILTER_ID}]`;
 
-const getSessionSearch = (entries: [string, string][]) =>
-  getDashboardFilterSessionSearch(new URLSearchParams(entries));
+const getValidSearch = (entries: [string, string][]) =>
+  getValidDashboardFilterSearch(new URLSearchParams(entries));
 
-describe('getDashboardFilterSessionSearch', () => {
+describe('getValidDashboardFilterSearch', () => {
   it('should keep a valid value and drop the other params', () => {
     expect(
-      getSessionSearch([
+      getValidSearch([
         ['tab', 'overview'],
         [`${KEY}[IS_RELATIVE]`, 'PAST_7_DAY'],
       ]),
@@ -19,12 +19,12 @@ describe('getDashboardFilterSessionSearch', () => {
   });
 
   it('should keep an explicit empty value', () => {
-    expect(getSessionSearch([[KEY, '']])).toBe(
+    expect(getValidSearch([[KEY, '']])).toBe(
       new URLSearchParams([[KEY, '']]).toString(),
     );
   });
 
   it('should drop a value the bar cannot apply', () => {
-    expect(getSessionSearch([[`${KEY}[IS_RELATIVE]`, 'garbage']])).toBe('');
+    expect(getValidSearch([[`${KEY}[IS_RELATIVE]`, 'garbage']])).toBe('');
   });
 });
