@@ -5,6 +5,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import gql from 'graphql-tag';
 import { MALFORMED_DASHBOARD_FILTER_BINDINGS } from 'test/integration/metadata/suites/page-layout/constants/malformed-dashboard-filter-bindings.constant';
 import { PAGE_LAYOUT_WITH_DASHBOARD_FILTER_BINDINGS_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout/constants/page-layout-with-dashboard-filter-bindings-gql-fields.constant';
+import { findStoredConfiguration } from 'test/integration/metadata/suites/page-layout/utils/find-stored-configuration.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { DASHBOARD_DATE_RANGE_FILTER_ID } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -47,15 +48,6 @@ const findInstalledDashboard = async ({
   );
 
   return { pageLayout, tab: tabs[0], widget };
-};
-
-const findStoredConfiguration = async (widgetId: string) => {
-  const [widget] = await globalThis.testDataSource.query(
-    `SELECT configuration FROM core."pageLayoutWidget" WHERE id = $1`,
-    [widgetId],
-  );
-
-  return widget?.configuration;
 };
 
 describe('Installed application dashboard filter bindings', () => {

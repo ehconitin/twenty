@@ -15,6 +15,7 @@ import {
   fetchDashboardFilterBindingFieldIds,
 } from 'test/integration/metadata/suites/page-layout/utils/fetch-dashboard-filter-binding-field-ids.util';
 import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
+import { findStoredConfiguration } from 'test/integration/metadata/suites/page-layout/utils/find-stored-configuration.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 import { saveDashboardWithAggregateWidget } from 'test/integration/metadata/suites/page-layout/utils/save-dashboard-with-aggregate-widget.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
@@ -62,15 +63,6 @@ const createDashboardPageLayoutWithTab = async () => {
   });
 
   return { pageLayoutId, tabId: tabData.createPageLayoutTab.id };
-};
-
-const findStoredConfiguration = async (widgetId: string) => {
-  const [widget] = await globalThis.testDataSource.query(
-    `SELECT configuration FROM core."pageLayoutWidget" WHERE id = $1`,
-    [widgetId],
-  );
-
-  return widget?.configuration;
 };
 
 const findStoredDashboardFilterBindings = async (widgetId: string) =>
