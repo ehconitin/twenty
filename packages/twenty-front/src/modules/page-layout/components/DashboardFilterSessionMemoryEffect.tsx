@@ -18,8 +18,7 @@ export const DashboardFilterSessionMemoryEffect = () => {
     new URLSearchParams(location.search),
   );
 
-  // Follows the URL, which no bar event covers (entry, links); the memory is read, not
-  // subscribed, so the handlers' earlier memory write never re-runs it on a stale URL
+  // Read, not subscribed: the handlers write memory before navigating
   useEffect(() => {
     if (isPageLayoutInEditMode) {
       return;
