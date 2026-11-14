@@ -9,8 +9,7 @@ import {
 
 const DASHBOARD_ROOT_RECORD_FILTER_GROUP_ID = 'dashboard-filter-root';
 
-// Groups everything under one AND root so dashboard conditions never share a
-// `filter[field][operand]` URL key with the clicked bucket's conditions.
+// One AND root, so dashboard and bucket conditions never share a URL key
 export const combineChartFilterWithDashboardRecordFilters = ({
   chartFilter: { recordFilters = [], recordFilterGroups = [] },
   dashboardRecordFilters,

@@ -53,12 +53,15 @@ export const computeDashboardFilterForWidget = ({
     });
 
   // Until the object's fields load, every filter would read as an unavailable field
-  const getIndicators = (
-    appliedFields: WidgetDashboardFilter['appliedFields'],
+  const getIndicators = ({
+    appliedFields,
+    widgetFilterReplacement,
+  }: {
+    appliedFields: WidgetDashboardFilter['appliedFields'];
     widgetFilterReplacement: Parameters<
       typeof getWidgetDashboardFilterIndicators
-    >[0]['widgetFilterReplacement'],
-  ) =>
+    >[0]['widgetFilterReplacement'];
+  }) =>
     isNonEmptyArray(fields)
       ? getWidgetDashboardFilterIndicators({
           dashboardFilters,
@@ -73,7 +76,10 @@ export const computeDashboardFilterForWidget = ({
   if (!isNonEmptyArray(values)) {
     return {
       ...NO_WIDGET_DASHBOARD_FILTER,
-      indicators: getIndicators([], NO_WIDGET_FILTER_REPLACEMENT),
+      indicators: getIndicators({
+        appliedFields: [],
+        widgetFilterReplacement: NO_WIDGET_FILTER_REPLACEMENT,
+      }),
     };
   }
 
@@ -108,10 +114,10 @@ export const computeDashboardFilterForWidget = ({
         recordFilters: dashboardFilter.recordFilters,
         recordFilterGroups: [],
       }),
-      indicators: getIndicators(
-        dashboardFilter.appliedFields,
+      indicators: getIndicators({
+        appliedFields: dashboardFilter.appliedFields,
         widgetFilterReplacement,
-      ),
+      }),
     };
   } catch (error) {
     if (!(error instanceof InvalidDashboardFilterError)) {
@@ -122,7 +128,10 @@ export const computeDashboardFilterForWidget = ({
     return {
       ...NO_WIDGET_DASHBOARD_FILTER,
       isInvalid: true,
-      indicators: getIndicators([], NO_WIDGET_FILTER_REPLACEMENT),
+      indicators: getIndicators({
+        appliedFields: [],
+        widgetFilterReplacement: NO_WIDGET_FILTER_REPLACEMENT,
+      }),
     };
   }
 };
