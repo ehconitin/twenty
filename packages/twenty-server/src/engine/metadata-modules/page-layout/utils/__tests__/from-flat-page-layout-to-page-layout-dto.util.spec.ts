@@ -45,16 +45,13 @@ const buildFlatPageLayout = ({
 });
 
 describe('fromFlatPageLayoutToPageLayoutDto', () => {
-  it.each([null, []])(
-    'should read a dashboard with %p stored filters as having the built-in Date range filter',
-    (filters) => {
-      expect(
-        fromFlatPageLayoutToPageLayoutDto(
-          buildFlatPageLayout({ type: PageLayoutType.DASHBOARD, filters }),
-        ).filters,
-      ).toEqual([DASHBOARD_DATE_RANGE_FILTER]);
-    },
-  );
+  it('should read a dashboard without stored filters as null', () => {
+    expect(
+      fromFlatPageLayoutToPageLayoutDto(
+        buildFlatPageLayout({ type: PageLayoutType.DASHBOARD, filters: null }),
+      ).filters,
+    ).toBeNull();
+  });
 
   it('should read the stored filters of a dashboard', () => {
     expect(

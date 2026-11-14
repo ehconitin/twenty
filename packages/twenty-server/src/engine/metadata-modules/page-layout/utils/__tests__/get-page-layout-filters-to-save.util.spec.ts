@@ -56,7 +56,7 @@ describe('getPageLayoutFiltersToSave', () => {
     ).toBe(existingFilters);
   });
 
-  it('should keep nothing stored when the input is the built-in filter a dashboard reads without stored filters', () => {
+  it('should keep nothing stored when a dashboard without stored filters is saved with the built-in filter', () => {
     expect(
       getFiltersToSave({
         existingFilters: null,

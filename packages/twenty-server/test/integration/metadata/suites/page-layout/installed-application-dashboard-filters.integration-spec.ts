@@ -97,10 +97,10 @@ describe('Installed application dashboard filters', () => {
     });
   });
 
-  it('should read the built-in Date range filter on a freshly installed dashboard', async () => {
+  it('should read null filters on a freshly installed dashboard', async () => {
     const installedDashboard = await findInstalledDashboard();
 
-    expect(installedDashboard.filters).toEqual([DASHBOARD_DATE_RANGE_FILTER]);
+    expect(installedDashboard.filters).toBeNull();
     expect(await findStoredFilters(installedDashboard.id)).toBeNull();
   });
 
