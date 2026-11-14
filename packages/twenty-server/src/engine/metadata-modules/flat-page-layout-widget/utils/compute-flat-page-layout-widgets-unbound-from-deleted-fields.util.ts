@@ -67,38 +67,43 @@ export const computeFlatPageLayoutWidgetsUnboundFromDeletedFields = <
       ),
     );
 
+    const keptConfigurationFilter =
+      'filter' in configuration && isDefined(configuration.filter)
+        ? {
+            filter: {
+              ...configuration.filter,
+              recordFilters: configuration.filter.recordFilters?.filter(
+                ({ fieldMetadataId }) => isFieldKept(fieldMetadataId),
+              ),
+            },
+          }
+        : {};
+    const keptUniversalConfigurationFilter =
+      'filter' in universalConfiguration &&
+      isDefined(universalConfiguration.filter)
+        ? {
+            filter: {
+              ...universalConfiguration.filter,
+              recordFilters:
+                universalConfiguration.filter.recordFilters?.filter(
+                  ({ fieldMetadataUniversalIdentifier }) =>
+                    isUniversalFieldKept(fieldMetadataUniversalIdentifier),
+                ),
+            },
+          }
+        : {};
+
     return [
       {
         ...flatPageLayoutWidget,
         configuration: {
           ...configuration,
-          ...('filter' in configuration && isDefined(configuration.filter)
-            ? {
-                filter: {
-                  ...configuration.filter,
-                  recordFilters: configuration.filter.recordFilters?.filter(
-                    ({ fieldMetadataId }) => isFieldKept(fieldMetadataId),
-                  ),
-                },
-              }
-            : {}),
+          ...keptConfigurationFilter,
           dashboardFilterBindings: keptDashboardFilterBindings,
         },
         universalConfiguration: {
           ...universalConfiguration,
-          ...('filter' in universalConfiguration &&
-          isDefined(universalConfiguration.filter)
-            ? {
-                filter: {
-                  ...universalConfiguration.filter,
-                  recordFilters:
-                    universalConfiguration.filter.recordFilters?.filter(
-                      ({ fieldMetadataUniversalIdentifier }) =>
-                        isUniversalFieldKept(fieldMetadataUniversalIdentifier),
-                    ),
-                },
-              }
-            : {}),
+          ...keptUniversalConfigurationFilter,
           dashboardFilterBindings:
             universalConfiguration.dashboardFilterBindings?.filter(
               ({ pageLayoutFilterId }) =>

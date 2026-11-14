@@ -157,23 +157,21 @@ export class FieldMetadataService {
         .filter(isDefined),
     );
 
-    const flatPageLayoutWidgetsToDelete = Object.values(
+    const existingFlatPageLayoutWidgets = Object.values(
       existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (widget) =>
-          !isDefined(widget.deletedAt) &&
-          widget.configuration?.configurationType ===
-            WidgetConfigurationType.FIELD &&
-          deletedFieldIds.has(widget.configuration.fieldMetadataId),
-      );
+    ).filter(isDefined);
+
+    const flatPageLayoutWidgetsToDelete = existingFlatPageLayoutWidgets.filter(
+      (widget) =>
+        !isDefined(widget.deletedAt) &&
+        widget.configuration?.configurationType ===
+          WidgetConfigurationType.FIELD &&
+        deletedFieldIds.has(widget.configuration.fieldMetadataId),
+    );
 
     const flatPageLayoutWidgetsToUpdate =
       computeFlatPageLayoutWidgetsUnboundFromDeletedFields({
-        flatPageLayoutWidgets: Object.values(
-          existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
-        ).filter(isDefined),
+        flatPageLayoutWidgets: existingFlatPageLayoutWidgets,
         deletedFieldIds,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       });
