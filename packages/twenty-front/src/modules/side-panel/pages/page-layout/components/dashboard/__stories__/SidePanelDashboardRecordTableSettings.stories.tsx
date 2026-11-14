@@ -1,6 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { RecordTableWidgetSettingsStory } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/RecordTableWidgetSettingsStory';
@@ -12,7 +11,6 @@ import {
   DASHBOARD_DATE_RANGE_FILTER,
   DASHBOARD_DATE_RANGE_FILTER_ID,
 } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -37,31 +35,16 @@ const widgetViewDraftState =
   recordTableWidgetViewDraftComponentState.atomFamily({
     instanceId: pageLayoutId,
   });
-const THIRD_PARTY_APPLICATION_ID = 'acme-sync-application';
 
 const initializeDashboardFilterBindingsStory = ({
-  applicationId,
-  isWidgetPersisted,
   isCloseDateOverridden = true,
 }: {
-  applicationId: string;
-  isWidgetPersisted: boolean;
   isCloseDateOverridden?: boolean;
-}) => {
+} = {}) => {
   initializeRecordTableWidgetSettingsStory();
   const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
-    installedApplications: [
-      ...mockCurrentWorkspace.installedApplications,
-      {
-        id: THIRD_PARTY_APPLICATION_ID,
-        name: 'Acme Sync',
-        universalIdentifier: THIRD_PARTY_APPLICATION_ID,
-        logoUrl: null,
-        createdAt: '2024-01-01T00:00:00.000Z',
-      },
-    ],
     featureFlags: [
       { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
     ],
@@ -82,7 +65,6 @@ const initializeDashboardFilterBindingsStory = ({
         widgets: [
           {
             ...widget,
-            applicationId,
             configuration: {
               ...widget.configuration,
               dashboardFilterBindings: isCloseDateOverridden
@@ -100,18 +82,6 @@ const initializeDashboardFilterBindingsStory = ({
     ],
   };
   jotaiStore.set(pageLayoutDraftState, draftWithFilter);
-  jotaiStore.set(
-    pageLayoutPersistedComponentState.atomFamily({ instanceId: pageLayoutId }),
-    {
-      ...draftWithFilter,
-      applicationId: '',
-      universalIdentifier: pageLayoutId,
-      isSystemSideEffect: false,
-      createdAt: '2026-08-01T00:00:00.000Z',
-      updatedAt: '2026-08-01T00:00:00.000Z',
-      tabs: isWidgetPersisted ? draftWithFilter.tabs : [],
-    },
-  );
   jotaiStore.set(widgetViewDraftState, (widgetViewDrafts) => ({
     ...widgetViewDrafts,
     [widgetId]: {
@@ -378,11 +348,7 @@ export const EmbeddedViewLayoutRows: Story = {
 };
 
 export const DashboardFilterBindings: Story = {
-  beforeEach: () =>
-    initializeDashboardFilterBindingsStory({
-      applicationId: '',
-      isWidgetPersisted: true,
-    }),
+  beforeEach: () => initializeDashboardFilterBindingsStory(),
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await body.findByRole('button', { name: /^Date range/ });
@@ -398,55 +364,9 @@ export const DashboardFilterBindings: Story = {
   },
 };
 
-export const DashboardFilterBindingsReadOnlyOnAppWidget: Story = {
-  beforeEach: () =>
-    initializeDashboardFilterBindingsStory({
-      applicationId: THIRD_PARTY_APPLICATION_ID,
-      isWidgetPersisted: true,
-    }),
-  play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = await body.findByRole('button', { name: /^Date range/ });
-
-    expect(trigger).toBeDisabled();
-    await userEvent.click(trigger);
-    expect(
-      body.queryByRole('option', { name: 'Ignored' }),
-    ).not.toBeInTheDocument();
-
-    if (isDefined(trigger.parentElement)) {
-      await userEvent.hover(trigger.parentElement);
-    }
-
-    expect(
-      await body.findByText('Set by the app that installed this widget'),
-    ).toBeVisible();
-  },
-};
-
-export const DashboardFilterBindingsEditableOnUnsavedCopyOfAppWidget: Story = {
-  beforeEach: () =>
-    initializeDashboardFilterBindingsStory({
-      applicationId: THIRD_PARTY_APPLICATION_ID,
-      isWidgetPersisted: false,
-    }),
-  play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = await body.findByRole('button', { name: /^Date range/ });
-
-    expect(trigger).toBeEnabled();
-    await userEvent.click(trigger);
-    expect(await body.findByRole('option', { name: 'Ignored' })).toBeVisible();
-  },
-};
-
 export const DashboardFilterDefaultOnViewFilterDate: Story = {
   beforeEach: () =>
-    initializeDashboardFilterBindingsStory({
-      applicationId: '',
-      isWidgetPersisted: true,
-      isCloseDateOverridden: false,
-    }),
+    initializeDashboardFilterBindingsStory({ isCloseDateOverridden: false }),
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await body.findByRole('button', { name: /^Date range/ });
