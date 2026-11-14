@@ -1,10 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { DASHBOARD_DATE_RANGE_FILTER } from 'twenty-shared/constants';
 import { PageLayoutType } from 'twenty-shared/types';
-import {
-  fastDeepEqual,
-  getEffectiveDashboardPageLayoutFilters,
-} from 'twenty-shared/utils';
+import { fastDeepEqual } from 'twenty-shared/utils';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { sanitizePageLayoutFilters } from 'src/engine/metadata-modules/flat-page-layout/utils/sanitize-page-layout-filters.util';
@@ -23,24 +20,16 @@ export const getPageLayoutFiltersToSave = ({
     return existingFilters;
   }
 
-  const filters = sanitizePageLayoutFilters(filtersInput);
+  const sanitizedFilters = sanitizePageLayoutFilters(filtersInput);
 
-  const isDashboard = pageLayoutType === PageLayoutType.DASHBOARD;
+  // One representation for "no default": the database never holds the built-in filter without one
+  const filters =
+    pageLayoutType === PageLayoutType.DASHBOARD &&
+    fastDeepEqual(sanitizedFilters, [DASHBOARD_DATE_RANGE_FILTER])
+      ? null
+      : sanitizedFilters;
 
-  const effectiveExistingFilters = isDashboard
-    ? getEffectiveDashboardPageLayoutFilters(existingFilters)
-    : existingFilters;
-
-  if (
-    fastDeepEqual(filters, sanitizePageLayoutFilters(effectiveExistingFilters))
-  ) {
-    return existingFilters;
-  }
-
-  // One representation for "no default": the database never holds the virtual built-in filter
-  if (isDashboard && fastDeepEqual(filters, [DASHBOARD_DATE_RANGE_FILTER])) {
-    return null;
-  }
-
-  return filters;
+  return fastDeepEqual(filters, sanitizePageLayoutFilters(existingFilters))
+    ? existingFilters
+    : filters;
 };

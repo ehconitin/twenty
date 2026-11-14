@@ -113,10 +113,8 @@ describe('Page layout with filters update should succeed', () => {
     });
   });
 
-  it('should read the built-in Date range filter while nothing is stored', async () => {
-    expect(await findPageLayoutFilters(pageLayoutId)).toEqual([
-      DASHBOARD_DATE_RANGE_FILTER,
-    ]);
+  it('should read null filters while nothing is stored', async () => {
+    expect(await findPageLayoutFilters(pageLayoutId)).toBeNull();
     expect(await findStoredPageLayoutFilters(pageLayoutId)).toBeNull();
   });
 
@@ -155,9 +153,7 @@ describe('Page layout with filters update should succeed', () => {
       filters: [filterWithoutDefaultValue],
     });
 
-    expect(data.updatePageLayoutWithTabsAndWidgets.filters).toEqual([
-      DASHBOARD_DATE_RANGE_FILTER,
-    ]);
+    expect(data.updatePageLayoutWithTabsAndWidgets.filters).toBeNull();
     expect(await findStoredPageLayoutFilters(pageLayoutId)).toBeNull();
   });
 
@@ -181,9 +177,7 @@ describe('Page layout with filters update should succeed', () => {
       await saveDashboard({ pageLayoutId, tabId, filters });
 
       expect(await findStoredPageLayoutFilters(pageLayoutId)).toBeNull();
-      expect(await findPageLayoutFilters(pageLayoutId)).toEqual([
-        DASHBOARD_DATE_RANGE_FILTER,
-      ]);
+      expect(await findPageLayoutFilters(pageLayoutId)).toBeNull();
     },
   );
 });
@@ -217,9 +211,7 @@ describe('Page layout turned into a dashboard', () => {
       filters: [DASHBOARD_DATE_RANGE_FILTER],
     });
 
-    expect(data.updatePageLayoutWithTabsAndWidgets.filters).toEqual([
-      DASHBOARD_DATE_RANGE_FILTER,
-    ]);
+    expect(data.updatePageLayoutWithTabsAndWidgets.filters).toBeNull();
     expect(await findStoredPageLayoutFilters(pageLayoutId)).toBeNull();
   });
 });
