@@ -4,13 +4,12 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type DashboardFilters } from '@/page-layout/types/DashboardFilters';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { dashboardFilterSessionSearchFamilyState } from '@/page-layout/states/dashboardFilterSessionSearchFamilyState';
-import { getDashboardFilterSessionSearch } from '@/page-layout/utils/getDashboardFilterSessionSearch';
+import { getAppliedDashboardFilterSearch } from '@/page-layout/utils/getAppliedDashboardFilterSearch';
 import { getEffectiveDashboardFilterValues } from '@/page-layout/utils/getEffectiveDashboardFilterValues';
 import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/utils/parseDashboardFilterValuesFromSearchParams';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getEffectiveDashboardPageLayoutFilters } from 'twenty-shared/utils';
@@ -32,18 +31,12 @@ export const DashboardFiltersFromUrlProvider = ({
     dashboardFilterSessionSearchFamilyState,
     { pageLayoutId },
   );
-  const urlDashboardFilterSearch =
-    getDashboardFilterSessionSearch(searchParams);
-  // Edit mode previews what every viewer sees by default; the remembered value
-  // applies from the first render, before the effect writes it into the URL
-  const viewModeDashboardFilterSearch = isNonEmptyString(
-    urlDashboardFilterSearch,
-  )
-    ? urlDashboardFilterSearch
-    : dashboardFilterSessionSearch;
   const dashboardFilterSearch = isPageLayoutInEditMode
     ? ''
-    : viewModeDashboardFilterSearch;
+    : getAppliedDashboardFilterSearch({
+        searchParams,
+        rememberedDashboardFilterSearch: dashboardFilterSessionSearch,
+      });
   const { userTimezone } = useUserTimezone();
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
