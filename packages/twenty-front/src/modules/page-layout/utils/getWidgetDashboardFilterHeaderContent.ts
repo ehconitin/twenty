@@ -144,13 +144,13 @@ export const getWidgetDashboardFilterHeaderContent = ({
   const appliedFieldLabelTexts = indicatorsWithValue
     .filter(({ kind }) => kind === 'APPLIED')
     .map(getFieldIndicatorText);
-  const hasIgnoredPill = pills.some(({ kind }) => kind !== 'OVERLAP');
+  const hasNonOverlapPill = pills.some(({ kind }) => kind !== 'OVERLAP');
 
   return {
     fieldLabels: [],
     pills,
     hoverIndicatorText:
-      hasIgnoredPill || !isNonEmptyArray(appliedFieldLabelTexts)
+      hasNonOverlapPill || !isNonEmptyArray(appliedFieldLabelTexts)
         ? null
         : appliedFieldLabelTexts.join(', '),
   };

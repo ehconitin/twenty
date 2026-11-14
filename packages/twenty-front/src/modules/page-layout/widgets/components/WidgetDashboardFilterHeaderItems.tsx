@@ -112,20 +112,33 @@ export const WidgetDashboardFilterHeaderItems = ({
     canCollapse && isDefined(maxWidth) && naturalWidth > maxWidth;
 
   const renderItems = (isMeasure: boolean) => {
-    const renderText = (text: string, isCollapsible = true): ReactNode =>
-      isMeasure ? (
-        <StyledMeasuredText data-text={text} />
-      ) : isCompact && isCollapsible ? (
-        <VisuallyHidden>{text}</VisuallyHidden>
-      ) : (
-        <StyledText>{text}</StyledText>
-      );
+    const renderText = ({
+      text,
+      isCollapsible = true,
+    }: {
+      text: string;
+      isCollapsible?: boolean;
+    }): ReactNode => {
+      if (isMeasure) {
+        return <StyledMeasuredText data-text={text} />;
+      }
 
-    const withTooltip = (
-      key: string,
-      tooltip: string,
-      trigger: ReactElement,
-    ) =>
+      if (isCompact && isCollapsible) {
+        return <VisuallyHidden>{text}</VisuallyHidden>;
+      }
+
+      return <StyledText>{text}</StyledText>;
+    };
+
+    const withTooltip = ({
+      key,
+      tooltip,
+      trigger,
+    }: {
+      key: string;
+      tooltip: string;
+      trigger: ReactElement;
+    }) =>
       isMeasure ? (
         <span key={key}>{trigger}</span>
       ) : (
@@ -139,49 +152,56 @@ export const WidgetDashboardFilterHeaderItems = ({
         {fieldLabels.map(({ pageLayoutFilterId, kind, text, fullText }) => {
           const Icon = kind === 'APPLIED' ? IconCalendarEvent : IconFilterOff;
 
-          return withTooltip(
-            pageLayoutFilterId,
-            fullText,
-            <StyledFieldLabel>
-              <Icon size={theme.icon.size.sm} />
-              {renderText(text)}
-            </StyledFieldLabel>,
-          );
+          return withTooltip({
+            key: pageLayoutFilterId,
+            tooltip: fullText,
+            trigger: (
+              <StyledFieldLabel>
+                <Icon size={theme.icon.size.sm} />
+                {renderText({ text })}
+              </StyledFieldLabel>
+            ),
+          });
         })}
         {pills.map(({ pageLayoutFilterId, kind, text, tooltip }) => {
           const Icon = kind === 'OVERLAP' ? IconFilter : IconFilterOff;
 
-          return withTooltip(
-            pageLayoutFilterId,
+          return withTooltip({
+            key: pageLayoutFilterId,
             tooltip,
-            kind === 'UNAVAILABLE' ? (
-              <StyledStatusContainer>
-                <Status color="orange">{renderText(text, false)}</Status>
-              </StyledStatusContainer>
-            ) : (
-              <StyledPill>
-                <Icon size={theme.icon.size.sm} />
-                {renderText(text)}
-              </StyledPill>
-            ),
-          );
+            trigger:
+              kind === 'UNAVAILABLE' ? (
+                <StyledStatusContainer>
+                  <Status color="orange">
+                    {renderText({ text, isCollapsible: false })}
+                  </Status>
+                </StyledStatusContainer>
+              ) : (
+                <StyledPill>
+                  <Icon size={theme.icon.size.sm} />
+                  {renderText({ text })}
+                </StyledPill>
+              ),
+          });
         })}
         {isDefined(hoverIndicatorText) &&
           (isMeasure ? (
             <IconCalendarEvent size={theme.icon.size.sm} />
           ) : (
             <WidgetCardHeaderHoverReveal isAlwaysVisible={isTouchDevice}>
-              {withTooltip(
-                'hover-indicator',
-                hoverIndicatorText,
-                <StyledHoverIndicator
-                  role="img"
-                  tabIndex={0}
-                  aria-label={hoverIndicatorText}
-                >
-                  <IconCalendarEvent size={theme.icon.size.sm} />
-                </StyledHoverIndicator>,
-              )}
+              {withTooltip({
+                key: 'hover-indicator',
+                tooltip: hoverIndicatorText,
+                trigger: (
+                  <StyledHoverIndicator
+                    role="img"
+                    tabIndex={0}
+                    aria-label={hoverIndicatorText}
+                  >
+                    <IconCalendarEvent size={theme.icon.size.sm} />
+                  </StyledHoverIndicator>
+                ),
+              })}
             </WidgetCardHeaderHoverReveal>
           ))}
       </>
