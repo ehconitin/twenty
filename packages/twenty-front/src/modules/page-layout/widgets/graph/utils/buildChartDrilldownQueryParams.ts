@@ -2,15 +2,12 @@ import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/u
 import { type BuildChartDrilldownQueryParamsInput } from '@/page-layout/widgets/graph/types/BuildChartDrilldownQueryParamsInput';
 import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/buildFilterFromChartBucket';
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
-import { combineChartFilterWithDashboardRecordFilters } from '@/page-layout/widgets/graph/utils/combineChartFilterWithDashboardRecordFilters';
+import { composeChartFilterWithDashboardFilter } from '@/page-layout/widgets/graph/utils/composeChartFilterWithDashboardFilter';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
-import {
-  isDefined,
-  replaceWidgetFilterPeriodsWithDashboardFilter,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const buildChartDrilldownQueryParams = ({
   objectMetadataItem,
@@ -26,21 +23,12 @@ export const buildChartDrilldownQueryParams = ({
   const chartFilters: ChartFilters = configuration.filter ?? {};
 
   // The drilldown must list exactly what the chart counted
-  const { filter: chartFilter } = replaceWidgetFilterPeriodsWithDashboardFilter(
-    {
-      filter: sanitizeChartRecordFilters({
+  const chartFilterParams = buildFilterQueryParams({
+    ...composeChartFilterWithDashboardFilter({
+      chartFilter: sanitizeChartRecordFilters({
         chartFilters,
         fieldMetadataItems: objectMetadataItem.fields,
       }),
-      fieldMetadataIds: dashboardRecordFilters.map(
-        ({ fieldMetadataId }) => fieldMetadataId,
-      ),
-    },
-  );
-
-  const chartFilterParams = buildFilterQueryParams({
-    ...combineChartFilterWithDashboardRecordFilters({
-      chartFilter,
       dashboardRecordFilters,
     }),
     objectMetadataItem,
