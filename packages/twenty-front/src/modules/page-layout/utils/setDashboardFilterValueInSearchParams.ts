@@ -1,6 +1,6 @@
 import { DASHBOARD_FILTER_QUERY_PARAM_KEY } from '@/page-layout/constants/DashboardFilterQueryParamKey';
 import { type PageLayoutFilterValue } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const setDashboardFilterValueInSearchParams = ({
   searchParams,
@@ -25,7 +25,7 @@ export const setDashboardFilterValueInSearchParams = ({
     return nextSearchParams;
   }
 
-  if (value.conditions.length === 0) {
+  if (!isNonEmptyArray(value.conditions)) {
     nextSearchParams.append(pageLayoutFilterKey, '');
   }
 

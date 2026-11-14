@@ -22,7 +22,6 @@ export const DashboardFiltersFromUrlProvider = ({
 }: DashboardFiltersFromUrlProviderProps) => {
   const [searchParams] = useSearchParams();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  // Edit mode previews what every viewer sees by default
   const dashboardFilterSearch = isPageLayoutInEditMode
     ? ''
     : getDashboardFilterSearch(searchParams);

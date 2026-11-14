@@ -9,7 +9,7 @@ import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetD
 import { isDashboardFilterDataWidgetConfiguration } from '@/page-layout/utils/isDashboardFilterDataWidgetConfiguration';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 import {
-  buildDashboardFilterForWidget,
+  buildDashboardFilterForWidgetOrThrow,
   computeRecordGqlOperationFilter,
   InvalidDashboardFilterError,
   isDefined,
@@ -41,7 +41,7 @@ export const computeDashboardFilterForWidget = ({
   }
 
   try {
-    const dashboardFilter = buildDashboardFilterForWidget({
+    const dashboardFilter = buildDashboardFilterForWidgetOrThrow({
       bindings: getWidgetDashboardFilterBindings(configuration),
       ...getDashboardFilterWidgetCandidateFieldMetadataIds({
         configuration,
