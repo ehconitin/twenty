@@ -154,8 +154,6 @@ export const buildDashboardFilterForWidgetOrThrow = ({
 }): {
   recordFilters: DashboardRecordFilter[];
   appliedFields: DashboardFilterAppliedField[];
-  notAppliedPageLayoutFilterIds: string[];
-  unresolvedPageLayoutFilterIds: string[];
 } => {
   if (!isDefined(getValidTimeZoneOrUndefined(timeZone))) {
     throw new InvalidDashboardFilterError(
@@ -167,8 +165,6 @@ export const buildDashboardFilterForWidgetOrThrow = ({
 
   const recordFilters: DashboardRecordFilter[] = [];
   const appliedFields: DashboardFilterAppliedField[] = [];
-  const notAppliedPageLayoutFilterIds: string[] = [];
-  const unresolvedPageLayoutFilterIds: string[] = [];
 
   for (const { pageLayoutFilterId, type, conditions } of values) {
     const resolution = resolveDashboardFilterFieldForWidget({
@@ -181,10 +177,6 @@ export const buildDashboardFilterForWidgetOrThrow = ({
     });
 
     if (!isAppliedDashboardFilterFieldResolution(resolution)) {
-      (resolution.source === 'NOT_APPLIED'
-        ? notAppliedPageLayoutFilterIds
-        : unresolvedPageLayoutFilterIds
-      ).push(pageLayoutFilterId);
       continue;
     }
 
@@ -204,10 +196,5 @@ export const buildDashboardFilterForWidgetOrThrow = ({
     );
   }
 
-  return {
-    recordFilters,
-    appliedFields,
-    notAppliedPageLayoutFilterIds,
-    unresolvedPageLayoutFilterIds,
-  };
+  return { recordFilters, appliedFields };
 };

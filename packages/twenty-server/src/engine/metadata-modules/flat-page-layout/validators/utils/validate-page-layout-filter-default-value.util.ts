@@ -5,11 +5,25 @@ import {
   type PageLayoutFilterCondition,
   type PageLayoutFilterValue,
 } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  getDashboardFilterConditionValueIssue,
+  isDefined,
+  isNonEmptyArray,
+  isRecordFilterValueValid,
+} from 'twenty-shared/utils';
 
+import { getFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-filter-condition-validation-issue.util';
 import { type PageLayoutFilterValidationError } from 'src/engine/metadata-modules/flat-page-layout/types/page-layout-filter-validation-error.type';
-import { getPageLayoutFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-page-layout/utils/get-page-layout-filter-condition-validation-issue.util';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+
+const getDashboardFilterValueIssue = ({
+  operand,
+  value,
+}: PageLayoutFilterCondition) => {
+  const hint = getDashboardFilterConditionValueIssue({ operand, value });
+
+  return isDefined(hint) ? { stringifiedValue: value, hint } : undefined;
+};
 
 const validateCondition = ({
   condition: { operand, value },
@@ -20,9 +34,10 @@ const validateCondition = ({
   valueFormatFieldType: FieldMetadataType;
   filterLabel: string;
 }): PageLayoutFilterValidationError[] => {
-  const issue = getPageLayoutFilterConditionValidationIssue({
-    condition: { operand, value },
-    valueFormatFieldType,
+  const issue = getFilterConditionValidationIssue({
+    fieldType: valueFormatFieldType,
+    operand,
+    value,
   });
 
   if (issue?.kind === 'UNSUPPORTED_OPERAND') {
@@ -38,22 +53,7 @@ const validateCondition = ({
     ];
   }
 
-  if (issue?.kind === 'INVALID_VALUE') {
-    const { stringifiedValue, hint } = issue;
-
-    return [
-      {
-        code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
-        message: isNonEmptyString(hint)
-          ? t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}". ${hint}`
-          : t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}".`,
-        userFriendlyMessage: msg`Dashboard filter default value is not valid for this operand`,
-        value,
-      },
-    ];
-  }
-
-  if (issue?.kind === 'MISSING_VALUE') {
+  if (!isDefined(issue) && !isRecordFilterValueValid({ operand, value })) {
     return [
       {
         code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
@@ -64,7 +64,25 @@ const validateCondition = ({
     ];
   }
 
-  return [];
+  const invalidValueIssue =
+    issue ?? getDashboardFilterValueIssue({ operand, value });
+
+  if (!isDefined(invalidValueIssue)) {
+    return [];
+  }
+
+  const { stringifiedValue, hint } = invalidValueIssue;
+
+  return [
+    {
+      code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      message: isNonEmptyString(hint)
+        ? t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}". ${hint}`
+        : t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}".`,
+      userFriendlyMessage: msg`Dashboard filter default value is not valid for this operand`,
+      value,
+    },
+  ];
 };
 
 export const validatePageLayoutFilterDefaultValue = ({

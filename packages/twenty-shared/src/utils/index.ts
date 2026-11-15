@@ -300,6 +300,7 @@ export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWid
 export { InvalidDashboardFilterError } from './pageLayout/InvalidDashboardFilterError';
 export { isFieldBindableToDashboardFilter } from './pageLayout/isFieldBindableToDashboardFilter';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
+export { isSupportedPlainDate } from './pageLayout/isSupportedPlainDate';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export { replaceWidgetFilterPeriodsWithDashboardFilter } from './pageLayout/replaceWidgetFilterPeriodsWithDashboardFilter';
 export { resolveDashboardFilterFieldForWidget } from './pageLayout/resolveDashboardFilterFieldForWidget';
