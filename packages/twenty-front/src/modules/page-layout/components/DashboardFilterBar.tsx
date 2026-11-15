@@ -44,7 +44,6 @@ export const DashboardFilterBar = () => {
 
   return (
     <StyledContainer>
-      {/* Before the controls, so they keep their place at the right edge */}
       {!isPageLayoutInEditMode &&
         isNonEmptyArray(pageLayoutFiltersDifferingFromDefault) && (
           <LightButton

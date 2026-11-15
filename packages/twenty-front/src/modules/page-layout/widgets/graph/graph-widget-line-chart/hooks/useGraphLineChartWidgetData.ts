@@ -1,5 +1,4 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useDashboardFilterChartDataInput } from '@/page-layout/hooks/useDashboardFilterChartDataInput';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -46,8 +45,6 @@ export const useGraphLineChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput();
-
   const dataConfiguration = extractLineChartDataConfiguration(configuration);
 
   const {
@@ -59,7 +56,6 @@ export const useGraphLineChartWidgetData = ({
       input: {
         objectMetadataId: objectMetadataItemId,
         configuration: dataConfiguration,
-        ...dashboardFilterChartDataInput,
       },
     },
   });
