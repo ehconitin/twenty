@@ -292,6 +292,7 @@ export class PageLayoutWidgetService {
           configuration: getPageLayoutWidgetConfigurationToSaveOrThrow({
             existingWidget: undefined,
             configuration: createInput.configuration,
+            objectMetadataId: createInput.objectMetadataId,
             fieldMetadataUniversalIdentifierById:
               flatFieldMetadataMaps.universalIdentifierById,
           }),
@@ -466,6 +467,7 @@ export class PageLayoutWidgetService {
               configuration: this.enrichRichTextConfigurationBody(
                 updateData.configuration,
               ),
+              objectMetadataId: updateData.objectMetadataId,
               fieldMetadataUniversalIdentifierById:
                 existingFlatFieldMetadataMaps.universalIdentifierById,
             }),

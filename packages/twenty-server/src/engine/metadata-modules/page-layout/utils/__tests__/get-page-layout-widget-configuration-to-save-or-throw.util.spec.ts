@@ -11,6 +11,8 @@ import { getPageLayoutWidgetConfigurationToSaveOrThrow } from 'src/engine/metada
 
 const CREATED_AT_FIELD_METADATA_ID = '7a1c2d3e-4f50-4a6b-8c7d-9e0f1a2b3c01';
 const CLOSE_DATE_FIELD_METADATA_ID = '7a1c2d3e-4f50-4a6b-8c7d-9e0f1a2b3c02';
+const OPPORTUNITY_OBJECT_METADATA_ID = '3c9d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e01';
+const COMPANY_OBJECT_METADATA_ID = '3c9d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e02';
 
 const PERIOD_BINDING: DashboardFilterBinding = {
   pageLayoutFilterId: '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01',
@@ -47,16 +49,22 @@ const getConfigurationToSave = ({
   ]),
   isNewWidget = false,
   configuration,
+  objectMetadataId,
 }: {
   existingConfiguration?: FlatPageLayoutWidget['configuration'];
   isNewWidget?: boolean;
   configuration: FlatPageLayoutWidget['configuration'];
+  objectMetadataId?: string | null;
 }) =>
   getPageLayoutWidgetConfigurationToSaveOrThrow({
     existingWidget: isNewWidget
       ? undefined
-      : { configuration: existingConfiguration },
+      : {
+          configuration: existingConfiguration,
+          objectMetadataId: OPPORTUNITY_OBJECT_METADATA_ID,
+        },
     configuration,
+    objectMetadataId,
     fieldMetadataUniversalIdentifierById:
       FIELD_METADATA_UNIVERSAL_IDENTIFIER_BY_ID,
   });
@@ -74,6 +82,39 @@ describe('getPageLayoutWidgetConfigurationToSaveOrThrow', () => {
     expect(
       getConfigurationToSave({ configuration: buildConfiguration() }),
     ).toEqual(buildConfiguration([PERIOD_BINDING, CLOSE_DATE_BINDING]));
+  });
+
+  it('should keep the stored bindings when a save omits them and resends the same object', () => {
+    expect(
+      getConfigurationToSave({
+        configuration: buildConfiguration(),
+        objectMetadataId: OPPORTUNITY_OBJECT_METADATA_ID,
+      }),
+    ).toEqual(buildConfiguration([PERIOD_BINDING, CLOSE_DATE_BINDING]));
+  });
+
+  it('should drop the stored overrides but keep the exclusions when a save omits the bindings and changes the object', () => {
+    expect(
+      getConfigurationToSave({
+        existingConfiguration: buildConfiguration([
+          PERIOD_BINDING,
+          NOT_APPLIED_BINDING,
+        ]),
+        configuration: buildConfiguration(),
+        objectMetadataId: COMPANY_OBJECT_METADATA_ID,
+      }),
+    ).toEqual(buildConfiguration([NOT_APPLIED_BINDING]));
+  });
+
+  it('should save the bindings as sent when a save changes the object', () => {
+    const configuration = buildConfiguration([CLOSE_DATE_BINDING]);
+
+    expect(
+      getConfigurationToSave({
+        configuration,
+        objectMetadataId: COMPANY_OBJECT_METADATA_ID,
+      }),
+    ).toEqual(configuration);
   });
 
   it.each([
