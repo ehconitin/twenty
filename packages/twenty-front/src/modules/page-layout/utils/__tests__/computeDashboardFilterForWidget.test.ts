@@ -86,8 +86,6 @@ describe('computeDashboardFilterForWidget', () => {
           source: 'CREATED_AT',
         },
       ],
-      notAppliedPageLayoutFilterIds: [],
-      unresolvedPageLayoutFilterIds: [],
       replacedWidgetRecordFilterIds: [],
       isInvalid: false,
       gqlOperationFilter: {
@@ -145,22 +143,21 @@ describe('computeDashboardFilterForWidget', () => {
   });
 
   it('should report a widget set to not applied', () => {
-    const { recordFilters, notAppliedPageLayoutFilterIds } =
-      computeDashboardFilterForWidget({
-        dashboardFilters: DASHBOARD_FILTERS,
-        configuration: {
-          ...RECORD_TABLE_CONFIGURATION,
-          dashboardFilterBindings: [
-            { pageLayoutFilterId: DATE_RANGE_FILTER_ID, fieldMetadataId: null },
-          ],
-        },
-        fields: [CREATED_AT_FIELD],
-        widgetFilter: NO_WIDGET_FILTER,
-        filterValueDependencies: {},
-      });
+    const { recordFilters, appliedFields } = computeDashboardFilterForWidget({
+      dashboardFilters: DASHBOARD_FILTERS,
+      configuration: {
+        ...RECORD_TABLE_CONFIGURATION,
+        dashboardFilterBindings: [
+          { pageLayoutFilterId: DATE_RANGE_FILTER_ID, fieldMetadataId: null },
+        ],
+      },
+      fields: [CREATED_AT_FIELD],
+      widgetFilter: NO_WIDGET_FILTER,
+      filterValueDependencies: {},
+    });
 
     expect(recordFilters).toEqual([]);
-    expect(notAppliedPageLayoutFilterIds).toEqual([DATE_RANGE_FILTER_ID]);
+    expect(appliedFields).toEqual([]);
   });
 
   it('should ignore widgets that show no records', () => {
@@ -173,8 +170,8 @@ describe('computeDashboardFilterForWidget', () => {
         fields: [],
         widgetFilter: NO_WIDGET_FILTER,
         filterValueDependencies: {},
-      }).unresolvedPageLayoutFilterIds,
-    ).toEqual([]);
+      }),
+    ).toMatchObject({ recordFilters: [], appliedFields: [] });
   });
 
   it('should mark the widget invalid when a value cannot be resolved', () => {
