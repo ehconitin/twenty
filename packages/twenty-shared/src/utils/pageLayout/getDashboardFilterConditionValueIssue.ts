@@ -1,8 +1,8 @@
 import { DASHBOARD_FILTER_PLAIN_DATE_OPERANDS } from '@/constants/DashboardFilterPlainDateOperands';
 import { type PageLayoutFilterCondition, ViewFilterOperand } from '@/types';
+import { isSupportedPlainDate } from '@/utils/date/isSupportedPlainDate';
 import { isSubDayRelativeDateFilterUnit } from '@/utils/filter/dates/utils/isSubDayRelativeDateFilterUnit';
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
-import { isSupportedPlainDate } from '@/utils/pageLayout/isSupportedPlainDate';
 
 const MAX_RELATIVE_DATE_AMOUNT = 1000;
 

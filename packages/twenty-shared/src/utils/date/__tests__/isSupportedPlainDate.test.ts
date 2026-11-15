@@ -1,4 +1,4 @@
-import { isSupportedPlainDate } from '@/utils/pageLayout/isSupportedPlainDate';
+import { isSupportedPlainDate } from '@/utils/date/isSupportedPlainDate';
 
 describe('isSupportedPlainDate', () => {
   it.each(['2026-02-28', '0001-01-01', '0050-05-31', '9999-12-31'])(
