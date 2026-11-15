@@ -16,34 +16,30 @@ const RECORD_TABLE_WIDGET = {
   },
 };
 
-const viewsById = new Map([[SAVED_VIEW.id, SAVED_VIEW]]);
-
 const getFilteredFieldMetadataIds = (
-  recordTableWidgetViewDrafts: Parameters<
+  recordTableWidgetViewDraft: Parameters<
     typeof getPageLayoutWidgetFilter
-  >[0]['recordTableWidgetViewDrafts'],
+  >[0]['recordTableWidgetViewDraft'],
 ) =>
   getPageLayoutWidgetFilter({
-    widget: RECORD_TABLE_WIDGET,
-    viewsById,
-    recordTableWidgetViewDrafts,
+    configuration: RECORD_TABLE_WIDGET.configuration,
+    view: SAVED_VIEW,
+    recordTableWidgetViewDraft,
   }).recordFilters.map(({ fieldMetadataId }) => fieldMetadataId);
 
 describe('getPageLayoutWidgetFilter', () => {
   it('should read the unsaved view of a record table first', () => {
-    expect(
-      getFilteredFieldMetadataIds({
-        [RECORD_TABLE_WIDGET.id]: DRAFT_VIEW_SNAPSHOT,
-      }),
-    ).toEqual(['draft-field-id']);
+    expect(getFilteredFieldMetadataIds(DRAFT_VIEW_SNAPSHOT)).toEqual([
+      'draft-field-id',
+    ]);
   });
 
   it('should read the saved view of a record table without an unsaved one', () => {
     expect(
       getPageLayoutWidgetFilter({
-        widget: RECORD_TABLE_WIDGET,
-        viewsById,
-        recordTableWidgetViewDrafts: {},
+        configuration: RECORD_TABLE_WIDGET.configuration,
+        view: SAVED_VIEW,
+        recordTableWidgetViewDraft: undefined,
       }),
     ).toEqual({
       recordFilters: [
@@ -72,12 +68,9 @@ describe('getPageLayoutWidgetFilter', () => {
 
     expect(
       getPageLayoutWidgetFilter({
-        widget: {
-          id: 'chart',
-          configuration: { ...TEST_BAR_CHART_CONFIGURATION, filter },
-        },
-        viewsById,
-        recordTableWidgetViewDrafts: {},
+        configuration: { ...TEST_BAR_CHART_CONFIGURATION, filter },
+        view: undefined,
+        recordTableWidgetViewDraft: undefined,
       }),
     ).toEqual({ ...filter, recordFilterGroups: [] });
   });

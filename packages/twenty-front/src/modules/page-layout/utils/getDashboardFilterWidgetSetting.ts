@@ -28,7 +28,9 @@ export const getDashboardFilterWidgetSetting = ({
   >;
   fields: DashboardFilterWidgetField[];
 }): DashboardFilterWidgetSetting => {
-  const resolve = (bindingsToResolve: DashboardFilterBinding[]) =>
+  const resolveDashboardFilterField = (
+    bindingsToResolve: DashboardFilterBinding[],
+  ) =>
     resolveDashboardFilterFieldForWidget({
       pageLayoutFilterId: pageLayoutFilter.id,
       filterType: pageLayoutFilter.type,
@@ -41,8 +43,10 @@ export const getDashboardFilterWidgetSetting = ({
     ({ pageLayoutFilterId }) => pageLayoutFilterId === pageLayoutFilter.id,
   );
 
-  const resolution = resolve(bindings);
-  const defaultResolution = isDefined(binding) ? resolve([]) : resolution;
+  const resolution = resolveDashboardFilterField(bindings);
+  const defaultResolution = isDefined(binding)
+    ? resolveDashboardFilterField([])
+    : resolution;
 
   const defaultField = fields.find(
     ({ id }) => id === defaultResolution.fieldMetadataId,
@@ -63,18 +67,27 @@ export const getDashboardFilterWidgetSetting = ({
         ]
       : [];
 
-  // A deactivated override keeps applying, so it stays selectable
+  const isFieldSelectable = (field: DashboardFilterWidgetField) => {
+    // A deactivated override keeps applying, so it stays selectable
+    if (
+      field.id === overrideFieldMetadataId &&
+      unavailableOverrideOptions.length === 0
+    ) {
+      return true;
+    }
+
+    if (!(field.isActive ?? false)) {
+      return false;
+    }
+
+    return isFieldBindableToDashboardFilter({
+      field,
+      filterType: pageLayoutFilter.type,
+    });
+  };
+
   const fieldOptions = fields
-    .filter(
-      (field) =>
-        (field.id === overrideFieldMetadataId &&
-          unavailableOverrideOptions.length === 0) ||
-        ((field.isActive ?? false) &&
-          isFieldBindableToDashboardFilter({
-            field,
-            filterType: pageLayoutFilter.type,
-          })),
-    )
+    .filter(isFieldSelectable)
     .map(({ id, label, icon }) => ({ value: id, label, iconName: icon }));
 
   return {
