@@ -96,7 +96,9 @@ describe('buildDashboardFilterChartDataInput', () => {
         },
         widgetDashboardFilter: { recordFilters: [], appliedFields: [] },
       }),
-    ).toEqual({ configuration: CONFIGURATION, viewerTimeZone: 'Europe/Paris' });
+    ).toEqual({
+      configuration: { ...CONFIGURATION, timezone: 'Europe/Paris' },
+    });
   });
 
   it("should send the chart its filter with the dashboard's range in place of its own period", () => {

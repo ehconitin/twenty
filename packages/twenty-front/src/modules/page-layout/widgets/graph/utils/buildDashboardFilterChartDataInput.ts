@@ -31,7 +31,6 @@ export const buildDashboardFilterChartDataInput = <
   now: Temporal.Instant;
 }): {
   configuration: TConfiguration;
-  viewerTimeZone: string;
   primaryAxisDateRange?: ChartDateRangeInput;
 } => {
   const conditionsOnPrimaryAxis = values
@@ -55,16 +54,18 @@ export const buildDashboardFilterChartDataInput = <
       : undefined;
 
   return {
-    configuration: isNonEmptyArray(recordFilters)
-      ? {
-          ...configuration,
-          filter: composeChartFilterWithDashboardFilter({
-            chartFilter: configuration.filter ?? {},
-            dashboardRecordFilters: recordFilters,
-          }),
-        }
-      : configuration,
-    viewerTimeZone: timeZone,
+    configuration: {
+      ...configuration,
+      timezone: timeZone,
+      ...(isNonEmptyArray(recordFilters)
+        ? {
+            filter: composeChartFilterWithDashboardFilter({
+              chartFilter: configuration.filter ?? {},
+              dashboardRecordFilters: recordFilters,
+            }),
+          }
+        : {}),
+    },
     ...(isDefined(primaryAxisDateRange)
       ? {
           primaryAxisDateRange: {
