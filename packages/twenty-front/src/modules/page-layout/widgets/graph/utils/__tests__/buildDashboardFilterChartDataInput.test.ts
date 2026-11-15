@@ -1,4 +1,4 @@
-import { buildDashboardFilterChartDataInput } from '@/page-layout/utils/buildDashboardFilterChartDataInput';
+import { buildDashboardFilterChartDataInput } from '@/page-layout/widgets/graph/utils/buildDashboardFilterChartDataInput';
 import { Temporal } from 'temporal-polyfill';
 import {
   type DashboardFilterValue,
@@ -80,7 +80,7 @@ const buildInput = (
       firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     },
     widgetDashboardFilter: APPLIED_ON_CLOSE_DATE,
-    primaryAxisDateField: CLOSE_DATE_FIELD,
+    primaryAxisField: CLOSE_DATE_FIELD,
     now: Temporal.Instant.from('2026-03-11T23:30:00Z'),
     ...overrides,
   });
@@ -174,7 +174,7 @@ describe('buildDashboardFilterChartDataInput', () => {
   });
 
   it.each([
-    ['a chart without a date axis', { primaryAxisDateField: undefined }],
+    ['a chart without a date axis', { primaryAxisField: undefined }],
     [
       'a filter applied to another field than the axis',
       {

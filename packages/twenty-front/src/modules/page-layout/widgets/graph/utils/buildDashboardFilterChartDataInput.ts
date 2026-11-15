@@ -1,10 +1,10 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DashboardFilters } from '@/page-layout/types/DashboardFilters';
 import { type WidgetDashboardFilter } from '@/page-layout/types/WidgetDashboardFilter';
-import { resolveDashboardFilterConditionsDateRange } from '@/page-layout/utils/resolveDashboardFilterConditionsDateRange';
 import { composeChartFilterWithDashboardFilter } from '@/page-layout/widgets/graph/utils/composeChartFilterWithDashboardFilter';
+import { resolveDashboardFilterConditionsDateRange } from '@/page-layout/widgets/graph/utils/resolveDashboardFilterConditionsDateRange';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { type Temporal } from 'temporal-polyfill';
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type ChartDateRangeInput } from '~/generated-metadata/graphql';
 
@@ -15,7 +15,7 @@ export const buildDashboardFilterChartDataInput = <
   configuration,
   dashboardFilters: { values, timeZone, firstDayOfTheWeek },
   widgetDashboardFilter: { recordFilters, appliedFields },
-  primaryAxisDateField,
+  primaryAxisField,
   now,
 }: {
   configuration: TConfiguration;
@@ -27,7 +27,7 @@ export const buildDashboardFilterChartDataInput = <
     WidgetDashboardFilter,
     'recordFilters' | 'appliedFields'
   >;
-  primaryAxisDateField?: { id: string; type: FieldMetadataType };
+  primaryAxisField?: Pick<FieldMetadataItem, 'id' | 'type'>;
   now: Temporal.Instant;
 }): {
   configuration: TConfiguration;
@@ -39,16 +39,16 @@ export const buildDashboardFilterChartDataInput = <
       appliedFields.some(
         (appliedField) =>
           appliedField.pageLayoutFilterId === pageLayoutFilterId &&
-          appliedField.fieldMetadataId === primaryAxisDateField?.id,
+          appliedField.fieldMetadataId === primaryAxisField?.id,
       ),
     )
     .flatMap(({ conditions }) => conditions);
 
   const primaryAxisDateRange =
-    isDefined(primaryAxisDateField) && isNonEmptyArray(conditionsOnPrimaryAxis)
+    isDefined(primaryAxisField) && isNonEmptyArray(conditionsOnPrimaryAxis)
       ? resolveDashboardFilterConditionsDateRange({
           conditions: conditionsOnPrimaryAxis,
-          fieldType: primaryAxisDateField.type,
+          fieldType: primaryAxisField.type,
           now: now.toZonedDateTimeISO(timeZone),
           firstDayOfTheWeek,
         })

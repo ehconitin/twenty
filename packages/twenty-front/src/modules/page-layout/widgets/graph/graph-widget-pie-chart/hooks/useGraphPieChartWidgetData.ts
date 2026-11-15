@@ -1,5 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useDashboardFilterChartDataInput } from '@/page-layout/hooks/useDashboardFilterChartDataInput';
+import { useDashboardFilterChartDataInput } from '@/page-layout/widgets/graph/hooks/useDashboardFilterChartDataInput';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';

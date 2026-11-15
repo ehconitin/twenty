@@ -1,4 +1,4 @@
-import { type DashboardRecordFilter } from '@/page-layout/types/DashboardRecordFilter';
+import { type WidgetDashboardFilter } from '@/page-layout/types/WidgetDashboardFilter';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import {
@@ -15,7 +15,7 @@ export const composeChartFilterWithDashboardFilter = ({
   dashboardRecordFilters,
 }: {
   chartFilter: ChartFilters;
-  dashboardRecordFilters: DashboardRecordFilter[];
+  dashboardRecordFilters: WidgetDashboardFilter['recordFilters'];
 }): ChartFilters => {
   if (!isNonEmptyArray(dashboardRecordFilters)) {
     return chartFilter;
@@ -42,7 +42,6 @@ export const composeChartFilterWithDashboardFilter = ({
 
   const rootRecordFilterGroup = findRootRecordFilterGroup(recordFilterGroups);
 
-  // A chart compiles its first parentless group only, so the others stay out
   const appliedRecordFilterGroupIds = new Set(
     isDefined(rootRecordFilterGroup)
       ? getGroupTreeIds(rootRecordFilterGroup.id)

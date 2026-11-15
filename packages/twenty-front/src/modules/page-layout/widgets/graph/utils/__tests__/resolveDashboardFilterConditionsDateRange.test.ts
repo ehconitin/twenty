@@ -1,4 +1,4 @@
-import { resolveDashboardFilterConditionsDateRange } from '@/page-layout/utils/resolveDashboardFilterConditionsDateRange';
+import { resolveDashboardFilterConditionsDateRange } from '@/page-layout/widgets/graph/utils/resolveDashboardFilterConditionsDateRange';
 import { Temporal } from 'temporal-polyfill';
 import {
   FieldMetadataType,
