@@ -37,10 +37,15 @@ const parseDashboardFilterBindingsOrThrow = (
 export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
   existingWidget,
   configuration,
+  objectMetadataId,
   fieldMetadataUniversalIdentifierById,
 }: {
-  existingWidget: Pick<FlatPageLayoutWidget, 'configuration'> | undefined;
+  existingWidget:
+    | Pick<FlatPageLayoutWidget, 'configuration' | 'objectMetadataId'>
+    | undefined;
   configuration: PageLayoutWidgetConfiguration;
+  // undefined when the save leaves the widget's object unchanged
+  objectMetadataId: string | null | undefined;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
 }): PageLayoutWidgetConfiguration => {
   if (
@@ -88,9 +93,18 @@ export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
     });
 
   if (isUndefined(dashboardFilterBindings)) {
+    const isObjectChanging =
+      !isUndefined(objectMetadataId) &&
+      objectMetadataId !== existingWidget.objectMetadataId;
+
+    // Field overrides point at the previous object; exclusions still hold
     return {
       ...configuration,
-      dashboardFilterBindings: existingDashboardFilterBindings,
+      dashboardFilterBindings: isObjectChanging
+        ? existingDashboardFilterBindings?.filter(
+            ({ fieldMetadataId }) => !isDefined(fieldMetadataId),
+          )
+        : existingDashboardFilterBindings,
     };
   }
 

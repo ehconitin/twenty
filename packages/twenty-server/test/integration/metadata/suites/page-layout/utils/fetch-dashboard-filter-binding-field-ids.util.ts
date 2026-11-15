@@ -8,6 +8,7 @@ export type DashboardFilterBindingFieldIds = {
   companyDeletedAtFieldId: string;
   companyNameFieldId: string;
   companyPositionFieldId: string;
+  personObjectMetadataId: string;
   personCreatedAtFieldId: string;
 };
 
@@ -74,6 +75,7 @@ export const fetchDashboardFilterBindingFieldIds =
         objectNameSingular: 'company',
         fieldName: 'position',
       }),
+      personObjectMetadataId: findObject('person').id,
       personCreatedAtFieldId: findFieldId({
         objectNameSingular: 'person',
         fieldName: 'createdAt',

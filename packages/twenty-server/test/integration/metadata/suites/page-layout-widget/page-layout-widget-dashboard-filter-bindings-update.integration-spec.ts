@@ -89,6 +89,58 @@ describe('Page layout widget update should apply the dashboard filter binding ru
       });
     });
 
+    it('should drop the stored overrides when the widget moves to another object without sending bindings', async () => {
+      const fieldIds = await fetchDashboardFilterBindingFieldIds();
+      const { data: layoutData } = await createOnePageLayout({
+        expectToFail: false,
+        input: {
+          name: 'Rebound Object Dashboard',
+          type: PageLayoutType.DASHBOARD,
+        },
+      });
+
+      pageLayoutId = layoutData.createPageLayout.id;
+
+      const { data: tabData } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: { title: 'Tab 1', pageLayoutId },
+      });
+      const widgetId = v4();
+
+      await saveDashboardWithAggregateWidget({
+        pageLayoutId,
+        tabId: tabData.createPageLayoutTab.id,
+        widgetId,
+        objectMetadataId: fieldIds.companyObjectMetadataId,
+        aggregateFieldMetadataId: fieldIds.companyPositionFieldId,
+        dashboardFilterBindings: [
+          {
+            pageLayoutFilterId: PERIOD_FILTER.id,
+            fieldMetadataId: fieldIds.companyCreatedAtFieldId,
+          },
+        ],
+      });
+
+      const { errors } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        gqlFields: 'id',
+        input: {
+          id: widgetId,
+          objectMetadataId: fieldIds.personObjectMetadataId,
+          configuration: {
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+            aggregateFieldMetadataId: fieldIds.personCreatedAtFieldId,
+            aggregateOperation: AggregateOperations.COUNT,
+          },
+        },
+      });
+
+      expect(errors).toBeUndefined();
+      expect(
+        (await findStoredConfiguration(widgetId)).dashboardFilterBindings,
+      ).toEqual([]);
+    });
+
     it('should drop a stored override whose field no longer resolves, on read and on the next write, instead of turning it into an exclusion', async () => {
       const fieldIds = await fetchDashboardFilterBindingFieldIds();
       const { data: layoutData } = await createOnePageLayout({

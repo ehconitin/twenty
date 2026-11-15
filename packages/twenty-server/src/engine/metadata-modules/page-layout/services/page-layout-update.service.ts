@@ -131,6 +131,7 @@ export class PageLayoutUpdateService {
             flatEntityMaps: flatPageLayoutWidgetMaps,
           }),
           configuration: widgetInput.configuration,
+          objectMetadataId: widgetInput.objectMetadataId ?? null,
           fieldMetadataUniversalIdentifierById:
             flatFieldMetadataMaps.universalIdentifierById,
         }),
