@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useDashboardFilterChartDataInput } from '@/page-layout/hooks/useDashboardFilterChartDataInput';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -8,6 +9,7 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,7 +47,17 @@ export const useGraphLineChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dataConfiguration = extractLineChartDataConfiguration(configuration);
+  const dataConfiguration = useMemo(
+    () => extractLineChartDataConfiguration(configuration),
+    [configuration],
+  );
+
+  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput({
+    configuration: dataConfiguration,
+    primaryAxisDateField: objectMetadataItem.fields.find(
+      ({ id }) => id === configuration.primaryAxisGroupByFieldMetadataId,
+    ),
+  });
 
   const {
     data: queryData,
@@ -55,7 +67,7 @@ export const useGraphLineChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration: dataConfiguration,
+        ...dashboardFilterChartDataInput,
       },
     },
   });
