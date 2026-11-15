@@ -4,10 +4,10 @@ import { type DashboardFilterBinding } from 'twenty-shared/types';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
-  PageLayoutException,
-  PageLayoutExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { getPageLayoutWidgetConfigurationToSaveOrThrow } from 'src/engine/metadata-modules/page-layout/utils/get-page-layout-widget-configuration-to-save-or-throw.util';
+  PageLayoutWidgetException,
+  PageLayoutWidgetExceptionCode,
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { getPageLayoutWidgetConfigurationToSaveOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/get-page-layout-widget-configuration-to-save-or-throw.util';
 
 const CREATED_AT_FIELD_METADATA_ID = '7a1c2d3e-4f50-4a6b-8c7d-9e0f1a2b3c01';
 const CLOSE_DATE_FIELD_METADATA_ID = '7a1c2d3e-4f50-4a6b-8c7d-9e0f1a2b3c02';
@@ -176,9 +176,9 @@ describe('getPageLayoutWidgetConfigurationToSaveOrThrow', () => {
         ]),
       }),
     ).toThrow(
-      new PageLayoutException(
+      new PageLayoutWidgetException(
         `Dashboard filter "${PERIOD_BINDING.pageLayoutFilterId}" is bound to field "${missingFieldMetadataId}", which does not exist`,
-        PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       ),
     );
   });
