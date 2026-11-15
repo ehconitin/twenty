@@ -193,9 +193,7 @@ describe('Installed application dashboard filter bindings', () => {
 
   it('should keep the stored bindings when the workspace saves them back unchanged', async () => {
     const { errors, storedWidget } = await saveInstalledDashboard((widget) => [
-      withDashboardFilterBindings(widget, (dashboardFilterBindings) =>
-        dashboardFilterBindings.map((binding) => ({ ...binding })),
-      ),
+      widget,
     ]);
 
     expect(errors).toBeUndefined();
