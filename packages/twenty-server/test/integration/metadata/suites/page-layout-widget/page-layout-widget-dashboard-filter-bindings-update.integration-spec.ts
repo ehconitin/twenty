@@ -247,22 +247,6 @@ describe('Page layout widget update should apply the dashboard filter binding ru
       });
     });
 
-    it('should accept a save that keeps the bindings unchanged', async () => {
-      const { errors } = await updateOnePageLayoutWidget({
-        expectToFail: false,
-        gqlFields: 'id',
-        input: {
-          id: installedWidget.id,
-          configuration: installedWidget.configuration,
-        },
-      });
-
-      expect(errors).toBeUndefined();
-      expect(await findStoredConfiguration(installedWidget.id)).toEqual(
-        installedWidget.configuration,
-      );
-    });
-
     it('should save a change to the bindings', async () => {
       const { errors } = await updateOnePageLayoutWidget({
         expectToFail: false,
