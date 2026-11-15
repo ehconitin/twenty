@@ -43,16 +43,27 @@ export const computeFlatPageLayoutWidgetsUnboundFromDeletedFields = <
   return flatPageLayoutWidgets.flatMap((flatPageLayoutWidget) => {
     const { configuration, universalConfiguration } = flatPageLayoutWidget;
 
+    if (isDefined(flatPageLayoutWidget.deletedAt)) {
+      return [];
+    }
+
     if (
-      isDefined(flatPageLayoutWidget.deletedAt) ||
       !('dashboardFilterBindings' in configuration) ||
-      !('dashboardFilterBindings' in universalConfiguration) ||
+      !('dashboardFilterBindings' in universalConfiguration)
+    ) {
+      return [];
+    }
+
+    if (
       !configuration.dashboardFilterBindings?.some(
         ({ fieldMetadataId }) =>
           isDefined(fieldMetadataId) && deletedFieldIds.has(fieldMetadataId),
-      ) ||
-      !getChartReferencedFieldMetadataIds(configuration).every(isFieldKept)
+      )
     ) {
+      return [];
+    }
+
+    if (!getChartReferencedFieldMetadataIds(configuration).every(isFieldKept)) {
       return [];
     }
 
