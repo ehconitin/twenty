@@ -8,6 +8,7 @@ import { getDashboardFilterBindingsWithWidgetSetting } from '@/page-layout/utils
 import { getPageLayoutFilterDisplayLabel } from '@/page-layout/utils/getPageLayoutFilterDisplayLabel';
 import { getPageLayoutWidgetFilter } from '@/page-layout/utils/getPageLayoutWidgetFilter';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
+import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { getWidgetDashboardFilterSettings } from '@/page-layout/utils/getWidgetDashboardFilterSettings';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
@@ -62,6 +63,8 @@ export const WidgetDashboardFilterBindingsSection = ({
     return null;
   }
 
+  const viewId = getWidgetConfigurationViewId(widget.configuration);
+
   const settings = getWidgetDashboardFilterSettings({
     pageLayoutFilters,
     configuration: widget.configuration,
@@ -69,9 +72,9 @@ export const WidgetDashboardFilterBindingsSection = ({
       ? (objectMetadataItemsByIdMap.get(widget.objectMetadataId)?.fields ?? [])
       : [],
     widgetFilter: getPageLayoutWidgetFilter({
-      widget,
-      viewsById: viewsByIdMap,
-      recordTableWidgetViewDrafts: recordTableWidgetViewDraft,
+      configuration: widget.configuration,
+      view: isDefined(viewId) ? viewsByIdMap.get(viewId) : undefined,
+      recordTableWidgetViewDraft: recordTableWidgetViewDraft[widget.id],
     }),
   });
 

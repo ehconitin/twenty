@@ -1,6 +1,5 @@
 import { type DashboardFilterWidgetConfiguration } from '@/page-layout/types/DashboardFilterWidgetConfiguration';
 import { type DashboardFilterWidgetFilter } from '@/page-layout/types/DashboardFilterWidgetFilter';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { getRecordTableWidgetFilter } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetFilter';
 import { getRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewForDisplay';
@@ -8,21 +7,17 @@ import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getPageLayoutWidgetFilter = ({
-  widget,
-  viewsById,
-  recordTableWidgetViewDrafts,
+  configuration: { filter },
+  view: savedView,
+  recordTableWidgetViewDraft,
 }: {
-  widget: Pick<PageLayoutWidget, 'id'> & {
-    configuration: DashboardFilterWidgetConfiguration;
-  };
-  viewsById: Map<string, View>;
-  recordTableWidgetViewDrafts: Record<string, RecordTableWidgetViewSnapshot>;
+  configuration: DashboardFilterWidgetConfiguration;
+  view: View | undefined;
+  recordTableWidgetViewDraft: RecordTableWidgetViewSnapshot | undefined;
 }): DashboardFilterWidgetFilter => {
-  const { filter, viewId } = widget.configuration;
-
   const view = getRecordTableWidgetViewForDisplay({
-    draftSnapshot: recordTableWidgetViewDrafts[widget.id],
-    view: isDefined(viewId) ? viewsById.get(viewId) : undefined,
+    draftSnapshot: recordTableWidgetViewDraft,
+    view: savedView,
   });
 
   if (isDefined(view)) {
