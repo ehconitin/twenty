@@ -5693,9 +5693,7 @@ export interface BarChartDataGenqlSelection{
 
 export interface BarChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
 /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
-primaryAxisDateRange?: (ChartDateRangeInput | null),
-/** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
-viewerTimeZone?: (Scalars['String'] | null)}
+primaryAxisDateRange?: (ChartDateRangeInput | null)}
 
 export interface BarChartSeriesGenqlSelection{
     key?: boolean | number
@@ -7129,9 +7127,7 @@ export interface LineChartDataGenqlSelection{
 
 export interface LineChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
 /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
-primaryAxisDateRange?: (ChartDateRangeInput | null),
-/** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
-viewerTimeZone?: (Scalars['String'] | null)}
+primaryAxisDateRange?: (ChartDateRangeInput | null)}
 
 export interface LineChartDataPointGenqlSelection{
     x?: boolean | number
@@ -8236,9 +8232,7 @@ export interface PieChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PieChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
-/** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
-viewerTimeZone?: (Scalars['String'] | null)}
+export interface PieChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID']}
 
 export interface PieChartDataItemGenqlSelection{
     key?: boolean | number

@@ -30,7 +30,6 @@ type GetPieChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
-  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
 };
 
@@ -46,7 +45,6 @@ export class PieChartDataService {
     workspaceId,
     objectMetadataId,
     configuration,
-    viewerTimeZone,
     authContext,
   }: GetPieChartDataParams): Promise<PieChartDataDTO> {
     try {
@@ -113,10 +111,7 @@ export class PieChartDataService {
         PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const timeZone = resolveChartTimeZone({
-        viewerTimeZone,
-        widgetTimeZone: configuration.timezone,
-      });
+      const timeZone = resolveChartTimeZone(configuration.timezone);
 
       const { idByNameSingular: objectIdByNameSingular } =
         buildObjectIdByNameMaps(flatObjectMetadataMaps);

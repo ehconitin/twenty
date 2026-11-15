@@ -38,7 +38,6 @@ type GetBarChartDataParams = {
   objectMetadataId: string;
   configuration: BarChartConfigurationDTO;
   primaryAxisDateRange?: ChartDateRangeInput | null;
-  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
   locale: keyof typeof APP_LOCALES;
 };
@@ -57,7 +56,6 @@ export class BarChartDataService {
     objectMetadataId,
     configuration,
     primaryAxisDateRange,
-    viewerTimeZone,
     authContext,
     locale,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
@@ -139,10 +137,7 @@ export class BarChartDataService {
         : BAR_CHART_MAXIMUM_NUMBER_OF_BARS +
           EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const timeZone = resolveChartTimeZone({
-        viewerTimeZone,
-        widgetTimeZone: configuration.timezone,
-      });
+      const timeZone = resolveChartTimeZone(configuration.timezone);
       const firstDayOfTheWeek: CalendarStartDay =
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY;

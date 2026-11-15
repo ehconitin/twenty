@@ -39,7 +39,6 @@ type GetLineChartDataParams = {
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
   primaryAxisDateRange?: ChartDateRangeInput | null;
-  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
   locale: keyof typeof APP_LOCALES;
 };
@@ -58,7 +57,6 @@ export class LineChartDataService {
     objectMetadataId,
     configuration,
     primaryAxisDateRange,
-    viewerTimeZone,
     authContext,
     locale,
   }: GetLineChartDataParams): Promise<LineChartDataDTO> {
@@ -142,10 +140,7 @@ export class LineChartDataService {
         : LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS +
           EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const timeZone = resolveChartTimeZone({
-        viewerTimeZone,
-        widgetTimeZone: configuration.timezone,
-      });
+      const timeZone = resolveChartTimeZone(configuration.timezone);
       const firstDayOfTheWeek: CalendarStartDay =
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY;

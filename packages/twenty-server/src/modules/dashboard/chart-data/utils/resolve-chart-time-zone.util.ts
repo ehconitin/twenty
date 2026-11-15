@@ -39,13 +39,6 @@ const toGroupByTimeZone = (
   ].find((name) => isDefined(name) && GROUP_BY_TIME_ZONES.has(name));
 };
 
-export const resolveChartTimeZone = ({
-  viewerTimeZone,
-  widgetTimeZone,
-}: {
-  viewerTimeZone: string | null | undefined;
-  widgetTimeZone: string | null | undefined;
-}): string =>
-  toGroupByTimeZone(viewerTimeZone) ??
-  toGroupByTimeZone(widgetTimeZone) ??
-  'UTC';
+export const resolveChartTimeZone = (
+  timeZone: string | null | undefined,
+): string => toGroupByTimeZone(timeZone) ?? 'UTC';

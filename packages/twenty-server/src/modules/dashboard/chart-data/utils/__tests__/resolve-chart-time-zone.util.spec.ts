@@ -1,42 +1,19 @@
 import { resolveChartTimeZone } from 'src/modules/dashboard/chart-data/utils/resolve-chart-time-zone.util';
 
 describe('resolveChartTimeZone', () => {
-  it.each<
-    [string, string | null | undefined, string | null | undefined, string]
-  >([
-    ["the viewer's zone", 'Asia/Tokyo', 'Europe/Paris', 'Asia/Tokyo'],
+  it.each<[string, string | null | undefined, string]>([
+    ['a zone the group-by supports', 'Asia/Tokyo', 'Asia/Tokyo'],
+    ['the group-by name of a renamed zone', 'Europe/Kyiv', 'Europe/Kiev'],
+    ['the canonical case of a zone', 'utc', 'UTC'],
     [
-      "the group-by name of the viewer's renamed zone",
-      'Europe/Kyiv',
-      'Europe/Paris',
-      'Europe/Kiev',
-    ],
-    ["the canonical case of the viewer's zone", 'utc', 'Europe/Paris', 'UTC'],
-    [
-      "the widget's zone when the group-by does not know the viewer's",
+      'UTC for a zone the group-by does not know',
       'America/Ciudad_Juarez',
-      'Europe/Paris',
-      'Europe/Paris',
-    ],
-    [
-      "the widget's zone when no viewer zone is sent",
-      undefined,
-      'Europe/Paris',
-      'Europe/Paris',
-    ],
-    [
-      'UTC when the group-by knows neither zone',
-      'America/Ciudad_Juarez',
-      'Mars/Olympus_Mons',
       'UTC',
     ],
-    ['UTC when there is no zone at all', null, undefined, 'UTC'],
-  ])(
-    'should resolve %s',
-    (_title, viewerTimeZone, widgetTimeZone, expectedTimeZone) => {
-      expect(resolveChartTimeZone({ viewerTimeZone, widgetTimeZone })).toBe(
-        expectedTimeZone,
-      );
-    },
-  );
+    ['UTC for an unknown zone', 'Mars/Olympus_Mons', 'UTC'],
+    ['UTC when no zone is sent', undefined, 'UTC'],
+    ['UTC for a null zone', null, 'UTC'],
+  ])('should resolve %s', (_title, timeZone, expectedTimeZone) => {
+    expect(resolveChartTimeZone(timeZone)).toBe(expectedTimeZone);
+  });
 });

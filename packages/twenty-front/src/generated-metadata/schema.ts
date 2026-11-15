@@ -1168,8 +1168,6 @@ export type BarChartDataInput = {
   objectMetadataId: Scalars['UUID']['input'];
   /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
   primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
-  /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
-  viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -3336,8 +3334,6 @@ export type LineChartDataInput = {
   objectMetadataId: Scalars['UUID']['input'];
   /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
   primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
-  /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
-  viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LineChartDataPoint = {
@@ -6238,8 +6234,6 @@ export type PieChartData = {
 export type PieChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
-  /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
-  viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PieChartDataItem = {
