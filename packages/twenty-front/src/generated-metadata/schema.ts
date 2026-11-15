@@ -1166,7 +1166,7 @@ export type BarChartData = {
 export type BarChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
-  /** Days the primary date axis must cover, shown as empty buckets where there is no data */
+  /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
   primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
   /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
   viewerTimeZone?: InputMaybe<Scalars['String']['input']>;
@@ -3334,7 +3334,7 @@ export type LineChartData = {
 export type LineChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
-  /** Days the primary date axis must cover, shown as empty buckets where there is no data */
+  /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
   primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
   /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
   viewerTimeZone?: InputMaybe<Scalars['String']['input']>;

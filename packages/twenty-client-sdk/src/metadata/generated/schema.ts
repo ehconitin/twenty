@@ -5692,7 +5692,7 @@ export interface BarChartDataGenqlSelection{
 }
 
 export interface BarChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
-/** Days the primary date axis must cover, shown as empty buckets where there is no data */
+/** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
 primaryAxisDateRange?: (ChartDateRangeInput | null),
 /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
 viewerTimeZone?: (Scalars['String'] | null)}
@@ -7128,7 +7128,7 @@ export interface LineChartDataGenqlSelection{
 }
 
 export interface LineChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
-/** Days the primary date axis must cover, shown as empty buckets where there is no data */
+/** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
 primaryAxisDateRange?: (ChartDateRangeInput | null),
 /** Time zone for date buckets and relative date filters, instead of the one stored on the widget */
 viewerTimeZone?: (Scalars['String'] | null)}

@@ -10,7 +10,6 @@ const computeRange = (
     primaryAxisDateRange: { start: '2026-01-15', end: '2026-03-10' },
     primaryAxisGroupBySubFieldName: null,
     primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
-    timeZone: 'UTC',
     firstDayOfTheWeek: CalendarStartDay.MONDAY,
     isQueryResultCutByLimit: false,
     ...overrides,
