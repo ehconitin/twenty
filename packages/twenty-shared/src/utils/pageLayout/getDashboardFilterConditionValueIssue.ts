@@ -2,12 +2,9 @@ import { DASHBOARD_FILTER_PLAIN_DATE_OPERANDS } from '@/constants/DashboardFilte
 import { type PageLayoutFilterCondition, ViewFilterOperand } from '@/types';
 import { isSubDayRelativeDateFilterUnit } from '@/utils/filter/dates/utils/isSubDayRelativeDateFilterUnit';
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
-import { plainDateFilterValueSchema } from '@/utils/filter/utils/validation-schemas/filterValueScalarSchemas';
-import { SUPPORTED_ISO_YEAR_PREFIX } from '@/utils/pageLayout/internal/SupportedIsoYearPrefix';
+import { isSupportedPlainDate } from '@/utils/pageLayout/isSupportedPlainDate';
 
 const MAX_RELATIVE_DATE_AMOUNT = 1000;
-
-const PLAIN_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
 
 const getRelativeDateIssue = (value: string): string | undefined => {
   const relativeDateFilter =
@@ -41,12 +38,7 @@ export const getDashboardFilterConditionValueIssue = ({
     return undefined;
   }
 
-  const isSupportedPlainDate =
-    PLAIN_DATE_FORMAT.test(value) &&
-    SUPPORTED_ISO_YEAR_PREFIX.test(value) &&
-    plainDateFilterValueSchema.safeParse(value).success;
-
-  return isSupportedPlainDate
+  return isSupportedPlainDate(value)
     ? undefined
     : 'Expected a YYYY-MM-DD date between years 0001 and 9999.';
 };

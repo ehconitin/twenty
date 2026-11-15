@@ -101,8 +101,6 @@ describe('buildDashboardFilterForWidgetOrThrow', () => {
     expect(buildForWidget({ values: [] })).toEqual({
       recordFilters: [],
       appliedFields: [],
-      notAppliedPageLayoutFilterIds: [],
-      unresolvedPageLayoutFilterIds: [],
     });
   });
 
@@ -124,7 +122,7 @@ describe('buildDashboardFilterForWidgetOrThrow', () => {
     );
   });
 
-  it('should report the filters a widget does not apply or cannot resolve, and filter on the others', () => {
+  it('should not filter on the filters a widget does not apply or cannot resolve', () => {
     const result = buildForWidget({
       values: [
         dateFilterValue(PERIOD_FILTER_ID, JANUARY_2026),
@@ -139,25 +137,22 @@ describe('buildDashboardFilterForWidgetOrThrow', () => {
     expect(result).toEqual({
       recordFilters: [],
       appliedFields: [],
-      notAppliedPageLayoutFilterIds: [SIGNED_FILTER_ID],
-      unresolvedPageLayoutFilterIds: [PERIOD_FILTER_ID],
     });
   });
 
-  it('should report an override to a field that is not given as unresolved', () => {
-    const { recordFilters, appliedFields, unresolvedPageLayoutFilterIds } =
-      buildForWidget({
-        values: [
-          dateFilterValue(PERIOD_FILTER_ID, JANUARY_2026),
-          dateFilterValue(SIGNED_FILTER_ID, JANUARY_2026),
-        ],
-        bindings: [
-          {
-            pageLayoutFilterId: SIGNED_FILTER_ID,
-            fieldMetadataId: 'unreadable-field-id',
-          },
-        ],
-      });
+  it('should not apply an override to a field that is not given', () => {
+    const { recordFilters, appliedFields } = buildForWidget({
+      values: [
+        dateFilterValue(PERIOD_FILTER_ID, JANUARY_2026),
+        dateFilterValue(SIGNED_FILTER_ID, JANUARY_2026),
+      ],
+      bindings: [
+        {
+          pageLayoutFilterId: SIGNED_FILTER_ID,
+          fieldMetadataId: 'unreadable-field-id',
+        },
+      ],
+    });
 
     expect(recordFilters).toHaveLength(2);
     expect(appliedFields).toEqual([
@@ -167,7 +162,6 @@ describe('buildDashboardFilterForWidgetOrThrow', () => {
         source: 'CREATED_AT',
       },
     ]);
-    expect(unresolvedPageLayoutFilterIds).toEqual([SIGNED_FILTER_ID]);
   });
 
   it.each([
