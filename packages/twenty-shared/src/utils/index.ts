@@ -289,7 +289,6 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { isBuiltInSectionKey } from './navigation/isBuiltInSectionKey';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { normalizeViewFieldLabel } from './normalizeViewFieldLabel';
-export { getEffectiveDashboardPageLayoutFilters } from './pageLayout/getEffectiveDashboardPageLayoutFilters';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
