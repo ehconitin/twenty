@@ -640,6 +640,19 @@ export const DashboardFilterPillTruncatesOnAPhone: Story = {
   },
 };
 
+const findClippingAncestor = (element: HTMLElement): HTMLElement | null => {
+  const { parentElement } = element;
+
+  if (
+    !isDefined(parentElement) ||
+    getComputedStyle(parentElement).overflow === 'hidden'
+  ) {
+    return parentElement;
+  }
+
+  return findClippingAncestor(parentElement);
+};
+
 export const DashboardFilterIndicatorFocusRingIsNotClipped: Story = {
   render: () => <DashboardFilterWidgetCardShellStory />,
   play: async ({ canvasElement }) => {
@@ -651,14 +664,7 @@ export const DashboardFilterIndicatorFocusRingIsNotClipped: Story = {
 
     const { outlineWidth, outlineOffset } = getComputedStyle(indicator);
     const ringWidth = parseFloat(outlineWidth) + parseFloat(outlineOffset);
-    let clippingElement = indicator.parentElement;
-
-    while (
-      isDefined(clippingElement) &&
-      getComputedStyle(clippingElement).overflow !== 'hidden'
-    ) {
-      clippingElement = clippingElement.parentElement;
-    }
+    const clippingElement = findClippingAncestor(indicator);
 
     const ring = indicator.getBoundingClientRect();
     const clip = clippingElement?.getBoundingClientRect();
