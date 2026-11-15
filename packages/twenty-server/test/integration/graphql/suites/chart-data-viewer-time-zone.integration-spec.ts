@@ -310,6 +310,18 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     },
   );
 
+  it('should accept a date range side with a year below 1000', async () => {
+    const response = await queryBarChart({
+      configuration: dailyChartConfiguration({
+        configurationType: 'BAR_CHART',
+        token: ABSOLUTE_TOKEN,
+      }),
+      primaryAxisDateRange: { start: '0050-05-31' },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+  });
+
   it('should extend a week axis to the weeks of the date range', async () => {
     expect(
       await queryBarChartBuckets({

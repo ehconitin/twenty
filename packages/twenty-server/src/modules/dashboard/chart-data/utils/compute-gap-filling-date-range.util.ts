@@ -18,7 +18,6 @@ export const computeGapFillingDateRange = ({
   primaryAxisDateRange,
   primaryAxisGroupBySubFieldName,
   primaryAxisDateGranularity,
-  timeZone,
   firstDayOfTheWeek,
   isQueryResultCutByLimit,
 }: {
@@ -28,7 +27,6 @@ export const computeGapFillingDateRange = ({
     | ObjectRecordGroupByDateGranularity
     | null
     | undefined;
-  timeZone: string;
   firstDayOfTheWeek: CalendarStartDay;
   isQueryResultCutByLimit: boolean;
 }): DateRangeBounds | undefined => {
@@ -56,7 +54,7 @@ export const computeGapFillingDateRange = ({
   const toBucketStart = (date: string | null | undefined) =>
     isDefined(date)
       ? getPeriodStart(
-          Temporal.PlainDate.from(date).toZonedDateTime(timeZone),
+          Temporal.PlainDate.from(date).toZonedDateTime('UTC'),
           period,
           weekStart,
         ).toPlainDate()

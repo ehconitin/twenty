@@ -203,7 +203,6 @@ export class BarChartDataService {
         primaryAxisGroupBySubFieldName:
           configuration.primaryAxisGroupBySubFieldName,
         primaryAxisDateGranularity: configuration.primaryAxisDateGranularity,
-        timeZone,
         firstDayOfTheWeek,
         isQueryResultCutByLimit: rawResults.length >= limit,
       });

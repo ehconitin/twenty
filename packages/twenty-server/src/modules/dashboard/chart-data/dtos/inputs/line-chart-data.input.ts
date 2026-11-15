@@ -30,7 +30,7 @@ export class LineChartDataInput {
   @Field(() => ChartDateRangeInput, {
     nullable: true,
     description:
-      'Days the primary date axis must cover, shown as empty buckets where there is no data',
+      'Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended',
   })
   @IsOptional()
   @ValidateNested()
