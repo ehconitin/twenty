@@ -9,11 +9,11 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { dropDashboardFilterBindingsToMissingFields } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/drop-dashboard-filter-bindings-to-missing-fields.util';
 import { isDashboardFilterBindingToMissingField } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-dashboard-filter-binding-to-missing-field.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import {
-  PageLayoutException,
-  PageLayoutExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+  PageLayoutWidgetException,
+  PageLayoutWidgetExceptionCode,
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 
 type PageLayoutWidgetConfiguration = FlatPageLayoutWidget['configuration'];
 
@@ -24,9 +24,9 @@ const parseDashboardFilterBindingsOrThrow = (
     DASHBOARD_FILTER_BINDINGS_SCHEMA.safeParse(dashboardFilterBindings);
 
   if (!parsedDashboardFilterBindings.success) {
-    throw new PageLayoutException(
+    throw new PageLayoutWidgetException(
       `Dashboard filter bindings are malformed: ${z.prettifyError(parsedDashboardFilterBindings.error)}`,
-      PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       { userFriendlyMessage: msg`Dashboard filter bindings are malformed` },
     );
   }
@@ -69,9 +69,9 @@ export const getPageLayoutWidgetConfigurationToSaveOrThrow = ({
   );
 
   if (isDefined(dashboardFilterBindingToMissingField)) {
-    throw new PageLayoutException(
+    throw new PageLayoutWidgetException(
       `Dashboard filter "${dashboardFilterBindingToMissingField.pageLayoutFilterId}" is bound to field "${dashboardFilterBindingToMissingField.fieldMetadataId}", which does not exist`,
-      PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       {
         userFriendlyMessage: msg`A dashboard filter is bound to a field that does not exist`,
       },
