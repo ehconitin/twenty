@@ -1,20 +1,20 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useDashboardFilters } from '@/page-layout/hooks/useDashboardFilters';
 import { useWidgetDashboardFilter } from '@/page-layout/hooks/useWidgetDashboardFilter';
-import { buildDashboardFilterChartDataInput } from '@/page-layout/utils/buildDashboardFilterChartDataInput';
+import { buildDashboardFilterChartDataInput } from '@/page-layout/widgets/graph/utils/buildDashboardFilterChartDataInput';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { useMemo } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDashboardFilterChartDataInput = <
   TConfiguration extends { filter?: ChartFilters | null },
 >({
   configuration,
-  primaryAxisDateField,
+  primaryAxisField,
 }: {
   configuration: TConfiguration;
-  primaryAxisDateField?: { id: string; type: FieldMetadataType };
+  primaryAxisField?: Pick<FieldMetadataItem, 'id' | 'type'>;
 }) => {
   const dashboardFilters = useDashboardFilters();
   const { recordFilters, appliedFields } = useWidgetDashboardFilter();
@@ -26,7 +26,7 @@ export const useDashboardFilterChartDataInput = <
             configuration,
             dashboardFilters,
             widgetDashboardFilter: { recordFilters, appliedFields },
-            primaryAxisDateField,
+            primaryAxisField,
             now: Temporal.Now.instant(),
           })
         : { configuration },
@@ -35,7 +35,7 @@ export const useDashboardFilterChartDataInput = <
       configuration,
       recordFilters,
       appliedFields,
-      primaryAxisDateField,
+      primaryAxisField,
     ],
   );
 };
