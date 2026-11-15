@@ -59,6 +59,7 @@ export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
 export { isPlainDateInSameMonth } from './date/isPlainDateInSameMonth';
 export { isPlainDateInWeekend } from './date/isPlainDateInWeekend';
 export { isSamePlainDate } from './date/isSamePlainDate';
+export { isSupportedPlainDate } from './date/isSupportedPlainDate';
 export { parseToInstantOrThrow } from './date/parseToInstantOrThrow';
 export { parseToPlainDateOrThrow } from './date/parseToPlainDateOrThrow';
 export { sortPlainDate } from './date/sortPlainDate';
@@ -300,7 +301,6 @@ export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWid
 export { InvalidDashboardFilterError } from './pageLayout/InvalidDashboardFilterError';
 export { isFieldBindableToDashboardFilter } from './pageLayout/isFieldBindableToDashboardFilter';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
-export { isSupportedPlainDate } from './pageLayout/isSupportedPlainDate';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export { replaceWidgetFilterPeriodsWithDashboardFilter } from './pageLayout/replaceWidgetFilterPeriodsWithDashboardFilter';
 export { resolveDashboardFilterFieldForWidget } from './pageLayout/resolveDashboardFilterFieldForWidget';
