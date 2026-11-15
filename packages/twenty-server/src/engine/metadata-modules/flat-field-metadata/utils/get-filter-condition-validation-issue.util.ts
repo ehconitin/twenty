@@ -10,7 +10,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-export type FilterConditionValidationIssue =
+type FilterConditionValidationIssue =
   | {
       kind: 'UNSUPPORTED_OPERAND';
       allowedOperands: readonly ViewFilterOperand[];
