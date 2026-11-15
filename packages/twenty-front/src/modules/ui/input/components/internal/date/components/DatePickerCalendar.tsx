@@ -43,7 +43,7 @@ export const DatePickerCalendar = ({
   const referenceDate =
     viewedDate ?? highlightedRange?.start ?? value ?? currentToday;
   const referenceKey = isDefined(highlightedRange)
-    ? `${highlightedRange.start}-${highlightedRange.end}`
+    ? `${viewedDate ?? ''}-${highlightedRange.start}-${highlightedRange.end}`
     : referenceDate;
   const [calendarState, setCalendarState] = useState({
     referenceKey,

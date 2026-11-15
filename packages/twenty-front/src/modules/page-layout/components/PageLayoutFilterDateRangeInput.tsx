@@ -99,7 +99,7 @@ export const PageLayoutFilterDateRangeInput = ({
     if (isEndBeforeStart || isOutOfSupportedYears) {
       setErrorMessage(
         isOutOfSupportedYears
-          ? t`Dates must be between the years 0001 and 9999.`
+          ? t`Dates must be between 0001-01-01 and 9999-12-30.`
           : t`End date must be after start date.`,
       );
       setInputsKey((previousInputsKey) => previousInputsKey + 1);
@@ -155,7 +155,6 @@ export const PageLayoutFilterDateRangeInput = ({
       <StyledCalendarContainer>
         <DatePickerCalendar
           loadingFallback={<DatePickerLoadingFallback />}
-          key={activeBoundDate ?? startDate ?? endDate}
           value={activeBoundDate}
           viewedDate={activeBoundDate ?? startDate ?? endDate}
           highlightedRange={
