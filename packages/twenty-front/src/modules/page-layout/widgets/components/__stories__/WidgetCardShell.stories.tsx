@@ -547,6 +547,8 @@ export const DashboardFilterPillTruncatesInANarrowHeader: Story = {
 
     expect(pillText).toBeVisible();
     expect(pillText.getBoundingClientRect().width).toBeGreaterThan(40);
+    expect(pillText.scrollWidth).toBeGreaterThan(pillText.clientWidth);
+    expect(getComputedStyle(pillText).textOverflow).toBe('ellipsis');
     expect(pill?.querySelector('svg')).toBeVisible();
 
     if (isDefined(pill)) {
@@ -687,13 +689,9 @@ export const DashboardFilterUnavailableStatusTruncatesInANarrowHeader: Story = {
     const statusText = await canvas.findByText('Date range field unavailable');
     const title = canvas.getByText('Total Pipeline Value This Quarter');
 
-    const statusContent = statusText.parentElement ?? statusText;
-
     expect(statusText.getBoundingClientRect().width).toBeGreaterThan(40);
-    expect(statusContent.scrollWidth).toBeGreaterThan(
-      statusContent.clientWidth,
-    );
-    expect(getComputedStyle(statusContent).textOverflow).toBe('ellipsis');
+    expect(statusText.scrollWidth).toBeGreaterThan(statusText.clientWidth);
+    expect(getComputedStyle(statusText).textOverflow).toBe('ellipsis');
     expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
   },
 };

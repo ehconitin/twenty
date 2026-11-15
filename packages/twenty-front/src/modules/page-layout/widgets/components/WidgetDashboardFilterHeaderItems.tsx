@@ -104,9 +104,7 @@ export const WidgetDashboardFilterHeaderItems = ({
           >
             {kind === 'UNAVAILABLE' ? (
               <StyledStatusContainer>
-                <Status color="orange">
-                  <StyledText>{text}</StyledText>
-                </Status>
+                <Status color="orange">{text}</Status>
               </StyledStatusContainer>
             ) : (
               <StyledPill>
