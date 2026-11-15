@@ -7,7 +7,6 @@ import { IconCalendarEvent, IconFilter, IconFilterOff } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { useIsTouchDevice } from 'twenty-ui/utilities';
 
 // Same tokens as the "Not shared" pill this header shows for a forbidden widget
 const StyledPill = styled.div`
@@ -73,7 +72,6 @@ export const WidgetDashboardFilterHeaderItems = ({
   content: { fieldLabels, pills, hoverIndicatorText },
 }: WidgetDashboardFilterHeaderItemsProps) => {
   const theme = useTheme();
-  const isTouchDevice = useIsTouchDevice();
 
   return (
     <>
@@ -116,7 +114,7 @@ export const WidgetDashboardFilterHeaderItems = ({
         );
       })}
       {isDefined(hoverIndicatorText) && (
-        <WidgetCardHeaderHoverReveal isAlwaysVisible={isTouchDevice}>
+        <WidgetCardHeaderHoverReveal>
           <Tooltip
             content={hoverIndicatorText}
             delay={TooltipDelay.mediumDelay}

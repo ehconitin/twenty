@@ -1,7 +1,7 @@
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
@@ -23,7 +23,7 @@ type WidgetCardHeaderHoverRevealProps = {
   isAlwaysVisible?: boolean;
 };
 
-// Touch devices have no hover, so the content stays visible on mobile.
+// Without hover (touch devices, mobile) the content stays visible
 export const WidgetCardHeaderHoverReveal = ({
   children,
   isAlwaysVisible,
@@ -32,6 +32,7 @@ export const WidgetCardHeaderHoverReveal = ({
     WidgetComponentInstanceContext,
   );
   const isMobile = useIsMobile();
+  const isTouchDevice = useIsTouchDevice();
 
   const widgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
@@ -40,7 +41,9 @@ export const WidgetCardHeaderHoverReveal = ({
 
   return (
     <StyledHoverReveal
-      isVisible={(isAlwaysVisible ?? isMobile) || widgetCardHovered}
+      isVisible={
+        (isAlwaysVisible ?? (isTouchDevice || isMobile)) || widgetCardHovered
+      }
     >
       {children}
     </StyledHoverReveal>
