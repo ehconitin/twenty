@@ -46,10 +46,13 @@ export const computeGapFillingDateRange = ({
     return undefined;
   }
 
-  const weekStart = convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
-    firstDayOfTheWeek,
-    FirstDayOfTheWeek.MONDAY,
-  );
+  const weekStart =
+    period === 'WEEK'
+      ? convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+          firstDayOfTheWeek,
+          FirstDayOfTheWeek.MONDAY,
+        )
+      : FirstDayOfTheWeek.MONDAY;
 
   const toBucketStart = (date: string | null | undefined) =>
     isDefined(date)

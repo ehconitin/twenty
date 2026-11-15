@@ -41,7 +41,6 @@ export class PieChartDataResolver {
     return this.pieChartDataService.getPieChartData({
       objectMetadataId: input.objectMetadataId,
       configuration: input.configuration,
-      viewerTimeZone: input.viewerTimeZone,
       workspaceId: authContext.workspace.id,
       authContext,
     });

@@ -4,7 +4,6 @@ import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsOptional,
-  IsTimeZone,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -36,13 +35,4 @@ export class BarChartDataInput {
   @ValidateNested()
   @Type(() => ChartDateRangeInput)
   primaryAxisDateRange?: ChartDateRangeInput | null;
-
-  @Field(() => String, {
-    nullable: true,
-    description:
-      'Time zone for date buckets and relative date filters, instead of the one stored on the widget',
-  })
-  @IsOptional()
-  @IsTimeZone()
-  viewerTimeZone?: string | null;
 }

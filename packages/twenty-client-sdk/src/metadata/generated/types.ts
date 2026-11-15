@@ -2266,9 +2266,6 @@ export default {
             "primaryAxisDateRange": [
                 153
             ],
-            "viewerTimeZone": [
-                4
-            ],
             "__typename": [
                 4
             ]
@@ -6347,9 +6344,6 @@ export default {
             ],
             "primaryAxisDateRange": [
                 153
-            ],
-            "viewerTimeZone": [
-                4
             ],
             "__typename": [
                 4
@@ -11177,9 +11171,6 @@ export default {
             ],
             "objectMetadataId": [
                 566
-            ],
-            "viewerTimeZone": [
-                4
             ],
             "__typename": [
                 4

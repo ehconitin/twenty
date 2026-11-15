@@ -989,11 +989,6 @@ input BarChartDataInput {
   Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended
   """
   primaryAxisDateRange: ChartDateRangeInput
-
-  """
-  Time zone for date buckets and relative date filters, instead of the one stored on the widget
-  """
-  viewerTimeZone: String
 }
 
 """Display mode for bar charts with secondary grouping"""
@@ -3061,11 +3056,6 @@ input LineChartDataInput {
   Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended
   """
   primaryAxisDateRange: ChartDateRangeInput
-
-  """
-  Time zone for date buckets and relative date filters, instead of the one stored on the widget
-  """
-  viewerTimeZone: String
 }
 
 type LineChartDataPoint {
@@ -4291,11 +4281,6 @@ type PieChartData {
 input PieChartDataInput {
   configuration: JSON!
   objectMetadataId: UUID!
-
-  """
-  Time zone for date buckets and relative date filters, instead of the one stored on the widget
-  """
-  viewerTimeZone: String
 }
 
 type PieChartDataItem {

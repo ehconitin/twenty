@@ -40,7 +40,6 @@ const DST_COMPANIES = [
 type ChartDataInput = {
   configuration: Record<string, unknown>;
   primaryAxisDateRange?: { start?: string; end?: string };
-  viewerTimeZone?: string;
 };
 
 type ChartDataPayload = {
@@ -50,7 +49,7 @@ type ChartDataPayload = {
   formattedToRawLookup: Record<string, string>;
 };
 
-describe('Chart data buckets in the viewer time zone (e2e)', () => {
+describe('Chart data buckets in the configuration time zone (e2e)', () => {
   let fieldIds: DashboardFilterBindingFieldIds;
 
   const nameContains = (token: string) => ({
@@ -103,14 +102,16 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
   const queryBarChartBuckets = async (
     input: Omit<ChartDataInput, 'configuration'> & {
       token: string;
+      timezone: string;
       granularity?: string;
     },
   ) => {
-    const { token, granularity, ...chartDataInput } = input;
+    const { token, timezone, granularity, ...chartDataInput } = input;
     const response = await queryBarChart({
       configuration: dailyChartConfiguration({
         configurationType: 'BAR_CHART',
         token,
+        timezone,
         granularity,
       }),
       ...chartDataInput,
@@ -168,11 +169,11 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     await destroyTestCompanies();
   });
 
-  it('should bucket a record created around midnight on the day of the viewer', async () => {
+  it('should bucket a record created around midnight on the day of the configuration time zone', async () => {
     expect(
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
-        viewerTimeZone: 'UTC',
+        timezone: 'UTC',
       }),
     ).toEqual([
       ['2019-07-10', 1],
@@ -182,7 +183,7 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     expect(
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
-        viewerTimeZone: 'Europe/Paris',
+        timezone: 'Europe/Paris',
       }),
     ).toEqual([
       ['2019-07-11', 1],
@@ -190,44 +191,11 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     ]);
   });
 
-  it('should bucket in the widget time zone when no viewer time zone is sent, as before', async () => {
-    for (const timezone of ['UTC', 'Europe/Paris']) {
-      const configuration = dailyChartConfiguration({
-        configurationType: 'BAR_CHART',
-        token: ABSOLUTE_TOKEN,
-        timezone,
-      });
-
-      const withoutViewerTimeZone = await queryBarChart({ configuration });
-      const inWidgetTimeZone = await queryBarChart({
-        configuration,
-        viewerTimeZone: timezone,
-      });
-
-      expect(withoutViewerTimeZone.body.errors).toBeUndefined();
-      expect(withoutViewerTimeZone.body).toEqual(inWidgetTimeZone.body);
-    }
-
-    const withoutViewerTimeZone = await queryBarChart({
-      configuration: dailyChartConfiguration({
-        configurationType: 'BAR_CHART',
-        token: ABSOLUTE_TOKEN,
-        timezone: 'Europe/Paris',
-      }),
-    });
-
-    expect(
-      Object.values(
-        withoutViewerTimeZone.body.data.barChartData.formattedToRawLookup,
-      ),
-    ).toEqual(['2019-07-11', '2019-07-12']);
-  });
-
   it('should extend the date axis to both bounded sides of the date range', async () => {
     expect(
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
-        viewerTimeZone: 'UTC',
+        timezone: 'UTC',
         primaryAxisDateRange: { start: '2019-07-08', end: '2019-07-14' },
       }),
     ).toEqual([
@@ -245,7 +213,7 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     expect(
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
-        viewerTimeZone: 'UTC',
+        timezone: 'UTC',
         primaryAxisDateRange: { start: '2019-07-09' },
       }),
     ).toEqual([
@@ -268,9 +236,9 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
             configuration: dailyChartConfiguration({
               configurationType: 'LINE_CHART',
               token: ABSOLUTE_TOKEN,
+              timezone: 'UTC',
             }),
             primaryAxisDateRange: { start: '2019-07-09', end: '2019-07-13' },
-            viewerTimeZone: 'UTC',
           },
         },
       });
@@ -327,7 +295,7 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
         granularity: 'WEEK',
-        viewerTimeZone: 'UTC',
+        timezone: 'UTC',
         primaryAxisDateRange: { start: '2019-07-01', end: '2019-07-21' },
       }),
     ).toEqual([
@@ -343,7 +311,7 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     expect(
       await queryBarChartBuckets({
         token: DST_TOKEN,
-        viewerTimeZone: 'America/Los_Angeles',
+        timezone: 'America/Los_Angeles',
         primaryAxisDateRange,
       }),
     ).toEqual([
@@ -355,7 +323,7 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     expect(
       await queryBarChartBuckets({
         token: DST_TOKEN,
-        viewerTimeZone: 'UTC',
+        timezone: 'UTC',
         primaryAxisDateRange,
       }),
     ).toEqual([
@@ -370,7 +338,7 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     expect(
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
-        viewerTimeZone: 'UTC',
+        timezone: 'UTC',
         primaryAxisDateRange: { start: '2019-01-01', end: '2019-07-14' },
       }),
     ).toEqual([
@@ -402,10 +370,10 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
           ...dailyChartConfiguration({
             configurationType: 'BAR_CHART',
             token: CUT_TOKEN,
+            timezone: 'UTC',
           }),
           secondaryAxisGroupByFieldMetadataId: fieldIds.companyNameFieldId,
         },
-        viewerTimeZone: 'UTC',
         primaryAxisDateRange: { start: '2018-01-01', end: '2018-03-01' },
       });
 
@@ -431,8 +399,8 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     }
   });
 
-  it('should bucket pie charts in the viewer time zone', async () => {
-    const queryPieDays = async (viewerTimeZone?: string) => {
+  it('should bucket pie charts in the configuration time zone', async () => {
+    const queryPieDays = async (timezone = 'UTC') => {
       const response = await request(`http://localhost:${APP_PORT}`)
         .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -448,10 +416,9 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
                 groupByFieldMetadataId: fieldIds.companyCreatedAtFieldId,
                 dateGranularity: 'DAY',
                 orderBy: 'FIELD_ASC',
-                timezone: 'UTC',
+                timezone,
                 filter: nameContains(ABSOLUTE_TOKEN),
               },
-              viewerTimeZone,
             },
           },
         });
@@ -470,11 +437,11 @@ describe('Chart data buckets in the viewer time zone (e2e)', () => {
     ]);
   });
 
-  it('should fall back to the widget time zone when the group-by does not know the viewer zone', async () => {
+  it('should fall back to UTC when the group-by does not know the zone', async () => {
     expect(
       await queryBarChartBuckets({
         token: ABSOLUTE_TOKEN,
-        viewerTimeZone: 'America/Ciudad_Juarez',
+        timezone: 'America/Ciudad_Juarez',
       }),
     ).toEqual([
       ['2019-07-10', 1],

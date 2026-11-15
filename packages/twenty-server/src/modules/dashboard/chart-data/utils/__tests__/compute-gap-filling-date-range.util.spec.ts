@@ -40,6 +40,14 @@ describe('computeGapFillingDateRange', () => {
     ).toEqual({ start: '2026-01-11', end: '2026-03-08' });
   });
 
+  it('should ignore a first day of the week the week conversion does not know when the axis is not weekly', () => {
+    const unknownFirstDayOfTheWeek: number = 3;
+
+    expect(
+      computeRange({ firstDayOfTheWeek: unknownFirstDayOfTheWeek }),
+    ).toEqual({ start: '2026-01-01', end: '2026-03-01' });
+  });
+
   it('should keep an open side open', () => {
     expect(
       computeRange({
