@@ -1,6 +1,7 @@
 import {
   type DashboardFilterValue,
   type FirstDayOfTheWeek,
+  type PageLayoutFilter,
   type PageLayoutFilterCondition,
   type PageLayoutFilterValue,
   ViewFilterOperand,
@@ -11,7 +12,6 @@ import {
   relativeDateFilterStringifiedSchema,
   stringifyRelativeDateFilter,
 } from 'twenty-shared/utils';
-import { type PageLayoutFilter } from '~/generated-metadata/graphql';
 
 // Without an embedded week start, server paths use the widget's and browser paths the viewer's
 const withFirstDayOfTheWeek = ({
@@ -51,9 +51,7 @@ export const getEffectiveDashboardFilterValues = ({
   timeZone,
   firstDayOfTheWeek,
 }: {
-  pageLayoutFilters: (Pick<PageLayoutFilter, 'id' | 'type'> & {
-    defaultValue?: PageLayoutFilterValue | null;
-  })[];
+  pageLayoutFilters: Pick<PageLayoutFilter, 'id' | 'type' | 'defaultValue'>[];
   urlValueByPageLayoutFilterId: Record<string, PageLayoutFilterValue>;
   timeZone: string;
   firstDayOfTheWeek: FirstDayOfTheWeek;
