@@ -44,7 +44,11 @@ const WidgetDashboardFilterHeaderItemsStory = ({
         value={{ instanceId: WIDGET_ID }}
       >
         <div style={{ display: 'flex', gap: 4 }}>
-          <WidgetDashboardFilterHeaderItems content={content} />
+          <WidgetDashboardFilterHeaderItems
+            fieldLabels={content.fieldLabels}
+            pills={content.pills}
+            hoverIndicatorText={content.hoverIndicatorText}
+          />
         </div>
       </WidgetComponentInstanceContext.Provider>
     </PageLayoutTestWrapper>

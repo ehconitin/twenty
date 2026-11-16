@@ -65,11 +65,15 @@ const StyledHoverIndicator = styled.span`
 `;
 
 type WidgetDashboardFilterHeaderItemsProps = {
-  content: WidgetDashboardFilterHeaderContent;
+  fieldLabels: WidgetDashboardFilterHeaderContent['fieldLabels'];
+  pills: WidgetDashboardFilterHeaderContent['pills'];
+  hoverIndicatorText: WidgetDashboardFilterHeaderContent['hoverIndicatorText'];
 };
 
 export const WidgetDashboardFilterHeaderItems = ({
-  content: { fieldLabels, pills, hoverIndicatorText },
+  fieldLabels,
+  pills,
+  hoverIndicatorText,
 }: WidgetDashboardFilterHeaderItemsProps) => {
   const theme = useTheme();
 

@@ -20,13 +20,13 @@ const StyledHoverReveal = styled.div<{ isVisible: boolean }>`
 
 type WidgetCardHeaderHoverRevealProps = {
   children: ReactNode;
-  isAlwaysVisible?: boolean;
+  isHoverOnly?: boolean;
 };
 
 // Without hover (touch devices, mobile) the content stays visible
 export const WidgetCardHeaderHoverReveal = ({
   children,
-  isAlwaysVisible,
+  isHoverOnly = false,
 }: WidgetCardHeaderHoverRevealProps) => {
   const widgetComponentInstanceId = useComponentInstanceStateContext(
     WidgetComponentInstanceContext,
@@ -42,7 +42,7 @@ export const WidgetCardHeaderHoverReveal = ({
   return (
     <StyledHoverReveal
       isVisible={
-        (isAlwaysVisible ?? (isTouchDevice || isMobile)) || widgetCardHovered
+        (!isHoverOnly && (isTouchDevice || isMobile)) || widgetCardHovered
       }
     >
       {children}

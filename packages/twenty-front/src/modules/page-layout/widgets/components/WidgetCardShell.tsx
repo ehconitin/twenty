@@ -131,7 +131,11 @@ export const WidgetCardShell = ({
             headerPills={
               hasDashboardFilterHeaderItems ? (
                 <WidgetDashboardFilterHeaderItems
-                  content={dashboardFilterHeaderContent}
+                  fieldLabels={dashboardFilterHeaderContent.fieldLabels}
+                  pills={dashboardFilterHeaderContent.pills}
+                  hoverIndicatorText={
+                    dashboardFilterHeaderContent.hoverIndicatorText
+                  }
                 />
               ) : undefined
             }

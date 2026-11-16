@@ -22,7 +22,6 @@ export const buildChartDrilldownQueryParams = ({
 
   const chartFilters: ChartFilters = configuration.filter ?? {};
 
-  // The drilldown must list exactly what the chart counted
   const chartFilterParams = buildFilterQueryParams({
     ...composeChartFilterWithDashboardFilter({
       chartFilter: sanitizeChartRecordFilters({
