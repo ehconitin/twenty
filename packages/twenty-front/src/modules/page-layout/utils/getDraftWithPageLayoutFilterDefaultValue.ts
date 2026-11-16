@@ -2,7 +2,7 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { getEffectiveDashboardPageLayoutFilters } from 'twenty-shared/utils';
 import { type PageLayoutFilterValue } from '~/generated-metadata/graphql';
 
-export const setPageLayoutFilterDefaultValueInDraft = ({
+export const getDraftWithPageLayoutFilterDefaultValue = ({
   pageLayoutDraft,
   pageLayoutFilterId,
   defaultValue,

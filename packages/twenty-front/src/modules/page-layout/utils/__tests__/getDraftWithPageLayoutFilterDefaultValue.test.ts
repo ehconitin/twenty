@@ -1,5 +1,5 @@
 import { DASHBOARD_DATE_RANGE_FILTER_ID } from 'twenty-shared/constants';
-import { setPageLayoutFilterDefaultValueInDraft } from '@/page-layout/utils/setPageLayoutFilterDefaultValueInDraft';
+import { getDraftWithPageLayoutFilterDefaultValue } from '@/page-layout/utils/getDraftWithPageLayoutFilterDefaultValue';
 import { makeDraft } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import {
   PageLayoutFilterType,
@@ -20,10 +20,10 @@ const SIGNUP_FILTER = {
   defaultValue: null,
 };
 
-describe('setPageLayoutFilterDefaultValueInDraft', () => {
+describe('getDraftWithPageLayoutFilterDefaultValue', () => {
   it('should write the built-in Date range into the draft filters with its default', () => {
     expect(
-      setPageLayoutFilterDefaultValueInDraft({
+      getDraftWithPageLayoutFilterDefaultValue({
         pageLayoutDraft: makeDraft([]),
         pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
         defaultValue: THIS_MONTH,
@@ -41,7 +41,7 @@ describe('setPageLayoutFilterDefaultValueInDraft', () => {
 
   it('should keep the built-in Date range in the draft when its default is cleared', () => {
     expect(
-      setPageLayoutFilterDefaultValueInDraft({
+      getDraftWithPageLayoutFilterDefaultValue({
         pageLayoutDraft: makeDraft([]),
         pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
         defaultValue: null,
@@ -53,7 +53,7 @@ describe('setPageLayoutFilterDefaultValueInDraft', () => {
 
   it('should set the default of a stored filter only', () => {
     expect(
-      setPageLayoutFilterDefaultValueInDraft({
+      getDraftWithPageLayoutFilterDefaultValue({
         pageLayoutDraft: { ...makeDraft([]), filters: [SIGNUP_FILTER] },
         pageLayoutFilterId: SIGNUP_FILTER.id,
         defaultValue: THIS_MONTH,
