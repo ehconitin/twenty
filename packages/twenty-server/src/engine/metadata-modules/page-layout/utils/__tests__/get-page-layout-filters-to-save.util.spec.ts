@@ -43,6 +43,16 @@ describe('getPageLayoutFiltersToSave', () => {
     );
   });
 
+  it('should drop the stored filters when a dashboard is saved as another layout type without filters', () => {
+    expect(
+      getFiltersToSave({
+        type: PageLayoutType.RECORD_PAGE,
+        existingFilters: [DATE_RANGE_FILTER_WITH_DEFAULT],
+        filtersInput: undefined,
+      }),
+    ).toBeNull();
+  });
+
   it('should keep the stored filters when the input is unchanged', () => {
     const existingFilters = [DATE_RANGE_FILTER_WITH_DEFAULT];
 

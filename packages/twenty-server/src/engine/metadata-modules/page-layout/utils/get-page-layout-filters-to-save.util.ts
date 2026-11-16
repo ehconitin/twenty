@@ -17,7 +17,7 @@ export const getPageLayoutFiltersToSave = ({
   filtersInput: UpdatePageLayoutWithTabsInput['filters'];
 }): FlatPageLayout['filters'] => {
   if (isUndefined(filtersInput)) {
-    return existingFilters;
+    return pageLayoutType === PageLayoutType.DASHBOARD ? existingFilters : null;
   }
 
   const sanitizedFilters = sanitizePageLayoutFilters(filtersInput);
