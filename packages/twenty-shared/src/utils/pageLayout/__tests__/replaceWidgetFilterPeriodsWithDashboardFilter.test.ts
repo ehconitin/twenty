@@ -18,14 +18,17 @@ type TestRecordFilter = {
   recordFilterGroupId?: string | null;
 };
 
-const condition = (
-  id: string,
-  operand: ViewFilterOperand,
-  {
-    fieldMetadataId = CLOSE_DATE,
-    recordFilterGroupId,
-  }: { fieldMetadataId?: string; recordFilterGroupId?: string } = {},
-): TestRecordFilter => ({
+const condition = ({
+  id,
+  operand,
+  fieldMetadataId = CLOSE_DATE,
+  recordFilterGroupId,
+}: {
+  id: string;
+  operand: ViewFilterOperand;
+  fieldMetadataId?: string;
+  recordFilterGroupId?: string;
+}): TestRecordFilter => ({
   id,
   fieldMetadataId,
   operand,
@@ -33,23 +36,29 @@ const condition = (
   recordFilterGroupId,
 });
 
-const THIS_QUARTER = condition('this-quarter', ViewFilterOperand.IS_RELATIVE);
-const WON = condition('won', ViewFilterOperand.IS, { fieldMetadataId: STAGE });
+const THIS_QUARTER = condition({
+  id: 'this-quarter',
+  operand: ViewFilterOperand.IS_RELATIVE,
+});
+const WON = condition({
+  id: 'won',
+  operand: ViewFilterOperand.IS,
+  fieldMetadataId: STAGE,
+});
 
-const replace = (
-  recordFilters: TestRecordFilter[],
-  {
-    recordFilterGroups = [],
-    fieldMetadataIds = [CLOSE_DATE],
-  }: {
-    recordFilterGroups?: {
-      id: string;
-      logicalOperator: RecordFilterGroupLogicalOperator;
-      parentRecordFilterGroupId?: string;
-    }[];
-    fieldMetadataIds?: string[];
-  } = {},
-) =>
+const replace = ({
+  recordFilters,
+  recordFilterGroups = [],
+  fieldMetadataIds = [CLOSE_DATE],
+}: {
+  recordFilters: TestRecordFilter[];
+  recordFilterGroups?: {
+    id: string;
+    logicalOperator: RecordFilterGroupLogicalOperator;
+    parentRecordFilterGroupId?: string;
+  }[];
+  fieldMetadataIds?: string[];
+}) =>
   replaceWidgetFilterPeriodsWithDashboardFilter({
     filter: { recordFilters, recordFilterGroups },
     fieldMetadataIds,
@@ -64,9 +73,9 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     ViewFilterOperand.IS,
     ViewFilterOperand.IS_TODAY,
   ])('should replace a %s period on the field', (operand) => {
-    const period = condition('period', operand);
+    const period = condition({ id: 'period', operand });
 
-    expect(replace([period, WON])).toEqual({
+    expect(replace({ recordFilters: [period, WON] })).toEqual({
       filter: { recordFilters: [WON], recordFilterGroups: [] },
       replacedRecordFilters: [period],
       stillFilteredFieldMetadataIds: [],
@@ -81,9 +90,9 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     ViewFilterOperand.IS_EMPTY,
     ViewFilterOperand.IS_NOT_EMPTY,
   ])('should keep a lone %s condition on the field', (operand) => {
-    const bound = condition('bound', operand);
+    const bound = condition({ id: 'bound', operand });
 
-    expect(replace([bound])).toEqual({
+    expect(replace({ recordFilters: [bound] })).toEqual({
       filter: { recordFilters: [bound], recordFilterGroups: [] },
       replacedRecordFilters: [],
       stillFilteredFieldMetadataIds: [CLOSE_DATE],
@@ -91,32 +100,49 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
   });
 
   it('should replace an after + before pair like one period', () => {
-    const after = condition('after', ViewFilterOperand.IS_AFTER);
-    const before = condition('before', ViewFilterOperand.IS_BEFORE);
+    const after = condition({
+      id: 'after',
+      operand: ViewFilterOperand.IS_AFTER,
+    });
+    const before = condition({
+      id: 'before',
+      operand: ViewFilterOperand.IS_BEFORE,
+    });
 
-    const { filter, replacedRecordFilters } = replace([after, before, WON]);
+    const { filter, replacedRecordFilters } = replace({
+      recordFilters: [after, before, WON],
+    });
 
     expect(getIds(filter.recordFilters)).toEqual(['won']);
     expect(getIds(replacedRecordFilters)).toEqual(['after', 'before']);
   });
 
   it('should replace a pair and a relative period together', () => {
-    const after = condition('after', ViewFilterOperand.IS_AFTER);
-    const before = condition('before', ViewFilterOperand.IS_BEFORE);
+    const after = condition({
+      id: 'after',
+      operand: ViewFilterOperand.IS_AFTER,
+    });
+    const before = condition({
+      id: 'before',
+      operand: ViewFilterOperand.IS_BEFORE,
+    });
 
     expect(
-      getIds(replace([after, THIS_QUARTER, before]).replacedRecordFilters),
+      getIds(
+        replace({ recordFilters: [after, THIS_QUARTER, before] })
+          .replacedRecordFilters,
+      ),
     ).toEqual(['after', 'this-quarter', 'before']);
   });
 
   it('should keep every bound when the field has two afters and one before', () => {
     const recordFilters = [
-      condition('after-2020', ViewFilterOperand.IS_AFTER),
-      condition('after-2024', ViewFilterOperand.IS_AFTER),
-      condition('before-2025', ViewFilterOperand.IS_BEFORE),
+      condition({ id: 'after-2020', operand: ViewFilterOperand.IS_AFTER }),
+      condition({ id: 'after-2024', operand: ViewFilterOperand.IS_AFTER }),
+      condition({ id: 'before-2025', operand: ViewFilterOperand.IS_BEFORE }),
     ];
 
-    expect(replace(recordFilters)).toEqual({
+    expect(replace({ recordFilters })).toEqual({
       filter: { recordFilters, recordFilterGroups: [] },
       replacedRecordFilters: [],
       stillFilteredFieldMetadataIds: [CLOSE_DATE],
@@ -125,12 +151,12 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
 
   it('should keep every bound when the field has one after and two befores', () => {
     const recordFilters = [
-      condition('after-2020', ViewFilterOperand.IS_AFTER),
-      condition('before-2024', ViewFilterOperand.IS_BEFORE),
-      condition('before-2025', ViewFilterOperand.IS_BEFORE),
+      condition({ id: 'after-2020', operand: ViewFilterOperand.IS_AFTER }),
+      condition({ id: 'before-2024', operand: ViewFilterOperand.IS_BEFORE }),
+      condition({ id: 'before-2025', operand: ViewFilterOperand.IS_BEFORE }),
     ];
 
-    expect(replace(recordFilters)).toEqual({
+    expect(replace({ recordFilters })).toEqual({
       filter: { recordFilters, recordFilterGroups: [] },
       replacedRecordFilters: [],
       stillFilteredFieldMetadataIds: [CLOSE_DATE],
@@ -139,33 +165,40 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
 
   it('should still replace a relative period next to bounds it cannot pair', () => {
     const recordFilters = [
-      condition('after-2020', ViewFilterOperand.IS_AFTER),
-      condition('after-2024', ViewFilterOperand.IS_AFTER),
-      condition('before-2025', ViewFilterOperand.IS_BEFORE),
+      condition({ id: 'after-2020', operand: ViewFilterOperand.IS_AFTER }),
+      condition({ id: 'after-2024', operand: ViewFilterOperand.IS_AFTER }),
+      condition({ id: 'before-2025', operand: ViewFilterOperand.IS_BEFORE }),
     ];
 
-    const { filter, replacedRecordFilters } = replace([
-      ...recordFilters,
-      THIS_QUARTER,
-    ]);
+    const { filter, replacedRecordFilters } = replace({
+      recordFilters: [...recordFilters, THIS_QUARTER],
+    });
 
     expect(filter.recordFilters).toEqual(recordFilters);
     expect(replacedRecordFilters).toEqual([THIS_QUARTER]);
   });
 
   it('should replace two periods on the field', () => {
-    const today = condition('today', ViewFilterOperand.IS_TODAY);
+    const today = condition({
+      id: 'today',
+      operand: ViewFilterOperand.IS_TODAY,
+    });
 
-    const { filter, replacedRecordFilters } = replace([THIS_QUARTER, today]);
+    const { filter, replacedRecordFilters } = replace({
+      recordFilters: [THIS_QUARTER, today],
+    });
 
     expect(filter.recordFilters).toEqual([]);
     expect(getIds(replacedRecordFilters)).toEqual(['this-quarter', 'today']);
   });
 
   it('should keep a non-period condition next to a replaced period', () => {
-    const inThePast = condition('in-the-past', ViewFilterOperand.IS_IN_PAST);
+    const inThePast = condition({
+      id: 'in-the-past',
+      operand: ViewFilterOperand.IS_IN_PAST,
+    });
 
-    expect(replace([THIS_QUARTER, inThePast])).toEqual({
+    expect(replace({ recordFilters: [THIS_QUARTER, inThePast] })).toEqual({
       filter: { recordFilters: [inThePast], recordFilterGroups: [] },
       replacedRecordFilters: [THIS_QUARTER],
       stillFilteredFieldMetadataIds: [CLOSE_DATE],
@@ -173,19 +206,21 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
   });
 
   it('should keep a period on another field', () => {
-    const createdThisQuarter = condition(
-      'created',
-      ViewFilterOperand.IS_RELATIVE,
-      { fieldMetadataId: CREATED_AT },
-    );
+    const createdThisQuarter = condition({
+      id: 'created',
+      operand: ViewFilterOperand.IS_RELATIVE,
+      fieldMetadataId: CREATED_AT,
+    });
 
-    expect(replace([createdThisQuarter]).filter.recordFilters).toEqual([
-      createdThisQuarter,
-    ]);
+    expect(
+      replace({ recordFilters: [createdThisQuarter] }).filter.recordFilters,
+    ).toEqual([createdThisQuarter]);
   });
 
   it('should replace nothing without a field, as with no value or an ignored or unresolved filter', () => {
-    expect(replace([THIS_QUARTER], { fieldMetadataIds: [] })).toEqual({
+    expect(
+      replace({ recordFilters: [THIS_QUARTER], fieldMetadataIds: [] }),
+    ).toEqual({
       filter: { recordFilters: [THIS_QUARTER], recordFilterGroups: [] },
       replacedRecordFilters: [],
       stillFilteredFieldMetadataIds: [],
@@ -197,11 +232,15 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
       id: 'root',
       logicalOperator: RecordFilterGroupLogicalOperator.AND,
     };
-    const period = condition('period', ViewFilterOperand.IS_RELATIVE, {
+    const period = condition({
+      id: 'period',
+      operand: ViewFilterOperand.IS_RELATIVE,
       recordFilterGroupId: 'root',
     });
 
-    expect(replace([period], { recordFilterGroups: [rootGroup] })).toEqual({
+    expect(
+      replace({ recordFilters: [period], recordFilterGroups: [rootGroup] }),
+    ).toEqual({
       filter: { recordFilters: [], recordFilterGroups: [rootGroup] },
       replacedRecordFilters: [period],
       stillFilteredFieldMetadataIds: [],
@@ -213,13 +252,18 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
       id: 'root',
       logicalOperator: RecordFilterGroupLogicalOperator.AND,
     };
-    const period = condition('period', ViewFilterOperand.IS_RELATIVE, {
+    const period = condition({
+      id: 'period',
+      operand: ViewFilterOperand.IS_RELATIVE,
       recordFilterGroupId: 'root',
     });
     const wonInRoot = { ...WON, recordFilterGroupId: 'root' };
 
     expect(
-      replace([period, wonInRoot], { recordFilterGroups: [rootGroup] }).filter,
+      replace({
+        recordFilters: [period, wonInRoot],
+        recordFilterGroups: [rootGroup],
+      }).filter,
     ).toEqual({ recordFilters: [wonInRoot], recordFilterGroups: [rootGroup] });
   });
 
@@ -228,13 +272,18 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
       id: 'root',
       logicalOperator: RecordFilterGroupLogicalOperator.OR,
     };
-    const thisMonth = condition('this-month', ViewFilterOperand.IS_RELATIVE, {
+    const thisMonth = condition({
+      id: 'this-month',
+      operand: ViewFilterOperand.IS_RELATIVE,
       recordFilterGroupId: 'root',
     });
     const wonInRoot = { ...WON, recordFilterGroupId: 'root' };
 
     expect(
-      replace([thisMonth, wonInRoot], { recordFilterGroups: [rootGroup] }),
+      replace({
+        recordFilters: [thisMonth, wonInRoot],
+        recordFilterGroups: [rootGroup],
+      }),
     ).toEqual({
       filter: {
         recordFilters: [thisMonth, wonInRoot],
@@ -256,12 +305,24 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     ];
     const nested = { recordFilterGroupId: 'nested' };
     const recordFilters = [
-      condition('period', ViewFilterOperand.IS_RELATIVE, nested),
-      condition('after', ViewFilterOperand.IS_AFTER, nested),
-      condition('before', ViewFilterOperand.IS_BEFORE, nested),
+      condition({
+        id: 'period',
+        operand: ViewFilterOperand.IS_RELATIVE,
+        ...nested,
+      }),
+      condition({
+        id: 'after',
+        operand: ViewFilterOperand.IS_AFTER,
+        ...nested,
+      }),
+      condition({
+        id: 'before',
+        operand: ViewFilterOperand.IS_BEFORE,
+        ...nested,
+      }),
     ];
 
-    expect(replace(recordFilters, { recordFilterGroups }).filter).toEqual({
+    expect(replace({ recordFilters, recordFilterGroups }).filter).toEqual({
       recordFilters,
       recordFilterGroups,
     });
@@ -277,29 +338,30 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
       },
     ];
     const recordFilters = [
-      condition('after', ViewFilterOperand.IS_AFTER),
-      condition('before', ViewFilterOperand.IS_BEFORE, {
+      condition({ id: 'after', operand: ViewFilterOperand.IS_AFTER }),
+      condition({
+        id: 'before',
+        operand: ViewFilterOperand.IS_BEFORE,
         recordFilterGroupId: 'nested',
       }),
     ];
 
     expect(
-      replace(recordFilters, { recordFilterGroups }).replacedRecordFilters,
+      replace({ recordFilters, recordFilterGroups }).replacedRecordFilters,
     ).toEqual([]);
   });
 
   // Field types never change the rule: DATE and DATE_TIME store the same operands
   it('should treat every field the dashboard filter applies to alike', () => {
-    const createdToday = condition(
-      'created-today',
-      ViewFilterOperand.IS_TODAY,
-      {
-        fieldMetadataId: CREATED_AT,
-      },
-    );
+    const createdToday = condition({
+      id: 'created-today',
+      operand: ViewFilterOperand.IS_TODAY,
+      fieldMetadataId: CREATED_AT,
+    });
 
     expect(
-      replace([THIS_QUARTER, createdToday], {
+      replace({
+        recordFilters: [THIS_QUARTER, createdToday],
         fieldMetadataIds: [CLOSE_DATE, CREATED_AT],
       }).filter.recordFilters,
     ).toEqual([]);
@@ -352,20 +414,25 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
 
     it('should never promote a parentless group the compiler ignored', () => {
       const day = {
-        ...condition('day', ViewFilterOperand.IS, {
+        ...condition({
+          id: 'day',
+          operand: ViewFilterOperand.IS,
           recordFilterGroupId: 'first-root',
         }),
         value: '2026-01-01',
       };
       const stageInIgnoredGroup = {
-        ...condition('won', ViewFilterOperand.CONTAINS, {
+        ...condition({
+          id: 'won',
+          operand: ViewFilterOperand.CONTAINS,
           fieldMetadataId: STAGE,
           recordFilterGroupId: 'ignored-root',
         }),
         value: 'won',
       };
 
-      const { filter } = replace([day, stageInIgnoredGroup], {
+      const { filter } = replace({
+        recordFilters: [day, stageInIgnoredGroup],
         recordFilterGroups: [
           AND_GROUP('first-root'),
           AND_GROUP('ignored-root'),
@@ -377,14 +444,15 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     });
 
     it('should keep a period in a second parentless group', () => {
-      const periodInIgnoredGroup = condition(
-        'period',
-        ViewFilterOperand.IS_RELATIVE,
-        { recordFilterGroupId: 'ignored-root' },
-      );
+      const periodInIgnoredGroup = condition({
+        id: 'period',
+        operand: ViewFilterOperand.IS_RELATIVE,
+        recordFilterGroupId: 'ignored-root',
+      });
 
       expect(
-        replace([periodInIgnoredGroup], {
+        replace({
+          recordFilters: [periodInIgnoredGroup],
           recordFilterGroups: [
             AND_GROUP('first-root'),
             AND_GROUP('ignored-root'),
@@ -396,38 +464,39 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     it('should pair an ungrouped bound with one in the root AND group, both ANDed at the root', () => {
       expect(
         getIds(
-          replace(
-            [
-              condition('after', ViewFilterOperand.IS_AFTER),
-              condition('before', ViewFilterOperand.IS_BEFORE, {
+          replace({
+            recordFilters: [
+              condition({ id: 'after', operand: ViewFilterOperand.IS_AFTER }),
+              condition({
+                id: 'before',
+                operand: ViewFilterOperand.IS_BEFORE,
                 recordFilterGroupId: 'root',
               }),
             ],
-            { recordFilterGroups: [AND_GROUP('root')] },
-          ).replacedRecordFilters,
+            recordFilterGroups: [AND_GROUP('root')],
+          }).replacedRecordFilters,
         ),
       ).toEqual(['after', 'before']);
     });
 
     it('should replace an ungrouped period next to a root OR group and keep the group', () => {
-      const thisQuarter = condition(
-        'this-quarter',
-        ViewFilterOperand.IS_RELATIVE,
-      );
-      const inThePastInOr = condition(
-        'in-the-past',
-        ViewFilterOperand.IS_IN_PAST,
-        {
-          recordFilterGroupId: 'root',
-        },
-      );
+      const thisQuarter = condition({
+        id: 'this-quarter',
+        operand: ViewFilterOperand.IS_RELATIVE,
+      });
+      const inThePastInOr = condition({
+        id: 'in-the-past',
+        operand: ViewFilterOperand.IS_IN_PAST,
+        recordFilterGroupId: 'root',
+      });
       const rootOrGroup = {
         id: 'root',
         logicalOperator: RecordFilterGroupLogicalOperator.OR,
       };
 
       expect(
-        replace([thisQuarter, inThePastInOr], {
+        replace({
+          recordFilters: [thisQuarter, inThePastInOr],
           recordFilterGroups: [rootOrGroup],
         }),
       ).toEqual({
@@ -441,11 +510,14 @@ describe('replaceWidgetFilterPeriodsWithDashboardFilter', () => {
     });
 
     it('should leave an emptied root group and its empty child to compile to no condition', () => {
-      const period = condition('period', ViewFilterOperand.IS_RELATIVE, {
+      const period = condition({
+        id: 'period',
+        operand: ViewFilterOperand.IS_RELATIVE,
         recordFilterGroupId: 'root',
       });
 
-      const { filter } = replace([period], {
+      const { filter } = replace({
+        recordFilters: [period],
         recordFilterGroups: [
           AND_GROUP('root'),
           {
