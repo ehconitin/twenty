@@ -166,20 +166,24 @@ export const fillDateGapsTwoDimensional = ({
     return { data, wasTruncated: false };
   }
 
+  const maximumNumberOfDateGroupsWithinSegmentBudget = isDefined(
+    maximumNumberOfSegments,
+  )
+    ? Math.floor(
+        maximumNumberOfSegments /
+          Math.min(
+            uniqueSecondDimensionValues.size,
+            maximumNumberOfSecondDimensionValues,
+          ),
+      )
+    : maximumNumberOfDateGroups;
+
   const { dates: allDates, wasTruncated } = generateDateGroupsCoveringRange({
     minDate,
     maxDate,
     dateRange,
     granularity: dateGranularity as SupportedDateGranularityForGapFilling,
-    maximumNumberOfDateGroups: isDefined(maximumNumberOfSegments)
-      ? Math.floor(
-          maximumNumberOfSegments /
-            Math.min(
-              uniqueSecondDimensionValues.size,
-              maximumNumberOfSecondDimensionValues,
-            ),
-        )
-      : maximumNumberOfDateGroups,
+    maximumNumberOfDateGroups: maximumNumberOfDateGroupsWithinSegmentBudget,
   });
 
   const orderedDates = isDescOrder ? [...allDates].reverse() : allDates;
