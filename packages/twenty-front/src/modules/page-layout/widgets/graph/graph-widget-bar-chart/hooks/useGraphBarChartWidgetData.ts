@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useDashboardFilterChartDataInput } from '@/page-layout/widgets/graph/hooks/useDashboardFilterChartDataInput';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSeries';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/getEffectiveGroupMode';
@@ -61,6 +62,13 @@ export const useGraphBarChartWidgetData = ({
     [configuration],
   );
 
+  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput({
+    configuration: dataConfiguration,
+    primaryAxisField: objectMetadataItem.fields.find(
+      ({ id }) => id === configuration.primaryAxisGroupByFieldMetadataId,
+    ),
+  });
+
   const {
     data: queryData,
     previousData,
@@ -70,7 +78,7 @@ export const useGraphBarChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration: dataConfiguration,
+        ...dashboardFilterChartDataInput,
       },
     },
   });
