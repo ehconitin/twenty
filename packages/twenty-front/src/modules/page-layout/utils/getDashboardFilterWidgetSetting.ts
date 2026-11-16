@@ -55,24 +55,22 @@ export const getDashboardFilterWidgetSetting = ({
   const defaultFieldLabel = defaultField?.label;
   const overrideFieldMetadataId = binding?.fieldMetadataId ?? null;
 
-  // The resolver turns an override to a missing or unbindable field into UNRESOLVED
-  const unavailableOverrideOptions =
-    isDefined(overrideFieldMetadataId) && resolution.source === 'UNRESOLVED'
-      ? [
-          {
-            value: overrideFieldMetadataId,
-            label: t`Unavailable field`,
-            iconName: 'IconFilterOff',
-          },
-        ]
-      : [];
+  const isOverrideUnavailable =
+    isDefined(overrideFieldMetadataId) && resolution.source === 'UNRESOLVED';
+
+  const unavailableOverrideOptions = isOverrideUnavailable
+    ? [
+        {
+          value: overrideFieldMetadataId,
+          label: t`Unavailable field`,
+          iconName: 'IconFilterOff',
+        },
+      ]
+    : [];
 
   const isFieldSelectable = (field: DashboardFilterWidgetField) => {
     // A deactivated override keeps applying, so it stays selectable
-    if (
-      field.id === overrideFieldMetadataId &&
-      unavailableOverrideOptions.length === 0
-    ) {
+    if (field.id === overrideFieldMetadataId && !isOverrideUnavailable) {
       return true;
     }
 
