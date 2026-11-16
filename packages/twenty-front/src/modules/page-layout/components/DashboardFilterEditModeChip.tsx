@@ -1,7 +1,7 @@
 import { DashboardFilterChip } from '@/page-layout/components/DashboardFilterChip';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { getPageLayoutFilterDisplayLabel } from '@/page-layout/utils/getPageLayoutFilterDisplayLabel';
-import { setPageLayoutFilterDefaultValueInDraft } from '@/page-layout/utils/setPageLayoutFilterDefaultValueInDraft';
+import { getDraftWithPageLayoutFilterDefaultValue } from '@/page-layout/utils/getDraftWithPageLayoutFilterDefaultValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -25,7 +25,7 @@ export const DashboardFilterEditModeChip = ({
 
   const handleChange = (newDefaultValue: PageLayoutFilterValue | null) =>
     setPageLayoutDraft((pageLayoutDraft) =>
-      setPageLayoutFilterDefaultValueInDraft({
+      getDraftWithPageLayoutFilterDefaultValue({
         pageLayoutDraft,
         pageLayoutFilterId,
         defaultValue: newDefaultValue,
