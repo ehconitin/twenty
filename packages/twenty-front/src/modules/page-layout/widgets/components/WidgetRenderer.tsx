@@ -20,10 +20,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   }
 
   return (
-    <WidgetDashboardFilterProvider
-      widget={widget}
-      dashboardFilters={dashboardFilters}
-    >
+    <WidgetDashboardFilterProvider widget={widget}>
       <WidgetRendererCard widget={widget} />
     </WidgetDashboardFilterProvider>
   );

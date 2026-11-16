@@ -7,7 +7,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { getPageLayoutFilterDisplayLabel } from '@/page-layout/utils/getPageLayoutFilterDisplayLabel';
 import { getDashboardFilterValueToStore } from '@/page-layout/utils/getDashboardFilterValueToStore';
 import { isDashboardFilterValueStoredAsDefault } from '@/page-layout/utils/isDashboardFilterValueStoredAsDefault';
-import { setPageLayoutFilterDefaultValueInDraft } from '@/page-layout/utils/setPageLayoutFilterDefaultValueInDraft';
+import { getDraftWithPageLayoutFilterDefaultValue } from '@/page-layout/utils/getDraftWithPageLayoutFilterDefaultValue';
 import { useResetLocationHash } from '@/ui/navigation/hooks/useResetLocationHash';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -57,7 +57,7 @@ export const DashboardFilterViewModeChip = ({
     setIsPageLayoutInEditMode(true);
     resetLocationHash();
     setPageLayoutDraft((pageLayoutDraft) =>
-      setPageLayoutFilterDefaultValueInDraft({
+      getDraftWithPageLayoutFilterDefaultValue({
         pageLayoutDraft,
         pageLayoutFilterId,
         defaultValue: getDashboardFilterValueToStore(value),

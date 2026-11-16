@@ -11,6 +11,7 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
+import { DashboardFiltersContext } from '@/page-layout/contexts/DashboardFiltersContext';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { WidgetDashboardFilterProvider } from '@/page-layout/widgets/components/WidgetDashboardFilterProvider';
@@ -188,23 +189,22 @@ const DashboardFilterWidgetCardShellStory = ({
             tabId: 'tab-1',
           }}
         >
-          <WidgetDashboardFilterProvider
-            widget={widget}
-            dashboardFilters={dashboardFilters}
-          >
-            <WidgetCardShell
-              widget={widget}
-              variant="framed"
-              isEditable={false}
-              isEditing={false}
-              isDragging={false}
-              isResizing={false}
-              showHeader
-              hasAccess
-              restriction={{ type: null }}
-              onRemove={() => undefined}
-            />
-          </WidgetDashboardFilterProvider>
+          <DashboardFiltersContext.Provider value={dashboardFilters}>
+            <WidgetDashboardFilterProvider widget={widget}>
+              <WidgetCardShell
+                widget={widget}
+                variant="framed"
+                isEditable={false}
+                isEditing={false}
+                isDragging={false}
+                isResizing={false}
+                showHeader
+                hasAccess
+                restriction={{ type: null }}
+                onRemove={() => undefined}
+              />
+            </WidgetDashboardFilterProvider>
+          </DashboardFiltersContext.Provider>
         </PageLayoutContentProvider>
       </PageLayoutTestWrapper>
     </div>
