@@ -89,20 +89,23 @@ const convertUniversalDashboardFilterBindingsToDashboardFilterBindings = ({
 }: {
   dashboardFilterBindings: UniversalDashboardFilterBinding[] | null | undefined;
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
-}): DashboardFilterBinding[] | null | undefined =>
-  isDefined(dashboardFilterBindings)
-    ? dashboardFilterBindings.map(
-        ({ pageLayoutFilterId, fieldMetadataUniversalIdentifier }) => ({
-          pageLayoutFilterId,
-          fieldMetadataId: isNull(fieldMetadataUniversalIdentifier)
-            ? null
-            : resolveFieldMetadataIdOrThrow({
-                fieldMetadataUniversalIdentifier,
-                flatFieldMetadataMaps,
-              }),
-        }),
-      )
-    : dashboardFilterBindings;
+}): DashboardFilterBinding[] | null | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return dashboardFilterBindings;
+  }
+
+  return dashboardFilterBindings.map(
+    ({ pageLayoutFilterId, fieldMetadataUniversalIdentifier }) => ({
+      pageLayoutFilterId,
+      fieldMetadataId: isNull(fieldMetadataUniversalIdentifier)
+        ? null
+        : resolveFieldMetadataIdOrThrow({
+            fieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          }),
+    }),
+  );
+};
 
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,

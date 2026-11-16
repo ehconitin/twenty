@@ -91,33 +91,34 @@ const convertDashboardFilterBindingsToUniversalDashboardFilterBindings = ({
   dashboardFilterBindings: DashboardFilterBinding[] | null | undefined;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier: boolean;
-}): UniversalDashboardFilterBinding[] | null | undefined =>
-  isDefined(dashboardFilterBindings)
-    ? dashboardFilterBindings.flatMap(
-        ({
-          pageLayoutFilterId,
+}): UniversalDashboardFilterBinding[] | null | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return dashboardFilterBindings;
+  }
+
+  return dashboardFilterBindings.flatMap(
+    ({
+      pageLayoutFilterId,
+      fieldMetadataId,
+    }): UniversalDashboardFilterBinding[] => {
+      if (isNull(fieldMetadataId)) {
+        return [{ pageLayoutFilterId, fieldMetadataUniversalIdentifier: null }];
+      }
+
+      const fieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
           fieldMetadataId,
-        }): UniversalDashboardFilterBinding[] => {
-          if (isNull(fieldMetadataId)) {
-            return [
-              { pageLayoutFilterId, fieldMetadataUniversalIdentifier: null },
-            ];
-          }
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        });
 
-          const fieldMetadataUniversalIdentifier =
-            getFieldMetadataUniversalIdentifier({
-              fieldMetadataId,
-              fieldMetadataUniversalIdentifierById,
-              shouldThrowOnMissingIdentifier,
-            });
-
-          // A stale override falls back to automatic: null means "Not applied"
-          return isNull(fieldMetadataUniversalIdentifier)
-            ? []
-            : [{ pageLayoutFilterId, fieldMetadataUniversalIdentifier }];
-        },
-      )
-    : dashboardFilterBindings;
+      // A stale override falls back to automatic: null means "Not applied"
+      return isNull(fieldMetadataUniversalIdentifier)
+        ? []
+        : [{ pageLayoutFilterId, fieldMetadataUniversalIdentifier }];
+    },
+  );
+};
 
 export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
