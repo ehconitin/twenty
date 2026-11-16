@@ -125,7 +125,7 @@ export const WidgetCardHeader = ({
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         {/* Keeps its slot, so the header pills do not move when it appears */}
         {isRemoveButtonShown && isDefined(headerPills) && (
-          <WidgetCardHeaderHoverReveal isAlwaysVisible={false}>
+          <WidgetCardHeaderHoverReveal isHoverOnly>
             <IconButton
               aria-label={t`Remove widget`}
               onClick={onRemove}
