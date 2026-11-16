@@ -164,6 +164,25 @@ describe('Page layout with filters update should succeed', () => {
     expect(await findPageLayoutFilters(pageLayoutId)).toEqual([PERIOD_FILTER]);
   });
 
+  it('should drop the filters when it is saved as another layout type without them', async () => {
+    await saveDashboard({ pageLayoutId, tabId, filters: [PERIOD_FILTER] });
+
+    const { data } = await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      gqlFields: PAGE_LAYOUT_WITH_FILTERS_GQL_FIELDS,
+      input: {
+        id: pageLayoutId,
+        name: 'Record Page',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [{ id: tabId, title: 'Tab 1', position: 0, widgets: [] }],
+      },
+    });
+
+    expect(data.updatePageLayoutWithTabsAndWidgets.filters).toBeNull();
+    expect(await findPageLayoutFilters(pageLayoutId)).toBeNull();
+  });
+
   it.each([
     ['null', null],
     [
