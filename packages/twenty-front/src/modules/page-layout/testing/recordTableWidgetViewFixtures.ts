@@ -4,7 +4,6 @@ import { type View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const SAVED_VIEW: View = {
   id: 'view-1',
@@ -32,7 +31,7 @@ export const SAVED_VIEW: View = {
   icon: 'IconTable',
   kanbanAggregateOperationFieldMetadataId: '',
   position: 0,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   isActive: true,
 };
 
@@ -45,7 +44,7 @@ export const DRAFT_VIEW_SNAPSHOT: RecordTableWidgetViewSnapshot = {
     type: ViewType.TABLE_WIDGET,
     isCompact: false,
     position: 0,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     shouldHideEmptyGroups: false,
     isActive: true,
   },
