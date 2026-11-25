@@ -45,7 +45,6 @@ export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
 export { convertCurrencyAmountToCurrencyMicros } from './currency/convertCurrencyAmountToCurrencyMicros';
 export { convertCurrencyMicrosToCurrencyAmount } from './currency/convertCurrencyMicrosToCurrencyAmount';
-export { buildDashboardFilterForWidgetOrThrow } from './pageLayout/buildDashboardFilterForWidgetOrThrow';
 export {
   NON_ISO_DATE_FORMATS,
   ACCEPTED_DATE_FORMATS,
@@ -293,6 +292,7 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { isBuiltInSectionKey } from './navigation/isBuiltInSectionKey';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { normalizeViewFieldLabel } from './normalizeViewFieldLabel';
+export { buildDashboardFilterForWidgetOrThrow } from './pageLayout/buildDashboardFilterForWidgetOrThrow';
 export { getChartReferencedFieldMetadataIds } from './pageLayout/getChartReferencedFieldMetadataIds';
 export { getDashboardFilterCandidateFieldMetadataIds } from './pageLayout/getDashboardFilterCandidateFieldMetadataIds';
 export { getDashboardFilterConditionValueIssue } from './pageLayout/getDashboardFilterConditionValueIssue';
