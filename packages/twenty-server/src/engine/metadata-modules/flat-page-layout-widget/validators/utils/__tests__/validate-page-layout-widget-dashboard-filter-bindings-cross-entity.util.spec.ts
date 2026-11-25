@@ -37,6 +37,7 @@ const buildBoundWidget = ({
   position: null,
   conditionalDisplay: null,
   conditionalAvailabilityExpression: null,
+  conditionalAvailability: null,
   isActive,
   isSystemSideEffect: false,
   universalOverrides: null,
