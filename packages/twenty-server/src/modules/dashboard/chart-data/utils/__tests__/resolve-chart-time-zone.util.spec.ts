@@ -3,12 +3,12 @@ import { resolveChartTimeZone } from 'src/modules/dashboard/chart-data/utils/res
 describe('resolveChartTimeZone', () => {
   it.each<[string, string | null | undefined, string]>([
     ['a zone the group-by supports', 'Asia/Tokyo', 'Asia/Tokyo'],
-    ['the group-by name of a renamed zone', 'Europe/Kyiv', 'Europe/Kiev'],
+    ['a renamed zone the group-by accepts', 'Europe/Kyiv', 'Europe/Kyiv'],
     ['the canonical case of a zone', 'utc', 'UTC'],
     [
-      'UTC for a zone the group-by does not know',
+      'a zone the group-by recently added',
       'America/Ciudad_Juarez',
-      'UTC',
+      'America/Ciudad_Juarez',
     ],
     ['UTC for an unknown zone', 'Mars/Olympus_Mons', 'UTC'],
     ['UTC when no zone is sent', undefined, 'UTC'],
