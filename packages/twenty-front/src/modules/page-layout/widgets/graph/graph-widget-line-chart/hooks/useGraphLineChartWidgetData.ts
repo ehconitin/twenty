@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useDashboardFilterChartDataInput } from '@/page-layout/widgets/graph/hooks/useDashboardFilterChartDataInput';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -8,6 +9,7 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,23 +47,39 @@ export const useGraphLineChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dataConfiguration = extractLineChartDataConfiguration(configuration);
+  const dataConfiguration = useMemo(
+    () => extractLineChartDataConfiguration(configuration),
+    [configuration],
+  );
+
+  const dashboardFilterChartDataInput = useDashboardFilterChartDataInput({
+    configuration: dataConfiguration,
+    primaryAxisField: objectMetadataItem.fields.find(
+      ({ id }) => id === configuration.primaryAxisGroupByFieldMetadataId,
+    ),
+  });
 
   const {
     data: queryData,
+    previousData,
     loading,
     error,
   } = useQuery(LineChartDataDocument, {
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration: dataConfiguration,
+        ...dashboardFilterChartDataInput,
       },
     },
   });
 
-  const formattedToRawLookup = queryData?.lineChartData?.formattedToRawLookup
-    ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
+  const effectiveQueryData = queryData ?? previousData;
+
+  const formattedToRawLookup = effectiveQueryData?.lineChartData
+    ?.formattedToRawLookup
+    ? new Map(
+        Object.entries(effectiveQueryData.lineChartData.formattedToRawLookup),
+      )
     : new Map();
 
   const secondaryAxisField = objectMetadataItem?.fields?.find(
@@ -83,7 +101,7 @@ export const useGraphLineChartWidgetData = ({
     selectFieldOptions,
   });
 
-  const series = queryData?.lineChartData?.series?.map(
+  const series = effectiveQueryData?.lineChartData?.series?.map(
     (seriesItem: LineChartSeries): LineChartSeriesWithColor => {
       const rawValue = formattedToRawLookup.get(seriesItem.key);
 
@@ -111,13 +129,14 @@ export const useGraphLineChartWidgetData = ({
     series: series ?? [],
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
-    hasTooManyGroups: queryData?.lineChartData?.hasTooManyGroups ?? false,
+    hasTooManyGroups:
+      effectiveQueryData?.lineChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
-    xAxisLabel: queryData?.lineChartData?.xAxisLabel ?? '',
-    yAxisLabel: queryData?.lineChartData?.yAxisLabel ?? '',
-    loading,
+    xAxisLabel: effectiveQueryData?.lineChartData?.xAxisLabel ?? '',
+    yAxisLabel: effectiveQueryData?.lineChartData?.yAxisLabel ?? '',
+    loading: loading && !previousData,
     error,
   };
 };

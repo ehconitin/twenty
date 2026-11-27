@@ -1,30 +1,42 @@
+import { DashboardFilterSessionMemoryEffect } from '@/page-layout/components/DashboardFilterSessionMemoryEffect';
 import { DashboardFiltersContext } from '@/page-layout/contexts/DashboardFiltersContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type DashboardFilters } from '@/page-layout/types/DashboardFilters';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { getDashboardFilterSearch } from '@/page-layout/utils/getDashboardFilterSearch';
+import { dashboardFilterSessionSearchFamilyState } from '@/page-layout/states/dashboardFilterSessionSearchFamilyState';
+import { getAppliedDashboardFilterSearch } from '@/page-layout/utils/getAppliedDashboardFilterSearch';
 import { getEffectiveDashboardFilterValues } from '@/page-layout/utils/getEffectiveDashboardFilterValues';
 import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/utils/parseDashboardFilterValuesFromSearchParams';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type ReactNode, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getEffectiveDashboardPageLayoutFilters } from 'twenty-shared/utils';
 
 type DashboardFiltersFromUrlProviderProps = {
+  pageLayoutId: string;
   pageLayoutFilters: PageLayout['filters'];
   children: ReactNode;
 };
 
 export const DashboardFiltersFromUrlProvider = ({
+  pageLayoutId,
   pageLayoutFilters,
   children,
 }: DashboardFiltersFromUrlProviderProps) => {
   const [searchParams] = useSearchParams();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const dashboardFilterSessionSearch = useAtomFamilyStateValue(
+    dashboardFilterSessionSearchFamilyState,
+    { pageLayoutId },
+  );
   const dashboardFilterSearch = isPageLayoutInEditMode
     ? ''
-    : getDashboardFilterSearch(searchParams);
+    : getAppliedDashboardFilterSearch({
+        searchParams,
+        rememberedDashboardFilterSearch: dashboardFilterSessionSearch,
+      });
   const { userTimezone } = useUserTimezone();
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
@@ -59,6 +71,7 @@ export const DashboardFiltersFromUrlProvider = ({
 
   return (
     <DashboardFiltersContext.Provider value={dashboardFilters}>
+      <DashboardFilterSessionMemoryEffect />
       {children}
     </DashboardFiltersContext.Provider>
   );
