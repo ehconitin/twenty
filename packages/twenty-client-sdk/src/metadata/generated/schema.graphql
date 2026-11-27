@@ -1080,6 +1080,11 @@ type BarChartData {
 input BarChartDataInput {
   configuration: JSON!
   objectMetadataId: UUID!
+
+  """
+  Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended
+  """
+  primaryAxisDateRange: ChartDateRangeInput
 }
 
 """Display mode for bar charts with secondary grouping"""
@@ -1414,6 +1419,12 @@ enum CaptchaDriverType {
 
 type ChannelSyncSuccess {
   success: Boolean!
+}
+
+input ChartDateRangeInput {
+  """Last day of the range, included"""
+  end: String
+  start: String
 }
 
 """Format used to display the chart value"""
@@ -3161,6 +3172,11 @@ type LineChartData {
 input LineChartDataInput {
   configuration: JSON!
   objectMetadataId: UUID!
+
+  """
+  Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended
+  """
+  primaryAxisDateRange: ChartDateRangeInput
 }
 
 type LineChartDataPoint {

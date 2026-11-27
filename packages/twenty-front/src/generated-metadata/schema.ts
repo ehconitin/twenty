@@ -1166,6 +1166,8 @@ export type BarChartData = {
 export type BarChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
+  primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -1516,6 +1518,12 @@ export enum CaptchaDriverType {
 export type ChannelSyncSuccess = {
   __typename?: 'ChannelSyncSuccess';
   success: Scalars['Boolean']['output'];
+};
+
+export type ChartDateRangeInput = {
+  /** Last day of the range, included */
+  end?: InputMaybe<Scalars['String']['input']>;
+  start?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Format used to display the chart value */
@@ -3324,6 +3332,8 @@ export type LineChartData = {
 export type LineChartDataInput = {
   configuration: Scalars['JSON']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  /** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
+  primaryAxisDateRange?: InputMaybe<ChartDateRangeInput>;
 };
 
 export type LineChartDataPoint = {

@@ -5691,7 +5691,9 @@ export interface BarChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BarChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID']}
+export interface BarChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
+/** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
+primaryAxisDateRange?: (ChartDateRangeInput | null)}
 
 export interface BarChartSeriesGenqlSelection{
     key?: boolean | number
@@ -5963,6 +5965,10 @@ export interface ChannelSyncSuccessGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface ChartDateRangeInput {
+/** Last day of the range, included */
+end?: (Scalars['String'] | null),start?: (Scalars['String'] | null)}
 
 export interface ChatConfigurationGenqlSelection{
     configurationType?: boolean | number
@@ -7119,7 +7125,9 @@ export interface LineChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface LineChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID']}
+export interface LineChartDataInput {configuration: Scalars['JSON'],objectMetadataId: Scalars['UUID'],
+/** Days to extend the primary date axis to, as empty buckets; skipped when the axis cannot be extended */
+primaryAxisDateRange?: (ChartDateRangeInput | null)}
 
 export interface LineChartDataPointGenqlSelection{
     x?: boolean | number
