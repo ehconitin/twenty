@@ -1,7 +1,7 @@
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
@@ -11,20 +11,28 @@ const StyledHoverReveal = styled.div<{ isVisible: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? '1' : '0')};
   pointer-events: ${({ isVisible }) => (isVisible ? 'auto' : 'none')};
   transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
+
+  &:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 type WidgetCardHeaderHoverRevealProps = {
   children: ReactNode;
+  isHoverOnly?: boolean;
 };
 
-// Touch devices have no hover, so the content stays visible on mobile.
+// Without hover (touch devices, mobile) the content stays visible
 export const WidgetCardHeaderHoverReveal = ({
   children,
+  isHoverOnly = false,
 }: WidgetCardHeaderHoverRevealProps) => {
   const widgetComponentInstanceId = useComponentInstanceStateContext(
     WidgetComponentInstanceContext,
   );
   const isMobile = useIsMobile();
+  const isTouchDevice = useIsTouchDevice();
 
   const widgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
@@ -32,7 +40,11 @@ export const WidgetCardHeaderHoverReveal = ({
   );
 
   return (
-    <StyledHoverReveal isVisible={isMobile || widgetCardHovered}>
+    <StyledHoverReveal
+      isVisible={
+        (!isHoverOnly && (isTouchDevice || isMobile)) || widgetCardHovered
+      }
+    >
       {children}
     </StyledHoverReveal>
   );

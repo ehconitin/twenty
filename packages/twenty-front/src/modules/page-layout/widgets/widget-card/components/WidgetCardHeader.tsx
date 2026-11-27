@@ -1,4 +1,5 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { WidgetCardHeaderHoverReveal } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderHoverReveal';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { IconButton } from 'twenty-ui/components/input';
@@ -22,6 +23,7 @@ export type WidgetCardHeaderProps = {
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
+  headerPills?: ReactNode;
   className?: string;
   isResizing?: boolean;
 };
@@ -59,6 +61,18 @@ const StyledCount = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
+// The max width leaves the title some room before both truncate; the padding keeps focus rings inside the clip
+const StyledHeaderPillsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  margin: calc(-1 * ${themeCssVariables.spacing[1]});
+  max-width: calc(100% - min(${themeCssVariables.spacing[20]}, 40%));
+  min-width: 0;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
@@ -83,11 +97,15 @@ export const WidgetCardHeader = ({
   title,
   onRemove,
   forbiddenDisplay,
+  headerPills,
   className,
 }: WidgetCardHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
+
+  const isRemoveButtonShown =
+    !isResizing && !isEmpty && isInEditMode && isDefined(onRemove);
 
   const shouldInset = variant === 'flush';
   return (
@@ -99,11 +117,27 @@ export const WidgetCardHeader = ({
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
         {isDefined(count) && <StyledCount>{formatNumber(count)}</StyledCount>}
       </StyledTitleContainer>
+      {isDefined(headerPills) && (
+        <StyledHeaderPillsContainer>{headerPills}</StyledHeaderPillsContainer>
+      )}
       <StyledRightContainer>
         {actions}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
+        {/* Keeps its slot, so the header pills do not move when it appears */}
+        {isRemoveButtonShown && isDefined(headerPills) && (
+          <WidgetCardHeaderHoverReveal isHoverOnly>
+            <IconButton
+              aria-label={t`Remove widget`}
+              onClick={onRemove}
+              variant="ghost"
+              size="sm"
+            >
+              <IconTrash />
+            </IconButton>
+          </WidgetCardHeaderHoverReveal>
+        )}
         <AnimatePresence initial={false}>
-          {!isResizing && !isEmpty && isInEditMode && onRemove && isHovered && (
+          {isRemoveButtonShown && !isDefined(headerPills) && isHovered && (
             <StyledIconButtonContainer
               initial={{ width: 0, opacity: 0 }}
               animate={{ width: 'auto', opacity: 1 }}
