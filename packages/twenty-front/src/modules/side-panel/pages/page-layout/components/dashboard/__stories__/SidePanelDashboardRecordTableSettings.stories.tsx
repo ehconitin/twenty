@@ -1,20 +1,103 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { RecordTableWidgetSettingsStory } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/RecordTableWidgetSettingsStory';
 import { initializeRecordTableWidgetSettingsStory } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/initializeRecordTableWidgetSettingsStory';
 import { RECORD_TABLE_WIDGET_SETTINGS_STORY_DATA } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/recordTableWidgetSettingsStoryData';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  DASHBOARD_DATE_RANGE_FILTER,
+  DASHBOARD_DATE_RANGE_FILTER_ID,
+} from 'twenty-shared/constants';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ViewCalendarLayout,
+  ViewFilterOperand,
+  ViewType,
+} from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const onBackgroundClickOutside = fn();
 const { pageLayoutId, widgetId } = RECORD_TABLE_WIDGET_SETTINGS_STORY_DATA;
+const pageLayoutDraftState = pageLayoutDraftComponentState.atomFamily({
+  instanceId: pageLayoutId,
+});
+const widgetViewDraftState =
+  recordTableWidgetViewDraftComponentState.atomFamily({
+    instanceId: pageLayoutId,
+  });
+
+const initializeDashboardFilterBindingsStory = ({
+  isCloseDateOverridden = true,
+}: {
+  isCloseDateOverridden?: boolean;
+} = {}) => {
+  initializeRecordTableWidgetSettingsStory();
+  const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
+    ],
+  });
+  const closeDate = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: getMockObjectMetadataItemOrThrow('opportunity'),
+    fieldName: 'closeDate',
+  });
+  const pageLayoutDraft = jotaiStore.get(pageLayoutDraftState);
+  const [tab] = pageLayoutDraft.tabs;
+  const [widget] = tab.widgets;
+  const draftWithFilter = {
+    ...pageLayoutDraft,
+    filters: [DASHBOARD_DATE_RANGE_FILTER],
+    tabs: [
+      {
+        ...tab,
+        widgets: [
+          {
+            ...widget,
+            configuration: {
+              ...widget.configuration,
+              dashboardFilterBindings: isCloseDateOverridden
+                ? [
+                    {
+                      pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
+                      fieldMetadataId: closeDate.id,
+                    },
+                  ]
+                : null,
+            },
+          },
+        ],
+      },
+    ],
+  };
+  jotaiStore.set(pageLayoutDraftState, draftWithFilter);
+  jotaiStore.set(widgetViewDraftState, (widgetViewDrafts) => ({
+    ...widgetViewDrafts,
+    [widgetId]: {
+      ...widgetViewDrafts[widgetId],
+      viewFilters: [
+        {
+          id: 'close-date-view-filter',
+          fieldMetadataId: closeDate.id,
+          operand: ViewFilterOperand.IS_AFTER,
+          value: '2026-01-01',
+          viewId: widgetViewDrafts[widgetId].view.id,
+        },
+      ],
+    },
+  }));
+  return () => jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+};
+
 const getWidgetViewSnapshot = () =>
   jotaiStore.get(
     recordTableWidgetViewDraftComponentState.atomFamily({
@@ -241,5 +324,33 @@ export const EmbeddedViewLayoutRows: Story = {
       await body.findByRole('button', { name: /^Calendar view/ }),
     ).toHaveTextContent('Month');
     expect(onBackgroundClickOutside).not.toHaveBeenCalled();
+  },
+};
+
+export const DashboardFilterBindings: Story = {
+  beforeEach: () => initializeDashboardFilterBindingsStory(),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+    expect(body.getByText('Dashboard filters')).toBeVisible();
+    expect(trigger).toHaveTextContent('Close date');
+
+    await userEvent.click(trigger);
+    await userEvent.click(await body.findByRole('option', { name: 'Ignored' }));
+
+    await waitFor(() => expect(trigger).toHaveTextContent('Ignored'));
+    expect(onBackgroundClickOutside).not.toHaveBeenCalled();
+  },
+};
+
+export const DashboardFilterDefaultOnViewFilterDate: Story = {
+  beforeEach: () =>
+    initializeDashboardFilterBindingsStory({ isCloseDateOverridden: false }),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+    expect(trigger).toHaveTextContent('Default (Close date)');
   },
 };
