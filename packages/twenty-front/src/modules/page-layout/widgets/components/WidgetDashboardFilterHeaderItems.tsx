@@ -8,11 +8,11 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-// Same tokens as the "Not shared" pill this header shows for a forbidden widget
+// The "Not shared" pill's look, with a radius squircles do not double
 const StyledPill = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
