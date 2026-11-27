@@ -3,6 +3,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecordIndexExcludedRecordFilterIds } from '@/object-record/record-index/hooks/useRecordIndexExcludedRecordFilterIds';
+import { omitRecordFiltersExcludedFromQueries } from '@/object-record/record-index/utils/omitRecordFiltersExcludedFromQueries';
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -27,6 +29,14 @@ export const useBuildRecordInputFromFilters = ({
     objectMetadataItem.id,
   );
 
+  const excludedRecordFilterIds = useRecordIndexExcludedRecordFilterIds();
+
+  // A filter the index leaves out of its queries must not pre-fill a new record either
+  const queriedRecordFilters = omitRecordFiltersExcludedFromQueries({
+    recordFilters: currentRecordFilters,
+    excludedRecordFilterIds,
+  });
+
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { currentRecord } = useContext(RecordFilterValueDependenciesContext);
@@ -35,7 +45,7 @@ export const useBuildRecordInputFromFilters = ({
 
   const buildRecordInputFromFilters = (): Partial<ObjectRecord> => {
     return buildRecordInputFromFilter({
-      currentRecordFilters,
+      currentRecordFilters: queriedRecordFilters,
       objectMetadataItem,
       uneditableFields: objectPermissions.uneditableFields,
       currentWorkspaceMember: currentWorkspaceMember ?? undefined,
