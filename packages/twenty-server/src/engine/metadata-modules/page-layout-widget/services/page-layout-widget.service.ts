@@ -35,6 +35,7 @@ import { getVerticalListWidgetInsertionPositions } from 'src/engine/metadata-mod
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { validateRichTextWidgetBodyOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-rich-text-widget-body-or-throw.util';
+import { getPageLayoutWidgetConfigurationToSaveOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/get-page-layout-widget-configuration-to-save-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -295,7 +296,16 @@ export class PageLayoutWidgetService {
 
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
-        createPageLayoutWidgetInput: createInput,
+        createPageLayoutWidgetInput: {
+          ...createInput,
+          configuration: getPageLayoutWidgetConfigurationToSaveOrThrow({
+            existingWidget: undefined,
+            configuration: createInput.configuration,
+            objectMetadataId: createInput.objectMetadataId,
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+          }),
+        },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutTabMaps,
@@ -461,9 +471,15 @@ export class PageLayoutWidgetService {
       isConfigurationBeingUpdated && isDefined(updateData.configuration)
         ? {
             ...updateData,
-            configuration: this.enrichRichTextConfigurationBody(
-              updateData.configuration,
-            ),
+            configuration: getPageLayoutWidgetConfigurationToSaveOrThrow({
+              existingWidget,
+              configuration: this.enrichRichTextConfigurationBody(
+                updateData.configuration,
+              ),
+              objectMetadataId: updateData.objectMetadataId,
+              fieldMetadataUniversalIdentifierById:
+                existingFlatFieldMetadataMaps.universalIdentifierById,
+            }),
           }
         : updateData;
 

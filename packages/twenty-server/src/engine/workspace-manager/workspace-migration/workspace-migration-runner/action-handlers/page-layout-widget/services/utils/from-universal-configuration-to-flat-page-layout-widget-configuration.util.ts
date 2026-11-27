@@ -1,6 +1,9 @@
+import { isNull } from '@sniptt/guards';
 import {
   type ChartFilter,
+  type DashboardFilterBinding,
   type UniversalChartFilter,
+  type UniversalDashboardFilterBinding,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -80,6 +83,30 @@ const convertUniversalFilterToChartFilter = ({
   };
 };
 
+const convertUniversalDashboardFilterBindingsToDashboardFilterBindings = ({
+  dashboardFilterBindings,
+  flatFieldMetadataMaps,
+}: {
+  dashboardFilterBindings: UniversalDashboardFilterBinding[] | null | undefined;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): DashboardFilterBinding[] | null | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return dashboardFilterBindings;
+  }
+
+  return dashboardFilterBindings.map(
+    ({ pageLayoutFilterId, fieldMetadataUniversalIdentifier }) => ({
+      pageLayoutFilterId,
+      fieldMetadataId: isNull(fieldMetadataUniversalIdentifier)
+        ? null
+        : resolveFieldMetadataIdOrThrow({
+            fieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          }),
+    }),
+  );
+};
+
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,
   flatFieldMetadataMaps,
@@ -99,6 +126,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         ratioAggregateConfig: universalRatioAggregateConfig,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -127,6 +155,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalDashboardFilterBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -135,6 +168,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         groupByFieldMetadataUniversalIdentifier,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -158,6 +192,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalDashboardFilterBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -167,6 +206,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -201,6 +241,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalDashboardFilterBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -210,6 +255,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -244,6 +290,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalDashboardFilterBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -273,7 +324,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      const { viewUniversalIdentifier, ...rest } = universalConfiguration;
+      const { viewUniversalIdentifier, dashboardFilterBindings, ...rest } =
+        universalConfiguration;
 
       let viewId: string | null = null;
 
@@ -293,7 +345,15 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         viewId = flatView.id;
       }
 
-      return { ...rest, viewId };
+      return {
+        ...rest,
+        viewId,
+        dashboardFilterBindings:
+          convertUniversalDashboardFilterBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
+      };
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
