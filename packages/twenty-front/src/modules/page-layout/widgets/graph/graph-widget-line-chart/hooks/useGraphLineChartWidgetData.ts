@@ -61,6 +61,7 @@ export const useGraphLineChartWidgetData = ({
 
   const {
     data: queryData,
+    previousData,
     loading,
     error,
   } = useQuery(LineChartDataDocument, {
@@ -72,8 +73,13 @@ export const useGraphLineChartWidgetData = ({
     },
   });
 
-  const formattedToRawLookup = queryData?.lineChartData?.formattedToRawLookup
-    ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
+  const effectiveQueryData = queryData ?? previousData;
+
+  const formattedToRawLookup = effectiveQueryData?.lineChartData
+    ?.formattedToRawLookup
+    ? new Map(
+        Object.entries(effectiveQueryData.lineChartData.formattedToRawLookup),
+      )
     : new Map();
 
   const secondaryAxisField = objectMetadataItem?.fields?.find(
@@ -95,7 +101,7 @@ export const useGraphLineChartWidgetData = ({
     selectFieldOptions,
   });
 
-  const series = queryData?.lineChartData?.series?.map(
+  const series = effectiveQueryData?.lineChartData?.series?.map(
     (seriesItem: LineChartSeries): LineChartSeriesWithColor => {
       const rawValue = formattedToRawLookup.get(seriesItem.key);
 
@@ -123,13 +129,14 @@ export const useGraphLineChartWidgetData = ({
     series: series ?? [],
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
-    hasTooManyGroups: queryData?.lineChartData?.hasTooManyGroups ?? false,
+    hasTooManyGroups:
+      effectiveQueryData?.lineChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
-    xAxisLabel: queryData?.lineChartData?.xAxisLabel ?? '',
-    yAxisLabel: queryData?.lineChartData?.yAxisLabel ?? '',
-    loading,
+    xAxisLabel: effectiveQueryData?.lineChartData?.xAxisLabel ?? '',
+    yAxisLabel: effectiveQueryData?.lineChartData?.yAxisLabel ?? '',
+    loading: loading && !previousData,
     error,
   };
 };

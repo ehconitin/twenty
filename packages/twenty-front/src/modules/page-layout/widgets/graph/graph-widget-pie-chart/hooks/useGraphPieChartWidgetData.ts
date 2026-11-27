@@ -56,6 +56,7 @@ export const useGraphPieChartWidgetData = ({
 
   const {
     data: queryData,
+    previousData,
     loading,
     error,
   } = useQuery(PieChartDataDocument, {
@@ -67,8 +68,13 @@ export const useGraphPieChartWidgetData = ({
     },
   });
 
-  const formattedToRawLookup = queryData?.pieChartData?.formattedToRawLookup
-    ? new Map(Object.entries(queryData.pieChartData.formattedToRawLookup))
+  const effectiveQueryData = queryData ?? previousData;
+
+  const formattedToRawLookup = effectiveQueryData?.pieChartData
+    ?.formattedToRawLookup
+    ? new Map(
+        Object.entries(effectiveQueryData.pieChartData.formattedToRawLookup),
+      )
     : new Map();
 
   const groupByField = objectMetadataItem?.fields?.find(
@@ -90,7 +96,7 @@ export const useGraphPieChartWidgetData = ({
     selectFieldOptions,
   });
 
-  const chartData = queryData?.pieChartData?.data?.map(
+  const chartData = effectiveQueryData?.pieChartData?.data?.map(
     (item: PieChartDataItem): PieChartDataItemWithColor => {
       const rawValue = formattedToRawLookup.get(item.key);
 
@@ -113,11 +119,12 @@ export const useGraphPieChartWidgetData = ({
     showLegend: configuration.displayLegend ?? true,
     showDataLabels: configuration.displayDataLabel ?? false,
     showCenterMetric: configuration.showCenterMetric ?? true,
-    hasTooManyGroups: queryData?.pieChartData?.hasTooManyGroups ?? false,
+    hasTooManyGroups:
+      effectiveQueryData?.pieChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
-    loading,
+    loading: loading && !previousData,
     error,
   };
 };
