@@ -34,7 +34,7 @@ import { type RLSDynamicValue } from '@/object-record/record-filter/types/Record
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SettingsRoleRuleConditionVariablePicker } from '@/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionVariablePicker';
 import { RuleConditionVariablePickerContext } from '@/settings/roles/role-permissions/rule-conditions/contexts/RuleConditionVariablePickerContext';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -328,7 +328,9 @@ export const SettingsRoleRuleConditionValueInput = ({
           defaultValue={recordFilter.value}
           onChange={(relativeDateFilter: RelativeDateFilter) =>
             applyObjectFilterDropdownFilterValue(
-              stringifyRelativeDateFilter(relativeDateFilter),
+              stringifyRelativeDateFilterWithDetectedStartDay(
+                relativeDateFilter,
+              ),
             )
           }
           isDateTimeField={recordFilter.type === FieldMetadataType.DATE_TIME}

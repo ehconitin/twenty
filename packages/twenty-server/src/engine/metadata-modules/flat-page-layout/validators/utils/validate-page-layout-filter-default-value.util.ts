@@ -5,7 +5,12 @@ import {
   type PageLayoutFilterCondition,
   type PageLayoutFilterValue,
 } from 'twenty-shared/types';
-import { isNonEmptyArray, isRecordFilterValueValid } from 'twenty-shared/utils';
+import {
+  getDashboardFilterConditionValueIssue,
+  isDefined,
+  isNonEmptyArray,
+  isRecordFilterValueValid,
+} from 'twenty-shared/utils';
 
 import { getFilterConditionValidationIssue } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-filter-condition-validation-issue.util';
 import { type PageLayoutFilterValidationError } from 'src/engine/metadata-modules/flat-page-layout/types/page-layout-filter-validation-error.type';
@@ -20,6 +25,21 @@ const validateCondition = ({
   valueFormatFieldType: FieldMetadataType;
   filterLabel: string;
 }): PageLayoutFilterValidationError[] => {
+  const buildInvalidValueError = ({
+    stringifiedValue,
+    hint,
+  }: {
+    stringifiedValue: string;
+    hint: string;
+  }): PageLayoutFilterValidationError => ({
+    code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+    message: isNonEmptyString(hint)
+      ? t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}". ${hint}`
+      : t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}".`,
+    userFriendlyMessage: msg`Dashboard filter default value is not valid for this operand`,
+    value,
+  });
+
   const issue = getFilterConditionValidationIssue({
     fieldType: valueFormatFieldType,
     operand,
@@ -40,18 +60,7 @@ const validateCondition = ({
   }
 
   if (issue?.kind === 'INVALID_VALUE') {
-    const { stringifiedValue, hint } = issue;
-
-    return [
-      {
-        code: PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
-        message: isNonEmptyString(hint)
-          ? t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}". ${hint}`
-          : t`Value "${stringifiedValue}" of the default value of dashboard filter "${filterLabel}" is not valid for operand "${operand}".`,
-        userFriendlyMessage: msg`Dashboard filter default value is not valid for this operand`,
-        value,
-      },
-    ];
+    return [buildInvalidValueError(issue)];
   }
 
   if (!isRecordFilterValueValid({ operand, value })) {
@@ -63,6 +72,12 @@ const validateCondition = ({
         value,
       },
     ];
+  }
+
+  const hint = getDashboardFilterConditionValueIssue({ operand, value });
+
+  if (isDefined(hint)) {
+    return [buildInvalidValueError({ stringifiedValue: value, hint })];
   }
 
   return [];
