@@ -235,6 +235,7 @@ export type {
   DashboardFilterBinding,
   UniversalDashboardFilterBinding,
 } from './page-layout/DashboardFilterBinding';
+export type { DashboardFilterFieldResolution } from './page-layout/DashboardFilterFieldResolution';
 export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';
 export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfigurationType';
 export type { GridPosition } from './page-layout/GridPosition';
