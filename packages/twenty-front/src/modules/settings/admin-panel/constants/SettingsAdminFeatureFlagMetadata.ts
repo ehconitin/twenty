@@ -81,4 +81,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Inbox object names`,
     description: msg`Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand.`,
   },
+  [FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED]: {
+    label: msg`Dashboard filters`,
+    description: msg`Show a Date range filter on dashboards and choose, per widget, which date it filters. Enable after the instance upgrade completes.`,
+  },
 };

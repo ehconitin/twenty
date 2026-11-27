@@ -1,10 +1,9 @@
 import { DASHBOARD_FILTER_PLAIN_DATE_OPERANDS } from '@/constants/DashboardFilterPlainDateOperands';
+import { DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX } from '@/constants/DashboardFilterRelativeDateAmountMax';
 import { type PageLayoutFilterCondition, ViewFilterOperand } from '@/types';
 import { isSupportedPlainDate } from '@/utils/date/isSupportedPlainDate';
 import { isSubDayRelativeDateFilterUnit } from '@/utils/filter/dates/utils/isSubDayRelativeDateFilterUnit';
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
-
-const MAX_RELATIVE_DATE_AMOUNT = 1000;
 
 const getRelativeDateIssue = (value: string): string | undefined => {
   const relativeDateFilter =
@@ -14,8 +13,11 @@ const getRelativeDateIssue = (value: string): string | undefined => {
     return 'Expected a relative date such as "PAST_30_DAY".';
   }
 
-  if ((relativeDateFilter.data.amount ?? 1) > MAX_RELATIVE_DATE_AMOUNT) {
-    return `Expected a relative date amount of at most ${MAX_RELATIVE_DATE_AMOUNT}.`;
+  if (
+    (relativeDateFilter.data.amount ?? 1) >
+    DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX
+  ) {
+    return `Expected a relative date amount of at most ${DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX}.`;
   }
 
   // A dashboard filter can bind a DATE field, where a sub-day range is empty
