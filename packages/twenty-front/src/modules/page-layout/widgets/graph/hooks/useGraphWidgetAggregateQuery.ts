@@ -150,7 +150,7 @@ export const useGraphWidgetAggregateQuery = ({
   return {
     value: aggregateDisplayValue,
     label: aggregateDisplayLabel,
-    loading,
+    loading: loading && !isDefined(data[aggregateField.name]),
     error,
   };
 };

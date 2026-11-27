@@ -51,14 +51,21 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     operationType: 'read',
   });
 
-  const { data, loading, error, refetch } =
-    useQuery<RecordGqlOperationFindManyResult>(aggregateQuery, {
-      skip: skip || !isDefined(objectMetadataItem) || !hasReadPermission,
-      variables: {
-        filter,
-      },
-      client: apolloCoreClient,
-    });
+  const {
+    data: queryData,
+    previousData,
+    loading,
+    error,
+    refetch,
+  } = useQuery<RecordGqlOperationFindManyResult>(aggregateQuery, {
+    skip: skip || !isDefined(objectMetadataItem) || !hasReadPermission,
+    variables: {
+      filter,
+    },
+    client: apolloCoreClient,
+  });
+
+  const data = queryData ?? previousData;
 
   const formattedData: AggregateRecordsData = {};
 
