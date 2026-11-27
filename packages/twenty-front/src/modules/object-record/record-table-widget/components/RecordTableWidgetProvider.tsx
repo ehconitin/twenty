@@ -24,7 +24,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   getAppPath,
@@ -35,6 +35,8 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   viewId: string;
   widgetId: string;
   recordLimit?: number;
+  additionalFilter?: RecordGqlOperationFilter;
+  excludedRecordFilterIds?: string[];
   instanceIdSuffix?: string;
   contextStoreViewType?: ContextStoreViewType;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
@@ -46,6 +48,8 @@ export const RecordTableWidgetProvider = ({
   viewId,
   widgetId,
   recordLimit,
+  additionalFilter,
+  excludedRecordFilterIds,
   instanceIdSuffix,
   contextStoreViewType,
   nestedRelationCreateThrough,
@@ -173,6 +177,8 @@ export const RecordTableWidgetProvider = ({
             fieldMetadataItemByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,
             recordLimit,
+            additionalFilter,
+            excludedRecordFilterIds,
           }}
         >
           <ViewComponentInstanceContext.Provider

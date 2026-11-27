@@ -1,10 +1,10 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecordIndexAdditionalFilter } from '@/object-record/record-index/hooks/useRecordIndexAdditionalFilter';
+import { useRecordIndexQueryRecordFilters } from '@/object-record/record-index/hooks/useRecordIndexQueryRecordFilters';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,13 +20,10 @@ import {
 export const useGetRecordIndexTotalCount = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentRecordFilterGroups = useAtomComponentStateValue(
-    currentRecordFilterGroupsComponentState,
-  );
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-  );
+  const {
+    recordFilters: currentRecordFilters,
+    recordFilterGroups: currentRecordFilterGroups,
+  } = useRecordIndexQueryRecordFilters();
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -61,6 +58,8 @@ export const useGetRecordIndexTotalCount = () => {
   const currentViewPresetFilterAsRecordGqlOperationFilter =
     useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
+  const additionalFilter = useRecordIndexAdditionalFilter();
+
   const { data, loading } = useAggregateRecords<{
     id: { COUNT: number };
   }>({
@@ -68,6 +67,7 @@ export const useGetRecordIndexTotalCount = () => {
     filter: combineFilters([
       { ...filter, ...anyFieldFilter },
       currentViewPresetFilterAsRecordGqlOperationFilter,
+      additionalFilter,
     ]),
     recordGqlFieldsAggregate: {
       id: [AggregateOperations.COUNT],
